@@ -1,0 +1,9 @@
+rule_id,dimension,table,column,severity,failed_rows,total_rows,fail_pct,sample_offending_value,recommended_action
+DQ-01,Completeness,customers,email,High,19,500,3.8,(empty),Backfill from source of record; make email required at intake.
+DQ-02,Validity,customers,email,Medium,10,500,2.0,ethan.haddad65.example.com,Add format validation at capture; correct existing malformed values.
+DQ-03,Uniqueness,customers,email,High,8,500,1.6,olivia.tanaka8@example.com,De-duplicate; enforce unique constraint / identity resolution.
+DQ-04,Validity,customers,date_of_birth,High,1,500,0.2,2027-06-16,Reject future DOB at entry; investigate and correct records.
+DQ-05,Integrity,accounts,customer_id,High,15,800,1.88,999999,Enforce FK; reconcile orphaned accounts to a valid customer.
+DQ-06,Consistency,accounts,status,Medium,181,800,22.62,ACTIVE,Normalize casing; constrain to a controlled vocabulary.
+DQ-07,Validity,lending_applications,credit_score,High,8,700,1.14,999,Range-validate 300-850; quarantine and re-pull invalid scores.
+DQ-08,Completeness,lending_applications,annual_income,Medium,9,700,1.29,(empty),Require income at application; backfill where lawful.

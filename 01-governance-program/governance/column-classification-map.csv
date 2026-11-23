@@ -1,0 +1,53 @@
+table,column,classification,data_category,commonly_missed,rationale
+customers,customer_id,Internal,Identifier,No,Internal surrogate key; not sensitive alone
+customers,first_name,Confidential,PII,No,Direct personal identifier
+customers,last_name,Confidential,PII,No,Direct personal identifier
+customers,email,Restricted,PII (contact),No,Direct identifier and contact; common breach target
+customers,phone,Restricted,PII (contact),No,Direct contact identifier
+customers,ssn,Restricted,Sensitive PII,No,Government identifier; highest sensitivity
+customers,date_of_birth,Restricted,Sensitive PII,Yes,Combines with name to enable identity theft; often under-classified
+customers,street_address,Restricted,PII,No,Locational personal data
+customers,state,Internal,PII (low),No,Coarse geography; low re-identification risk
+customers,created_at,Internal,Operational,No,Record metadata
+bank_clients,bank_id,Internal,Identifier,No,Internal key
+bank_clients,bank_name,Confidential,Business,No,Client relationship data
+bank_clients,routing_number,Confidential,Financial,No,Financial routing identifier
+bank_clients,contract_tier,Internal,Business,No,Commercial configuration
+bank_clients,api_key_hash,Restricted,Secret/Credential,Yes,Authentication secret; often missed because it is hashed
+accounts,account_id,Internal,Identifier,No,Internal key
+accounts,customer_id,Internal,Identifier (FK),No,Foreign key
+accounts,bank_id,Internal,Identifier (FK),No,Foreign key
+accounts,account_type,Internal,Operational,No,Account attribute
+accounts,balance,Restricted,Financial,No,Customer financial position
+accounts,opened_at,Internal,Operational,No,Record metadata
+accounts,status,Internal,Operational,No,Lifecycle state
+cards,card_id,Internal,Identifier,No,Internal key
+cards,account_id,Internal,Identifier (FK),No,Foreign key
+cards,card_number,Restricted,Cardholder Data (PCI),No,Primary Account Number; PCI DSS in scope
+cards,card_expiry,Restricted,Cardholder Data (PCI),Yes,Cardholder data; often forgotten next to the PAN
+cards,cardholder_name,Restricted,Cardholder Data / PII,Yes,PII and cardholder data; buried in a card table
+transactions,txn_id,Internal,Identifier,No,Internal key
+transactions,account_id,Internal,Identifier (FK),No,Foreign key
+transactions,amount,Confidential,Financial,No,Transaction value
+transactions,currency,Public,Reference,No,Non-sensitive code
+transactions,merchant_name,Internal,Operational,No,Merchant descriptor
+transactions,merchant_category,Internal,Reference,No,MCC code
+transactions,txn_timestamp,Internal,Operational,No,Event time
+transactions,status,Internal,Operational,No,Lifecycle state
+lending_applications,app_id,Internal,Identifier,No,Internal key
+lending_applications,customer_id,Internal,Identifier (FK),No,Foreign key
+lending_applications,annual_income,Restricted,Sensitive Financial,No,Sensitive financial attribute
+lending_applications,credit_score,Restricted,Sensitive Financial,No,Regulated financial attribute
+lending_applications,loan_amount,Confidential,Financial,No,Financial attribute
+lending_applications,decision,Confidential,Financial,Yes,Adverse-action relevant; often under-classified
+lending_applications,decision_at,Internal,Operational,No,Event time
+console_users,user_id,Internal,Identifier,No,Internal key
+console_users,bank_id,Internal,Identifier (FK),No,Foreign key
+console_users,email,Confidential,Workforce PII,Yes,Business contact for client staff; missed because it is not customer PII
+console_users,role,Internal,Access,No,Authorization attribute
+console_users,last_login,Internal,Operational,No,Activity metadata
+audit_log,log_id,Internal,Identifier,No,Internal key
+audit_log,user_id,Internal,Identifier (FK),No,Foreign key
+audit_log,action,Internal,Security,No,Audit attribute
+audit_log,resource,Internal,Security,No,Audit attribute
+audit_log,event_timestamp,Internal,Security,No,Audit attribute
