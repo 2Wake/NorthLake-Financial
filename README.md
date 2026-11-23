@@ -21,7 +21,7 @@ Full context: [`00-company/northlake-profile.md`](00-company/northlake-profile.m
 | # | Project | What it demonstrates | Status |
 |---|---------|---------------------|--------|
 | — | **Interactive tools** (`/docs`) | A working vendor-risk engine and a framework crosswalk, hosted on GitHub Pages | ✅ Live |
-| 1 | [Data Governance Program](01-governance-program/) | Ownership model, data classification, quality, access governance | 🔜 Planned |
+| 1 | [Data Governance Program](01-governance-program/) | Classification, glossary, ownership & data quality on **BigQuery + OpenMetadata** over a seeded synthetic estate | ✅ Built |
 | 2 | [SOC 2 / ISO 27001 Audit](02-soc2-iso-audit/) | Control matrix, evidence/PBC tracking, **control-testing workpapers**, readiness assessment | 🏗️ In progress |
 | 3 | [GRC Automation](03-grc-automation/) | Python-driven evidence collection and control-drift monitoring | 🔜 Planned |
 | 4 | [AI in GRC](04-ai-in-grc/) | Using AI to assist classification/review, with human-owned design and guardrails | 🔜 Planned |
