@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Load the NorthLake synthetic estate CSVs into a BigQuery dataset.
+# Load the Empire City Taxi synthetic estate CSVs into a BigQuery dataset.
 # Prereqs: gcloud + bq CLI installed and authenticated (`gcloud auth login`),
 # and a BigQuery sandbox project. Run generate_estate.py first.
 #
@@ -7,13 +7,13 @@
 set -euo pipefail
 
 PROJECT="${1:?Usage: ./load_to_bigquery.sh PROJECT_ID [DATASET] [LOCATION]}"
-DATASET="${2:-northlake}"
+DATASET="${2:-ect}"
 LOCATION="${3:-US}"
 DATA_DIR="$(cd "$(dirname "$0")/../data" && pwd)"
 
 echo "Project=$PROJECT  Dataset=$DATASET  Location=$LOCATION"
 echo "Creating dataset (ok if it already exists)…"
-bq --location="$LOCATION" mk --dataset --description "NorthLake synthetic estate (fictional)" \
+bq --location="$LOCATION" mk --dataset --description "Empire City Taxi synthetic estate (fictional)" \
    "${PROJECT}:${DATASET}" 2>/dev/null || true
 
 for csv in "$DATA_DIR"/*.csv; do

@@ -1,0 +1,13 @@
+segment_id,name,definition,size_estimate
+1,New riders,created_at < 30 days,12962
+2,Lapsed,no trip in 90 days,28284
+3,Airport frequent,3+ airport trips/mo,29547
+4,Night owls,trips after midnight,34104
+5,High value,top 10% spend,7258
+6,Commuters,weekday AM/PM peaks,10003
+7,Weekend,Sat/Sun only,7542
+8,Promo responders,redeemed a promo,22228
+9,Business,expense-tagged trips,23738
+10,Tourists,out-of-state cards,18217
+11,Tippers,avg tip > 20%,10964
+12,At risk,declining frequency,14880

@@ -6,7 +6,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Reference/explorer tool — shares the NorthLake design system with the vendor-risk artifact so the portfolio reads as one program. Searchable, filterable crosswalk; click a row to open a mapping detail. */
+/* Reference/explorer tool — shares the Empire City Taxi design system with the vendor-risk artifact so the portfolio reads as one program. Searchable, filterable crosswalk; click a row to open a mapping detail. */
 :root{
   --bg:#f3f6f6; --surface:#ffffff; --surface-2:#eef2f2; --fg:#14201f; --muted:#596967; --line:#d4dcdb;
   --accent:#0f5d63; --accent-soft:#d9ebec; --accent-fg:#ffffff;
@@ -73,7 +73,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Control Crosswalk</h1><span class="org">NorthLake Financial · GRC</span></div>
+    <div class="brand"><h1>Control Crosswalk</h1><span class="org">Empire City Taxi Co. · GRC</span></div>
     <p class="sub">A unified control set mapped across SOC&nbsp;2 (TSC), ISO/IEC&nbsp;27001:2022 Annex&nbsp;A, and NIST&nbsp;800-53&nbsp;Rev&nbsp;5. One control, tested once, evidences three frameworks. Search a code, a keyword, or filter by domain.</p>
     <div class="controls">
       <div class="search">
@@ -94,13 +94,13 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   <div class="list" id="list"></div>
   <div class="none" id="empty" hidden>No controls match that search.</div>
 
-  <p class="foot">Illustrative crosswalk for a fictional company, built for a GRC portfolio. Framework mappings are approximate by nature — a single unified control rarely maps one-to-one, and official mappings (e.g., the AICPA and ISO reference tables) should govern a real program. Implementation and evidence notes describe a simulated NorthLake environment; no real data.</p>
+  <p class="foot">Illustrative crosswalk for a fictional company, built for a GRC portfolio. Framework mappings are approximate by nature — a single unified control rarely maps one-to-one, and official mappings (e.g., the AICPA and ISO reference tables) should govern a real program. Implementation and evidence notes describe a simulated Empire City Taxi environment; no real data.</p>
 </div>
 
 <script>
 const DATA=[
  {id:"GOV-01",dom:"Governance",t:"Information security policy set",desc:"A board-approved information security policy, supported by topic-specific standards, is published, communicated, and reviewed at least annually.",
-  soc:["CC1.1","CC5.3"],iso:["A.5.1"],nist:["PM-1","PL-1"],impl:"NorthLake maintains a master InfoSec Policy plus 11 standards in a Git-backed policy repo; changes require security + legal approval and an annual review attestation.",evid:"Signed policy PDF, approval ticket, annual review log."},
+  soc:["CC1.1","CC5.3"],iso:["A.5.1"],nist:["PM-1","PL-1"],impl:"Empire City Taxi maintains a master InfoSec Policy plus 11 standards in a Git-backed policy repo; changes require security + legal approval and an annual review attestation.",evid:"Signed policy PDF, approval ticket, annual review log."},
  {id:"GOV-02",dom:"Governance",t:"Risk assessment program",desc:"Security risks are identified, analyzed, and treated on a defined cadence and after significant change.",
   soc:["CC3.1","CC3.2","CC3.4"],iso:["A.5.7","Clause 6.1.2"],nist:["RA-3","PM-9"],impl:"Quarterly risk register review using a 5×5 likelihood/impact model; treatment plans tracked in Jira with owner and due date.",evid:"Risk register export, quarterly review minutes."},
  {id:"GOV-03",dom:"Governance",t:"Roles, responsibilities & authority",desc:"Security roles are defined and assigned, with segregation of conflicting duties.",
@@ -146,7 +146,7 @@ const DATA=[
  {id:"PRV-01",dom:"Privacy",t:"Privacy & consent",desc:"Personal data is processed lawfully with notice and choice.",
   soc:["P1.1","P3.1","P5.1"],iso:["A.5.34"],nist:["PT-1","PT-5"],impl:"Privacy notice and consent capture at collection; DSAR workflow with 30-day SLA; ROPA maintained.",evid:"Privacy notice, DSAR log, ROPA extract."},
  {id:"VN-01",dom:"Third-Party",t:"Vendor risk management",desc:"Third parties are assessed before onboarding and monitored thereafter.",
-  soc:["CC9.2"],iso:["A.5.19","A.5.20","A.5.21"],nist:["SR-3","SR-6","SA-9"],impl:"Risk-tiered due diligence (see the NorthLake vendor-risk tool); security addendum required; annual reassessment of critical vendors.",evid:"Vendor risk assessments, signed security addenda."},
+  soc:["CC9.2"],iso:["A.5.19","A.5.20","A.5.21"],nist:["SR-3","SR-6","SA-9"],impl:"Risk-tiered due diligence (see the Empire City Taxi vendor-risk tool); security addendum required; annual reassessment of critical vendors.",evid:"Vendor risk assessments, signed security addenda."},
  {id:"PHY-01",dom:"Physical",t:"Physical & environmental security",desc:"Facilities and data centers restrict and monitor physical access.",
   soc:["CC6.4"],iso:["A.7.1","A.7.2","A.7.4"],nist:["PE-2","PE-3","PE-6"],impl:"Corporate offices use badge access with logging; production hosted in audited cloud regions (inherited controls via the CSP report).",evid:"Badge access logs, CSP SOC 2 / bridge letter."},
  {id:"HR-01",dom:"People",t:"Personnel security & awareness",desc:"Staff are screened, bound by agreements, and trained on security.",
@@ -189,7 +189,7 @@ function render(){
         <div class="mapcard iso"><div class="fw">ISO 27001:2022</div><div class="codes">${d.iso.map(c=>`<span class="ref iso">${c}</span>`).join("")}</div></div>
         <div class="mapcard nist"><div class="fw">NIST 800-53</div><div class="codes">${d.nist.map(c=>`<span class="ref nist">${c}</span>`).join("")}</div></div>
       </div>
-      <div class="evid"><div class="k">NorthLake implementation</div><p>${d.impl}</p><div class="k" style="margin-top:12px">Example evidence</div><p>${d.evid}</p></div>
+      <div class="evid"><div class="k">Empire City Taxi implementation</div><p>${d.impl}</p><div class="k" style="margin-top:12px">Example evidence</div><p>${d.evid}</p></div>
     </div>
   </div>`).join("");
   list.querySelectorAll(".row").forEach(row=>{

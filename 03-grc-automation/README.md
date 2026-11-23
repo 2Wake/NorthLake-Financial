@@ -1,6 +1,6 @@
 # Project 3 — GRC Automation *(planned)*
 
-Turns NorthLake's manual, point-in-time control operation into continuous assurance — directly addressing the root cause behind findings F-01, F-02, and F-05 in the [readiness assessment](../02-soc2-iso-audit/audit-readiness-assessment.md).
+Turns Empire City Taxi's manual, point-in-time control operation into continuous assurance — directly addressing the root cause behind findings F-01, F-02, and F-05 in the [readiness assessment](../02-soc2-iso-audit/audit-readiness-assessment.md).
 
 **Planned contents**
 - **Evidence collectors** — Python scripts that pull synthetic "evidence" (access exports, config snapshots, scan results) on a schedule and write it to the evidence tracker, with timestamps and hashes.

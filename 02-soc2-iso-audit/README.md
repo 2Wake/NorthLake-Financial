@@ -1,6 +1,6 @@
 # Project 2 — SOC 2 / ISO 27001 Audit Cycle
 
-**The spine of the portfolio.** This project simulates running NorthLake's annual **SOC 2 Type II** examination (with ISO 27001:2022 mapped alongside), from control environment to tested evidence to findings — the work a GRC owner actually does across an audit cycle.
+**The spine of the portfolio.** This project simulates running Empire City Taxi's annual **SOC 2 Type II** examination (with ISO 27001:2022 mapped alongside), from control environment to tested evidence to findings — the work a GRC owner actually does across an audit cycle.
 
 It is built to demonstrate four things most résumés can only assert:
 

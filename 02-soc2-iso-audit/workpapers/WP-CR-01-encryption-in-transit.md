@@ -11,7 +11,7 @@
 
 ## 1. Control description
 
-Data transmitted over public/untrusted networks to NorthLake's external endpoints is protected using TLS 1.2 or higher with strong cipher suites. Weak protocols (SSLv3, TLS 1.0/1.1) and weak ciphers are disabled. HSTS is enabled on web endpoints.
+Data transmitted over public/untrusted networks to Empire City Taxi's external endpoints is protected using TLS 1.2 or higher with strong cipher suites. Weak protocols (SSLv3, TLS 1.0/1.1) and weak ciphers are disabled. HSTS is enabled on web endpoints.
 
 ## 2. Test objective
 
@@ -19,7 +19,7 @@ Confirm that all in-scope external endpoints enforce TLS 1.2+ with strong cipher
 
 ## 3. Population
 
-All externally reachable in-scope endpoints: the PayRails API gateway, the LendLens API gateway, the Console web application, and the public marketing site (informational — not in the data boundary but tested for completeness). **4 endpoints.**
+All externally reachable in-scope endpoints: the Rider App API gateway, the Driver App API gateway, the Console web application, and the public marketing site (informational — not in the data boundary but tested for completeness). **4 endpoints.**
 
 ## 4. Test steps performed
 
@@ -32,8 +32,8 @@ All externally reachable in-scope endpoints: the PayRails API gateway, the LendL
 
 | Endpoint | TLS 1.2+ enforced | Weak protocols rejected | Strong ciphers only | HSTS |
 |---|---|---|---|---|
-| PayRails API | Yes | Yes (1.0/1.1 refused) | Yes | n/a (API) |
-| LendLens API | Yes | Yes | Yes | n/a (API) |
+| Rider App API | Yes | Yes (1.0/1.1 refused) | Yes | n/a (API) |
+| Driver App API | Yes | Yes | Yes | n/a (API) |
 | Console web | Yes | Yes | Yes | Yes (max-age 1yr) |
 | Marketing site | Yes | Yes | Yes | Yes |
 

@@ -1,19 +1,20 @@
-# NorthLake Financial — System Description (SOC 2)
+# Empire City Taxi Co. — System Description (SOC 2)
 
-*Abbreviated, SOC 2-style system description for the fictional NorthLake platform. In a real engagement this is management's assertion and forms Section III of the SOC 2 report. Synthetic.*
+*Abbreviated, SOC 2-style system description for the fictional ECT platform. In a real engagement this is management's assertion and forms Section III of the SOC 2 report. Synthetic.*
 
 ## 1. Overview of services
 
-NorthLake Financial provides embedded payments (PayRails) and lending-analytics (LendLens) APIs and an administrative dashboard (Console) to banking institutions. The services are delivered as a multi-tenant SaaS platform hosted on Google Cloud.
+Empire City Taxi Co. operates a NYC taxi and for-hire mobility platform: the *ECT Rider* and *ECT Driver* apps, a Dispatch & Matching service, a Payments service, and an internal Console. The services are delivered as a multi-tenant SaaS platform hosted on Google Cloud.
 
 ## 2. Principal service commitments and system requirements
 
-NorthLake commits to its customers through master service agreements, security addenda, and published documentation that it will:
+ECT commits to riders, drivers, and partners through its terms, privacy policy, and published documentation that it will:
 
-- Protect customer data confidentiality through encryption in transit and at rest and least-privilege access.
-- Maintain availability consistent with a 99.9% monthly uptime commitment.
-- Notify customers of confirmed security incidents affecting their data within 72 hours.
-- Restrict access to customer data to authorized personnel with a business need.
+- Protect rider, driver, and cardholder data through encryption in transit and at rest and least-privilege access.
+- Maintain availability consistent with a 99.9% monthly uptime commitment for the rider and driver apps.
+- Notify affected parties of confirmed security incidents within 72 hours.
+- Handle cardholder data in accordance with PCI DSS.
+- Restrict access to personal and cardholder data to authorized personnel with a business need.
 
 These commitments drive the system requirements implemented as controls (see the Control Matrix, Project 2).
 
@@ -21,30 +22,30 @@ These commitments drive the system requirements implemented as controls (see the
 
 **Infrastructure.** GKE clusters, Cloud Run services, Cloud SQL (Postgres), BigQuery, and Cloud Storage within Google Cloud, provisioned via Terraform.
 
-**Software.** NorthLake-developed API services and the Console web application; third-party and open-source components tracked in a software inventory.
+**Software.** ECT-developed services (Rider app, Driver app, Dispatch & Matching, Payments) and the Console; third-party and open-source components tracked in a software inventory.
 
-**People.** Engineering, Platform/SRE, Security & GRC, IT, Product, Customer Success, and corporate functions. Access governed by role.
+**People.** Engineering, Platform/SRE, Security & GRC, IT, Driver Operations, Support, Finance, People Ops, and corporate functions. Access governed by role.
 
-**Data.** Customer PII and financial data processed on behalf of bank clients; operational data (logs, metrics); configuration data. Classified per the Data Classification Standard.
+**Data.** Rider PII, cardholder data, driver PII, employee data, trip/operational data, and financials. Classified per the Data Classification Standard.
 
 **Processes.** Change management, access management, incident response, vulnerability management, vendor risk management, and the control-monitoring process operated by the GRC function.
 
 ## 4. Boundaries of the system
 
-The system boundary includes the production GCP environment serving PayRails, LendLens, and Console, and the supporting corporate systems used to administer them (Okta, GitHub, the GRC and ticketing platforms). Google Cloud is treated as a **carved-out** sub-service organization; complementary controls expected of GCP are listed in Section 6.
+The system boundary includes the production GCP environment serving the Rider app, Driver app, Dispatch & Matching, Payments, and Console, and the supporting corporate systems used to administer them (Okta, GitHub, the GRC and ticketing platforms). Google Cloud is treated as a **carved-out** sub-service organization; complementary controls expected of GCP are listed in Section 6. Card processing is performed by a PCI DSS-compliant payments processor (also carved out).
 
 ## 5. Complementary user-entity controls (CUECs)
 
-Customers (banks) are responsible for, among others:
+Riders and drivers are responsible for, among others:
 
-- Managing their own Console users and promptly removing access for departed staff.
-- Protecting API keys issued to them.
-- Configuring product settings in line with their own risk appetite.
+- Safeguarding their own app credentials.
+- Keeping their contact and payout information accurate.
+- Reporting suspected account compromise promptly.
 
-## 6. Complementary sub-service-organization controls (Google Cloud)
+## 6. Complementary sub-service-organization controls
 
-NorthLake's controls assume Google Cloud maintains, among others, physical and environmental security of data centers, hardware decommissioning, and underlying network infrastructure security — evidenced by GCP's own SOC 2 / ISO reports reviewed annually.
+*(Google Cloud)* ECT's controls assume Google Cloud maintains physical and environmental security of data centers, hardware decommissioning, and underlying network infrastructure security — evidenced by GCP's own SOC 2 / ISO reports reviewed annually. The payments processor is assumed to maintain PCI DSS compliance for the card-processing environment, evidenced by its Attestation of Compliance (AOC) reviewed annually.
 
 ## 7. Significant changes during the period
 
-*(Example for a report period.)* During the examination period NorthLake migrated Console authentication to phishing-resistant MFA and implemented continuous configuration monitoring across its GCP projects. Both changes were managed through the change-management process and are reflected in the relevant controls.
+*(Example for a report period.)* During the examination period ECT migrated Console authentication to phishing-resistant MFA and implemented continuous configuration monitoring across its GCP projects. Both changes were managed through the change-management process and are reflected in the relevant controls.

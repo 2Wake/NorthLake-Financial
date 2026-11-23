@@ -1,11 +1,11 @@
 # SOC 2 Type II — Audit Readiness Assessment
 
-**Entity:** NorthLake Financial (fictional) · **Prepared by:** GRC · **Date:** 2026-10-15
+**Entity:** Empire City Taxi Co. (fictional) · **Prepared by:** GRC · **Date:** 2026-10-15
 **Scope:** Security, Availability, Confidentiality (TSC) · **Period:** FY2026 (Jan 1 – Oct 31, 2026)
 
 ## Purpose
 
-An internal, honest assessment of whether NorthLake's control environment is ready for the external SOC 2 Type II examination. It rolls up the control matrix, the evidence tracker, and the testing workpapers into a findings list with severity and remediation, and gives leadership a go/no-go view.
+An internal, honest assessment of whether Empire City Taxi's control environment is ready for the external SOC 2 Type II examination. It rolls up the control matrix, the evidence tracker, and the testing workpapers into a findings list with severity and remediation, and gives leadership a go/no-go view.
 
 ## Readiness summary
 

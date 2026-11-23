@@ -66,7 +66,7 @@ Not just a questionnaire but a **certifiable framework** harmonizing HIPAA, ISO,
 ### Bespoke short-form (your own)
 A short internal questionnaire (10–30 questions) for low-risk vendors or as a pre-screen before deciding whether a deeper assessment is warranted.
 
-**Pros:** Fast, proportionate, no licensing. **Cons:** Not standardized or externally recognized; easy to under-scope if misapplied to a risky vendor. **Best use case:** Low inherent-risk vendors (no data, no access) and initial triage. *This is the tier the NorthLake tool's "light touch" path represents.*
+**Pros:** Fast, proportionate, no licensing. **Cons:** Not standardized or externally recognized; easy to under-scope if misapplied to a risky vendor. **Best use case:** Low inherent-risk vendors (no data, no access) and initial triage. *This is the tier the Empire City Taxi tool's "light touch" path represents.*
 
 ### SOC 2 Type II report — the evidence that often replaces a questionnaire
 Strictly, a SOC 2 report is an **independent attestation**, not a questionnaire — but in practice it's the single most valuable artifact in vendor review. For a vendor with a current SOC 2 Type II, reviewing the report (scope, period, exceptions, complementary user-entity controls) can substitute for much of a questionnaire. Always ask for it first; read the exceptions, not just the opinion.
@@ -92,7 +92,7 @@ Strictly, a SOC 2 report is an **independent attestation**, not a questionnaire 
 
 ---
 
-## How this maps to the NorthLake tool
+## How this maps to the Empire City Taxi tool
 
 The [Vendor Risk Assessment tool](vendor-risk/) implements the *process* these standards support: inherent-risk tiering, weighted control scoring across the same domains SIG and CAIQ cover (governance, access, data protection, infrastructure, incident response, resilience, compliance, subprocessors), and a residual-risk rating with an onboarding decision. It's a tiered, condensed instrument — the kind you'd send in place of a full SIG — not a replacement for the standards when deep, regulated assurance is required.
 
