@@ -42,9 +42,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 - **Catch-up design:** the pipeline works out what's missing from BigQuery itself rather than trusting the schedule, so missed days heal themselves.
 - **Run records are committed to the repo:** audit evidence for each run (Project 3 control monitoring), and the commits keep GitHub from pausing the schedule after 60 days of inactivity. **Open question:** commit them straight to `main`, which needs the user's OK, or to a separate branch.
 
+- Pushing the workflow needed the GitHub CLI's `workflow` permission. The user granted it with `gh auth refresh -s workflow`; in `!` commands use the full path `/opt/homebrew/bin/gh`.
+- **The user completed console setup steps A–F.** Merged `daily-refresh` to `main` from the CLI at the user's request. Run records go to `main` by default, since the user hasn't chosen otherwise.
+
 ### Next steps
-1. The user decides where the bot commits run records.
-2. The user does console steps A–G, then clicks **Run workflow**.
+1. First workflow run (step G), then check the run record.
 
 ---
 
