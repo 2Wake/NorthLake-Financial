@@ -1,0 +1,6 @@
+zone_id,zone_name,borough,reason
+57,Corona,Queens,Missing from the public zone table (filed under 56); name per the official TLC zone lookup
+104,Governor's Island/Ellis Island/Liberty Island,Manhattan,Missing from the public zone table (filed under 103)
+105,Governor's Island/Ellis Island/Liberty Island,Manhattan,Missing from the public zone table (filed under 103)
+264,Unknown,Unknown,TLC code for an unknown location; no boundary
+265,Outside of NYC,N/A,TLC code for trips outside New York City; no boundary

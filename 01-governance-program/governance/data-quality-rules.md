@@ -46,29 +46,50 @@ Data quality is measured across six dimensions: **Completeness, Validity, Unique
 
 ## Living platform (dbt) — rules running daily
 
-Since 2026-11-24 the rules also run as **dbt tests** on the living data platform ([`data-platform/dbt`](../../data-platform/dbt/models/staging/_staging.yml)). They check the current version of each record in `staging`, and each test is named after its rule (e.g. `dq_04_driver_ssn_format`). Tests are set to **warn** rather than fail, because the defects are planted on purpose. They are scored against the answer key `gov_planted_defects`.
+Since 2026-11-24 the rules run on the living data platform ([`data-platform/dbt`](../../data-platform/dbt/)). Everything is in one place:
 
-DQ-13 to DQ-16 were added so that every planted defect type has a rule. REF-01 covers the public reference data.
+| Piece | What it does |
+|---|---|
+| [`seeds/dq_rules.csv`](../../data-platform/dbt/seeds/dq_rules.csv) | **The rule catalog**: rule ID, dimension, target table and column, severity, expectation, and which planted defect the rule should catch |
+| `marts.fct_dq_findings` | Every failing record, one row per rule and record. Uses the data only, and holds record IDs, never the bad values |
+| `marts.fct_dq_scorecard` | Per rule: findings, planted, caught, missed, unplanted findings, detection rate. **The only reader of the answer key** (`gov_planted_defects`) |
+| dbt tests `dq_*`, `t*`, `ref_*` | One test per rule. A **warning** when a rule has findings (expected, since defects are planted) |
+| dbt test `scorecard_every_planted_defect_caught` | **Control test on the checks:** fails the build if any planted defect goes undetected |
 
-| Rule | dbt model | Found (first run, 2026-01-01 → 2026-11-23) | Planted | Notes |
-|---|---|---|---|---|
-| DQ-01 | `stg_app_riders.email` | 121 | 121 | |
-| DQ-02 | `stg_app_riders.email` | 86 | 86 | |
-| DQ-03 | `stg_app_riders.email` | 55 values | 56 rows | Counts duplicated values, not rows |
-| DQ-04 | `stg_fleet_drivers.ssn` | 17 | 17 | |
-| DQ-05 | `stg_fleet_drivers.tlc_license` | 9 | 9 | |
-| DQ-06 | `stg_fleet_drivers.background_check_status` | 3 values | 59 rows | Counts distinct bad spellings (`CLEAR`, `Clear`, ...) |
-| DQ-07 | `stg_payments_rider_cards.card_number` | 114 | 114 | |
-| DQ-08 | `stg_app_trip_surveys.rating` | 239 | 239 | |
-| DQ-09 | `stg_app_trip_surveys.trip_id` | 221 | 221 | |
-| DQ-10 | `stg_app_trip_surveys.comment` | 276 | 276 | No false positives on normal comments |
-| DQ-11 | `stg_hris_employees.salary` | 4 | 4 | Drivers are paid by commission, so an empty salary is valid |
-| DQ-12 | `stg_app_marketing_campaigns` | 2 | 2 | |
-| DQ-13 | `stg_hris_employees.ssn` | 12 | 12 | |
-| DQ-14 | `stg_hris_employees.email` | 9 | 9 | |
-| DQ-15 | `stg_payments_financial_ledger.account` | 1 | 1 | |
-| DQ-16 | `stg_fleet_drivers.payout_bank_account` | 11 | 11 | |
-| REF-01 | `stg_tlc_taxi_zones.zone_id` | 2 values | not planted | **Real defect** in the public zone table: zone 57 is filed under 56, and 104/105 under 103 |
+Three groups of rules:
+- **DQ-01 to DQ-16 (planted):** defects the generator plants on purpose, scored against the answer key. DQ-13 to DQ-16 were added so every planted defect type has a rule.
+- **T1 to T4 (real trip data):** defects in the real NYC TLC trips, carried over from the Project 1 SQL below. T5 (totals reconcile) was dropped because the public table lacks the congestion surcharge, and T6 became the dbt relationship tests.
+- **REF-01 to REF-03 (reference data):** problems in the public taxi zone table and in trip zone codes.
+
+### Scorecard, first run (2026-01-01 → 2026-11-23)
+
+| Rule | Target | Findings | Planted | Caught | Missed |
+|---|---|---|---|---|---|
+| DQ-01 | `app_riders.email` missing | 121 | 121 | 121 | 0 |
+| DQ-02 | `app_riders.email` format | 86 | 86 | 86 | 0 |
+| DQ-03 | `app_riders.email` duplicate | 56 | 56 | 56 | 0 |
+| DQ-04 | `fleet_drivers.ssn` format | 17 | 17 | 17 | 0 |
+| DQ-05 | `fleet_drivers.tlc_license` missing | 9 | 9 | 9 | 0 |
+| DQ-06 | `fleet_drivers.background_check_status` | 59 | 59 | 59 | 0 |
+| DQ-07 | `payments_rider_cards.card_number` | 114 | 114 | 114 | 0 |
+| DQ-08 | `app_trip_surveys.rating` | 239 | 239 | 239 | 0 |
+| DQ-09 | `app_trip_surveys.trip_id` orphan | 221 | 221 | 221 | 0 |
+| DQ-10 | `app_trip_surveys.comment` PII | 276 | 276 | 276 | 0 |
+| DQ-11 | `hris_employees.salary` | 4 | 4 | 4 | 0 |
+| DQ-12 | `app_marketing_campaigns.end_date` | 2 | 2 | 2 | 0 |
+| DQ-13 | `hris_employees.ssn` format | 12 | 12 | 12 | 0 |
+| DQ-14 | `hris_employees.email` duplicate | 9 | 9 | 9 | 0 |
+| DQ-15 | `payments_financial_ledger.account` | 1 | 1 | 1 | 0 |
+| DQ-16 | `fleet_drivers.payout_bank_account` | 11 | 11 | 11 | 0 |
+| T1 | fare ≤ 0 | 2,492 | — | — | — |
+| T2 | passenger count missing or outside 1–6 | 19,306 | — | — | — |
+| T3 | distance ≤ 0 or > 100 miles | 5,011 | — | — | — |
+| T4 | dropoff before pickup | 138 | — | — | — |
+| REF-01 | duplicate zone IDs (56, 103) | 2 | — | — | — |
+| REF-02 | pickup zone not in zone table | 4,993 | — | — | — |
+| REF-03 | dropoff zone not in zone table | 3,879 | — | — | — |
+
+**Detection rate 100% on every planted rule, with zero false positives.** Real-data findings (T, REF) are genuine and unplanted.
 
 ## Real `trips` table — BigQuery SQL
 

@@ -8,17 +8,50 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
 - [ ] **Daily runs:** until GitHub Actions is set up, new days are generated and loaded by hand (`ect-generate`, `ect-load`, then `dbt build`).
-- [ ] **dbt marts layer:** `dim_*`/`fct_*` capped at Sensitive (masking or aggregating Confidential data), and a DQ scorecard model (caught vs. planted, per record).
-- [ ] **Reference-data gap:** trip zone IDs 264/265 ("Unknown" / "Outside NYC") and 57 have no row in `tlc_taxi_zones`. Add a small seed for 264/265 in dbt and log 57 as a reference-data issue. Related: the public zone table files zone 57 under 56 and 104/105 under 103 (test REF-01).
-- [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`).
+- [ ] **Reference-data issue:** raise REF-01 to REF-03 as a governance issue (reference domain owner: Data Governance Manager) in the issue register.
+- [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`), then drive the marts classification-cap test from the map instead of its column-name list.
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
-- [ ] **Labels on tables**, applied in code: the loader for `raw`, dbt `labels` config for staging and marts. Include planted label gaps, tracked in the gap register.
+- [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [ ] **GitHub Actions daily refresh** with Workload Identity Federation (keyless).
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Marts, rule catalog and data-quality scorecard
+
+### Done
+- Merged `dbt-project` to `main` from the CLI at the user's request (`e412f30`).
+- **Answered the user's questions:**
+  - *Where are the reference rules?* Before this step there was only REF-01, a staging test. Now **all rules live in one catalog** (`seeds/dq_rules.csv`, 23 rules): DQ-01 to DQ-16 (planted), T1 to T4 (real trip data), REF-01 to REF-03 (reference data).
+  - *How is `gov_planted_defects` used?* As the **answer key** for scoring the checks. `fct_dq_scorecard` compares the findings with it per record.
+- **Rule logic in one place:** `marts.fct_dq_findings` lists every failing record (rule, table, record ID, column; never values). One dbt test per rule warns when there are findings. The old per-column DQ tests in staging were removed.
+- **Scorecard** `marts.fct_dq_scorecard`: **100% detection on all 16 planted rules and 0 false positives**, scored record by record. Real-data findings: T1 2,492, T2 19,306, T3 5,011, T4 138, REF-01 2, REF-02 4,993, REF-03 3,879.
+- **Two governance controls run on every build:**
+  - `scorecard_every_planted_defect_caught` (error if a rule misses any planted defect);
+  - `assert_marts_classification_cap` (error if a marts table is labeled above Sensitive, or has a Secret/Confidential column). **Both pass.**
+- **14 marts tables** in `marts`, all labeled (layer `marts`, classification sensitive / internal / public):
+  - Dimensions: `dim_employees`, `dim_drivers`, `dim_riders`, `dim_rider_cards`, `dim_taxi_zones`, `dim_campaigns`, `dim_rider_segments`, `dim_dq_rules`.
+  - Facts: `fct_trips` (357k, partitioned by pickup date, clustered by driver), `fct_daily_zone_trips` (24.6k), `fct_trip_surveys`, `fct_ledger_entries`, `fct_dq_findings` (37.1k), `fct_dq_scorecard`.
+- Full build: **114 nodes; 91 pass, 23 warn (the rules), 0 errors.** The heaviest query processed 75 MB.
+
+### Decisions
+- **How the Sensitive cap is applied in marts:**
+  - **Removed:** SSN, bank account, card number, expiry and cardholder (Secret); salary, rating, contact details, licence, background check (Confidential).
+  - **Masked:** card number → last 4 digits; survey comment → phone numbers and emails `[REDACTED]`.
+  - **Generalized:** in `fct_trips`, pickup and dropoff zone → **borough**, because zone plus rider_id would reveal a person's movements. Zone-level demand is in `fct_daily_zone_trips`, aggregated with no rider or driver IDs.
+- **`dim_rider_cards` is out of PCI scope** (last 4 digits only), so it's labeled `pci_scope: false`.
+- **Reference data is corrected in marts, not staging.** `dim_taxi_zones` collapses duplicate IDs and adds zones 57, 104, 105, 264 and 265 from a documented supplement seed (`zone_source` shows which). Staging keeps the public data as published, so REF-01 stays visible.
+- **Duplicate rules flag only the later copies** (by ID order), not the first holder of a value. That matches how the defect arises.
+- **T5 dropped** (total ≠ components): the public table lacks the congestion surcharge, so it would flag almost every trip. T6 (bad driver/rider IDs) is now covered by the relationship tests.
+- Marts are full-rebuild tables for now (small data). Switch `fct_trips` to incremental if build cost grows.
+
+### Next steps
+- GitHub Actions daily run (generate → load → `dbt build`), which needs a Workload Identity setup by the user in the console.
+- Looker Studio: a DQ scorecard and trips dashboard on `marts`.
 
 ---
 
