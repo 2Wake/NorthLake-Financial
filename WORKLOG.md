@@ -26,6 +26,28 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — GOV-2: DOC-01 PCI DSS scope drafted and reviewed (v0.9)
+
+### Done
+- **DOC-01 PCI DSS Scope & Cardholder Data Flow** created in ECTG (page 425996, under the space home). Linked from GOV-2.
+  - **Inventory (GOV-19 → Done)** from read-only checks: BigQuery column scan and `pci_scope` labels across raw/staging/marts; current access records; access policy matrix; role service accounts; workflow; local `output/`.
+    - In scope: S1 rider app card entry, S2 payments system (simulated by the generator), S3 Actions runner, S4 `raw.payments_rider_cards`, S5 `staging.stg_payments_rider_cards`, **S6 `staging.stg_payments_rider_cards_history`** (not in the ticket's starting list), **S7 laptop `data-platform/output/`** (327 days of full PAN in plain JSONL, 213 MB total, gitignored), S8 Google Cloud, S9 GitHub. Access: A1 `ect-pipeline`, A2 `ect-role-security`, A3 `ect-role-steward`, A4 36 people with raw/staging grants (dataset-level, includes 4 `data_analyst` grants on raw), A5 project owners.
+    - Connected-to: C1 repo/workflow, C2 Workload Identity provider, C3 `marts.dim_rider_cards` (the last-4 step), C4 Cloud audit logging (added in review).
+    - Out of scope: other marts, DQ/defect tables (IDs only), `ect-role-analyst`, Looker Studio, Atlassian, Collate (not connected; re-assess before connecting).
+  - **Data flow (GOV-20 → Done):** text diagram with CDE boundary + transfer/protection table.
+  - Observations recorded, not remediated: clear PAN in raw + 2 views; 36 readers via dataset-level access; laptop PAN files with no retention; S6 previously untracked; 3y retention label pending POL-13.
+- **Simulated review, in the right order this time** (dated today): Mateo Silva (accepted: add C4), Owen Park (rejected with reason: move laptop to connected-to; agreed). Page → **v0.9, In review**. Register page + extract: DOC-01 `in_review`, 0.9, page 425996.
+- GOV-2 → In Progress; GOV-21 (CISO sign-off) → In Review, **waiting for the owner's go-ahead**.
+
+### Decisions
+- Staging view name is `stg_payments_rider_cards` (earlier notes said `stg_rider_cards`).
+- Scope follows the data: synthetic but real-format PANs are treated as real, so the laptop is in scope.
+
+### Next steps
+- Owner reviews DOC-01 → record CISO approval v1.0 (CFO consulted), next scope confirmation 2027-11-24, scope-reduction ideas as follow-ups (GOV-21). Then GOV-2 closes and GOV-7/14/15 unblock.
+
+---
+
 ## 2026-11-24 — Roster fix: Arjun Mehta role_code (generator 0.3.0)
 
 ### Done
