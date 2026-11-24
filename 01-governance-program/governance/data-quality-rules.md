@@ -20,6 +20,10 @@ Data quality is measured across six dimensions: **Completeness, Validity, Unique
 | DQ-10 | Privacy (DLP) | `trip_surveys.comment` | High | No PII in free text |
 | DQ-11 | Validity | `employees.salary` | Medium | > 0 |
 | DQ-12 | Validity | `marketing_campaigns.end_date` | Low | ≥ start_date |
+| DQ-13 | Validity | `employees.ssn` | High | Matches NNN-NN-NNNN |
+| DQ-14 | Uniqueness | `employees.email` | Medium | Unique |
+| DQ-15 | Completeness | `financial_ledger.account` | High | Present (every posting needs a GL account) |
+| DQ-16 | Validity | `drivers.payout_bank_account` | High | 9 digits |
 
 ### Latest results (generated estate)
 
@@ -39,6 +43,32 @@ Data quality is measured across six dimensions: **Completeness, Validity, Unique
 | DQ-12 | marketing_campaigns.end_date | 3 | 7.50% |
 
 *(Counts shift if the generator seed changes. Line-level detail in [`remediation_log.csv`](../data/remediation_log.csv).)*
+
+## Living platform (dbt) — rules running daily
+
+Since 2026-11-24 the rules also run as **dbt tests** on the living data platform ([`data-platform/dbt`](../../data-platform/dbt/models/staging/_staging.yml)). They check the current version of each record in `staging`, and each test is named after its rule (e.g. `dq_04_driver_ssn_format`). Tests are set to **warn** rather than fail, because the defects are planted on purpose. They are scored against the answer key `gov_planted_defects`.
+
+DQ-13 to DQ-16 were added so that every planted defect type has a rule. REF-01 covers the public reference data.
+
+| Rule | dbt model | Found (first run, 2026-01-01 → 2026-11-23) | Planted | Notes |
+|---|---|---|---|---|
+| DQ-01 | `stg_app_riders.email` | 121 | 121 | |
+| DQ-02 | `stg_app_riders.email` | 86 | 86 | |
+| DQ-03 | `stg_app_riders.email` | 55 values | 56 rows | Counts duplicated values, not rows |
+| DQ-04 | `stg_fleet_drivers.ssn` | 17 | 17 | |
+| DQ-05 | `stg_fleet_drivers.tlc_license` | 9 | 9 | |
+| DQ-06 | `stg_fleet_drivers.background_check_status` | 3 values | 59 rows | Counts distinct bad spellings (`CLEAR`, `Clear`, ...) |
+| DQ-07 | `stg_payments_rider_cards.card_number` | 114 | 114 | |
+| DQ-08 | `stg_app_trip_surveys.rating` | 239 | 239 | |
+| DQ-09 | `stg_app_trip_surveys.trip_id` | 221 | 221 | |
+| DQ-10 | `stg_app_trip_surveys.comment` | 276 | 276 | No false positives on normal comments |
+| DQ-11 | `stg_hris_employees.salary` | 4 | 4 | Drivers are paid by commission, so an empty salary is valid |
+| DQ-12 | `stg_app_marketing_campaigns` | 2 | 2 | |
+| DQ-13 | `stg_hris_employees.ssn` | 12 | 12 | |
+| DQ-14 | `stg_hris_employees.email` | 9 | 9 | |
+| DQ-15 | `stg_payments_financial_ledger.account` | 1 | 1 | |
+| DQ-16 | `stg_fleet_drivers.payout_bank_account` | 11 | 11 | |
+| REF-01 | `stg_tlc_taxi_zones.zone_id` | 2 values | not planted | **Real defect** in the public zone table: zone 57 is filed under 56, and 104/105 under 103 |
 
 ## Real `trips` table — BigQuery SQL
 
