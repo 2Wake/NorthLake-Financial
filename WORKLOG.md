@@ -26,6 +26,26 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — GOV-2 closed: DOC-01 approved v1.0; observations story GOV-70
+
+### Done
+- **DOC-01 approved v1.0** *[Simulated]*: CFO consulted comment (Confluence 458789), CISO "Approved version 1.0" comment (491527) with next scope confirmation 2027-11-24 and scope-reduction ideas as follow-ups. Page v4: banner, version, status, approval date, next confirmation, 1.0 change-history row, section 5 links to GOV-70–74. Register page v5 + extract: `approved,1.0,2026-11-24,2027-11-24`.
+- **GOV-70 (Story, not under an epic; owner decision)** "PCI scope observations: plan remediation by policy", linked Relates → GOV-2 and to DOC-01. Sub-tasks bucketed by governing policy:
+  - GOV-71 encryption (obs. 1, POL-11/GOV-14)
+  - GOV-72 access need-to-know (obs. 2, POL-02/GOV-5)
+  - GOV-73 retention & disposal (obs. 3, 5, POL-13/GOV-16)
+  - GOV-74 card-data location inventory (obs. 4, POL-04/GOV-7)
+- Closing comments posted, then Done: **GOV-21**, **GOV-2** (GOV-2's comment lists all 5 observations with their sub-task, plus the 3.5 unknowns).
+
+### Decisions
+- Section 3.5 unknowns (processor, app TLS, in-cab provider) are questions, not remediation: they stay with GOV-15, not GOV-70.
+- Observations stay unremediated until their governing policy is approved (audit material).
+
+### Risks
+- GOV-73: `raw` is append-only by design, which conflicts with deleting expired card data. Needs a design decision when POL-13 is written.
+
+---
+
 ## 2026-11-24 — DOC-01 in-cab payments added; atlassian-setup merged to main
 
 ### Done
