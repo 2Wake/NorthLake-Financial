@@ -1,0 +1,201 @@
+version: 2
+
+# Marts: what analysts and dashboards use. Capped at Sensitive (Data Classification Standard):
+# no Secret columns; Confidential columns are excluded, masked or generalized.
+# tests/assert_marts_classification_cap.sql enforces this on every build.
+
+models:
+  - name: dim_employees
+    description: "Current employees (drivers included). Sensitive: names and work email. SSN, salary and performance rating are excluded."
+    config: {labels: {domain: people, layer: marts, data_owner: vp-people, data_steward: hr-data-steward, classification: sensitive, source_system: hris, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: employee_id
+        data_tests: [unique, not_null]
+  - name: dim_drivers
+    description: "Current drivers. Sensitive: names. Identity, contact, licence, background-check and bank details are excluded."
+    config: {labels: {domain: driver, layer: marts, data_owner: vp-driver-operations, data_steward: driver-data-steward, classification: sensitive, source_system: fleet, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: driver_id
+        data_tests: [unique, not_null]
+      - name: employee_id
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_employees'), field: employee_id}}
+  - name: dim_riders
+    description: "Current rider accounts. Sensitive: names. Email, phone and address are excluded."
+    config: {labels: {domain: rider, layer: marts, data_owner: vp-rider-experience, data_steward: rider-data-steward, classification: sensitive, source_system: app, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: rider_id
+        data_tests: [unique, not_null]
+  - name: dim_rider_cards
+    description: "Rider payment cards, masked to the last 4 digits. No cardholder data, so the table is out of PCI scope."
+    config: {labels: {domain: finance, layer: marts, data_owner: cfo, data_steward: finance-data-steward, classification: sensitive, source_system: payments, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: card_id
+        data_tests: [unique, not_null]
+      - name: rider_id
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_riders'), field: rider_id}}
+  - name: dim_taxi_zones
+    description: "NYC taxi zones, one row per zone: the public table de-duplicated, plus zones it is missing (zone_source = supplement)."
+    config: {labels: {domain: reference, layer: marts, data_owner: data-governance-manager, data_steward: ops-data-steward, classification: public, source_system: tlc, data_origin: public, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: zone_id
+        data_tests: [unique, not_null]
+  - name: fct_trips
+    description: "Completed trips. Pickup and dropoff are generalized to borough, because exact zones plus rider_id would be Confidential."
+    config: {labels: {domain: trips, layer: marts, data_owner: vp-operations, data_steward: ops-data-steward, classification: sensitive, source_system: derived, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: trip_id
+        data_tests: [unique, not_null]
+      - name: driver_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_drivers'), field: driver_id}}
+      - name: pickup_borough
+        data_tests:
+          - not_null:
+              config: {severity: warn}
+  - name: fct_daily_zone_trips
+    description: "Trips and revenue per pickup zone per day. Aggregated: no rider or driver IDs."
+    config: {labels: {domain: trips, layer: marts, data_owner: vp-operations, data_steward: ops-data-steward, classification: sensitive, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 7y}}
+  - name: fct_trip_surveys
+    description: "Post-trip surveys. Comments are masked: phone numbers and emails become [REDACTED]."
+    config: {labels: {domain: rider, layer: marts, data_owner: vp-rider-experience, data_steward: rider-data-steward, classification: sensitive, source_system: app, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: survey_id
+        data_tests: [unique, not_null]
+  - name: fct_ledger_entries
+    description: "General ledger postings by month and account."
+    config: {labels: {domain: finance, layer: marts, data_owner: cfo, data_steward: finance-data-steward, classification: sensitive, source_system: payments, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: entry_id
+        data_tests: [unique, not_null]
+  - name: dim_campaigns
+    description: "Marketing campaigns."
+    config: {labels: {domain: marketing, layer: marts, data_owner: vp-marketing, data_steward: marketing-data-steward, classification: sensitive, source_system: app, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: campaign_id
+        data_tests: [unique, not_null]
+  - name: dim_rider_segments
+    description: "Rider marketing segments and their current size estimates."
+    config: {labels: {domain: marketing, layer: marts, data_owner: vp-marketing, data_steward: marketing-data-steward, classification: internal, source_system: app, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: segment_id
+        data_tests: [unique, not_null]
+  - name: dim_dq_rules
+    description: "The data-quality rule catalog (from the dq_rules seed)."
+    config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: rule_id
+        data_tests: [unique, not_null]
+  - name: fct_dq_findings
+    description: >
+      Every record that fails a data-quality rule (one row per rule and record). Record IDs
+      only, never the failing values. Built from the data alone; never reads the answer key.
+    config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    data_tests:
+      - rule_has_no_findings:
+          name: dq_01_app_riders_email
+          arguments: {rule_id: DQ-01}
+          config: {severity: warn, meta: {rule_id: DQ-01, dimension: Completeness, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_02_app_riders_email
+          arguments: {rule_id: DQ-02}
+          config: {severity: warn, meta: {rule_id: DQ-02, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_03_app_riders_email
+          arguments: {rule_id: DQ-03}
+          config: {severity: warn, meta: {rule_id: DQ-03, dimension: Uniqueness, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_04_fleet_drivers_ssn
+          arguments: {rule_id: DQ-04}
+          config: {severity: warn, meta: {rule_id: DQ-04, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_05_fleet_drivers_tlc_license
+          arguments: {rule_id: DQ-05}
+          config: {severity: warn, meta: {rule_id: DQ-05, dimension: Completeness, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_06_fleet_drivers_background_check_status
+          arguments: {rule_id: DQ-06}
+          config: {severity: warn, meta: {rule_id: DQ-06, dimension: Consistency, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_07_payments_rider_cards_card_number
+          arguments: {rule_id: DQ-07}
+          config: {severity: warn, meta: {rule_id: DQ-07, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_08_app_trip_surveys_rating
+          arguments: {rule_id: DQ-08}
+          config: {severity: warn, meta: {rule_id: DQ-08, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_09_app_trip_surveys_trip_id
+          arguments: {rule_id: DQ-09}
+          config: {severity: warn, meta: {rule_id: DQ-09, dimension: Integrity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_10_app_trip_surveys_comment
+          arguments: {rule_id: DQ-10}
+          config: {severity: warn, meta: {rule_id: DQ-10, dimension: Privacy, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_11_hris_employees_salary
+          arguments: {rule_id: DQ-11}
+          config: {severity: warn, meta: {rule_id: DQ-11, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_12_app_marketing_campaigns_end_date
+          arguments: {rule_id: DQ-12}
+          config: {severity: warn, meta: {rule_id: DQ-12, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_13_hris_employees_ssn
+          arguments: {rule_id: DQ-13}
+          config: {severity: warn, meta: {rule_id: DQ-13, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_14_hris_employees_email
+          arguments: {rule_id: DQ-14}
+          config: {severity: warn, meta: {rule_id: DQ-14, dimension: Uniqueness, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_15_payments_financial_ledger_account
+          arguments: {rule_id: DQ-15}
+          config: {severity: warn, meta: {rule_id: DQ-15, dimension: Completeness, origin: planted}}
+      - rule_has_no_findings:
+          name: dq_16_fleet_drivers_payout_bank_account
+          arguments: {rule_id: DQ-16}
+          config: {severity: warn, meta: {rule_id: DQ-16, dimension: Validity, origin: planted}}
+      - rule_has_no_findings:
+          name: t1_app_trips_fare_amount
+          arguments: {rule_id: T1}
+          config: {severity: warn, meta: {rule_id: T1, dimension: Validity, origin: real}}
+      - rule_has_no_findings:
+          name: t2_app_trips_passenger_count
+          arguments: {rule_id: T2}
+          config: {severity: warn, meta: {rule_id: T2, dimension: Validity, origin: real}}
+      - rule_has_no_findings:
+          name: t3_app_trips_trip_distance
+          arguments: {rule_id: T3}
+          config: {severity: warn, meta: {rule_id: T3, dimension: Validity, origin: real}}
+      - rule_has_no_findings:
+          name: t4_app_trips_dropoff_datetime
+          arguments: {rule_id: T4}
+          config: {severity: warn, meta: {rule_id: T4, dimension: Consistency, origin: real}}
+      - rule_has_no_findings:
+          name: ref_01_tlc_taxi_zones_zone_id
+          arguments: {rule_id: REF-01}
+          config: {severity: warn, meta: {rule_id: REF-01, dimension: Uniqueness, origin: real}}
+      - rule_has_no_findings:
+          name: ref_02_app_trips_pickup_location_id
+          arguments: {rule_id: REF-02}
+          config: {severity: warn, meta: {rule_id: REF-02, dimension: Integrity, origin: real}}
+      - rule_has_no_findings:
+          name: ref_03_app_trips_dropoff_location_id
+          arguments: {rule_id: REF-03}
+          config: {severity: warn, meta: {rule_id: REF-03, dimension: Integrity, origin: real}}
+  - name: fct_dq_scorecard
+    description: >
+      One row per data-quality rule: failing records, and for planted defects how many the rule
+      caught or missed against the answer key. The only model that reads the answer key.
+    config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: rule_id
+        data_tests: [unique, not_null]
+    data_tests:
+      # Control test on the checks themselves: a missed planted defect means a rule is broken.
+      - expression_is_true:
+          name: scorecard_every_planted_defect_caught
+          arguments: {expression: "planted_missed = 0"}
