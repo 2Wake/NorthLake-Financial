@@ -7,17 +7,46 @@ Running log of all work, decisions and open items. It's the source for progress 
 ## 📋 Backlog
 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
-- [ ] **Daily runs:** until GitHub Actions is set up, new days are generated and loaded by hand (`ect-generate`, `ect-load`, then `dbt build`).
 - [ ] **Reference-data issue:** raise REF-01 to REF-03 as a governance issue (reference domain owner: Data Governance Manager) in the issue register.
 - [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`), then drive the marts classification-cap test from the map instead of its column-name list.
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
-- [ ] **GitHub Actions daily refresh** with Workload Identity Federation (keyless).
+- [ ] **GitHub Actions daily refresh:** workflow built. **Remaining:** the user does the console setup (`data-platform/docs/github-actions-setup.md`), then a test run. Until then, run by hand: `uv run ect-daily`, then `dbt build`.
+- [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
+- [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Daily run (GitHub Actions); DQ rule ownership; federated model
+
+### Done
+- Merged `marts` to `main` from the CLI at the user's request (`8accce2`).
+- **`uv run ect-daily`:** finds the newest loaded day (`MAX(_batch_date)` of `raw.app_trips`, ~3 MB read), then generates and loads every missing day through yesterday. A failed or skipped run is caught up the next day. Tested with a dry run: last loaded 2026-11-23, 0 days due.
+- **`uv run ect-record`:** writes `data-platform/run-records/<date>.md` with the days loaded, row counts per table, and the dbt results (every warning or failure with its failing-record count). Counts and test names only, never data values.
+- **Workflow** `.github/workflows/daily-refresh.yml`:
+  - Runs daily at 10:30 UTC (5:30 am New York), plus a manual "Run workflow" button.
+  - Steps: keyless Google sign-in → install → generator tests → `ect-daily` → `dbt build` → run record → commit.
+- **Setup guide** `data-platform/docs/github-actions-setup.md`: console steps A–G for the user (APIs, service account, dataset access, Workload Identity pool and provider, impersonation grant, GitHub variables, test run).
+- Read-only check: the IAM, IAM Credentials and Security Token Service APIs are **not enabled** yet. That's step A.
+
+### Decisions
+- **DQ rule ownership (the user's point):** data quality rules should be **written by data stewards, with the data owner's approval**, because they are closest to the data and its use. The 23 rules in `dq_rules.csv` are **drafts proposed by the governance hub**, pending each domain's sign-off. The hub owns the framework (catalog, findings, scorecard, controls); the domains own the rule content.
+- **Leaning toward a federated (hub-and-spoke) governance model** over a centralized one. The hub (Data Governance Manager) sets standards, tooling, the scorecard and reporting. Domain owners and stewards (the spokes) make and enforce decisions for their data. Roles and responsibilities to be fleshed out (backlog).
+- **Keyless sign-in** (Workload Identity Federation): restricted to this repository by an attribute condition; one service account, `ect-pipeline`.
+- **Least privilege:** BigQuery Job User (project) plus BigQuery Data Editor on `raw`, `staging` and `marts` only. No service-account key is ever created.
+- **Catch-up design:** the pipeline works out what's missing from BigQuery itself rather than trusting the schedule, so missed days heal themselves.
+- **Run records are committed to the repo:** audit evidence for each run (Project 3 control monitoring), and the commits keep GitHub from pausing the schedule after 60 days of inactivity. **Open question:** commit them straight to `main`, which needs the user's OK, or to a separate branch.
+
+- Pushing the workflow needed the GitHub CLI's `workflow` permission. The user granted it with `gh auth refresh -s workflow`; in `!` commands use the full path `/opt/homebrew/bin/gh`.
+- **The user completed console setup steps A–F.** Merged `daily-refresh` to `main` from the CLI at the user's request. Run records go to `main` by default, since the user hasn't chosen otherwise.
+
+### Next steps
+1. First workflow run (step G), then check the run record.
 
 ---
 

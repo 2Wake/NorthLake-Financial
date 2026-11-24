@@ -1,0 +1,63 @@
+# Daily data refresh: generate and load new days into BigQuery, rebuild dbt, keep a run record.
+# Signs in to Google Cloud keylessly (Workload Identity Federation): no keys stored anywhere.
+# Setup steps: data-platform/docs/github-actions-setup.md
+
+name: Daily data refresh
+
+on:
+  schedule:
+    - cron: "30 10 * * *"   # 10:30 UTC = 5:30 am New York (6:30 am in summer)
+  workflow_dispatch:         # "Run workflow" button on the Actions tab
+
+permissions:
+  contents: write   # commit the run record
+  id-token: write   # keyless sign-in to Google Cloud
+
+concurrency:
+  group: daily-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: data-platform
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sign in to Google Cloud (keyless)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install
+        run: uv sync --frozen
+
+      - name: Generator tests
+        run: uv run pytest -q
+
+      - name: Generate and load new days
+        run: uv run ect-daily
+
+      - name: Build and test (dbt)
+        id: dbt
+        working-directory: data-platform/dbt
+        run: uvx --from dbt-core==1.12.7 --with dbt-bigquery==1.12.4 dbt build
+
+      - name: Write run record
+        if: always()
+        run: uv run ect-record
+
+      - name: Commit run record
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add run-records
+          git commit -m "Run record $(date -u +%F)" || echo "Nothing to commit"
+          git push
