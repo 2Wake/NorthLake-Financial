@@ -26,6 +26,22 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — 6 follow-up tickets created (GOV-75 to GOV-80)
+
+### Done
+Owner approved all 6 drafts. Created as Tasks with no epic:
+- **GOV-75** Security incident reporting channel. Blocks GOV-55 (POL-01) and GOV-62 (POL-08).
+- **GOV-76** Approved tools list (software and AI, by data tier). Blocks GOV-59 (POL-05).
+- **GOV-77** Protect `main` with a GitHub ruleset (owner UI change; it's the POL-07 5.9 change record).
+- **GOV-78** Retire the repo `access-control-policy.md` (pointer to POL-02).
+- **GOV-79** Line up ACC-02/ACC-03 with POL-02's 24-hour and 5-day deadlines.
+- **GOV-80** Move the Classification and Labeling standards to Confluence as STD-02 and STD-03.
+
+### Risks
+- PR #3 was created with the blank template, not the prepped description, so it didn't meet POL-07 5.3 (description complete at creation). It's closed unmerged and replaced by a new PR from the prepped link. This is the first recorded use of the control catching a miss.
+
+---
+
 ## 2026-11-24 — POL-07 small-team allowance rewritten for one maintainer; PR #2 reviewed
 
 ### Done
