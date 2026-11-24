@@ -43,8 +43,15 @@ Running log of all work, decisions and open items. It's the source for progress 
 - **Expected first-run surprise:** staging models are *views* over `raw`. In BigQuery, querying a view also needs access to its source tables, unless the view's dataset is authorized on `raw`. So `staging` access probably only works for accounts that also have `raw`. If confirmed, that's a real design gap (the policy gives stewards staging without raw), fixable with an authorized dataset. Leave it as a finding.
 - The enforcement path can't be tested locally (impersonation from the laptop is blocked), so the first GitHub Actions run is the real test.
 
+### First run (2026-11-24, run 45437194376, started by Claude at the user's request): green
+- 18 checks loaded into `raw.iam_role_access_tests`. dbt: 66 pass, 39 warn, 0 errors.
+- **Scorecard: all 3 planted misconfigurations caught by both checks** (analyst on `raw`, steward on `raw`, security missing `raw`).
+- **One unplanted finding, as predicted:** `ect-role-security` is *on* the `staging` permission list (config passes), but BigQuery refuses its query (enforcement fails, ACC-09). The refusal names `raw.hris_employees`, the table under the `staging` view. **Design gap:** staging views need `raw` access unless `staging` is authorized on `raw`, so the policy's "staging without raw" (stewards) can't work as built. Left open as an audit finding; the fix would be an authorized dataset.
+- The steward's `staging` check passes only because of its (planted) `raw` access, so fixing that misconfiguration alone would expose the same gap for stewards.
+- Small fix: refusal messages now keep only BigQuery's reason, not the request URL.
+
 ### Next steps
-- User triggers **Run workflow**; check the results and the scorecard.
+- Open findings for the audit: ACC-08/09 role accounts, the staging-view design gap, CLS-01 unclassified columns.
 
 ---
 
