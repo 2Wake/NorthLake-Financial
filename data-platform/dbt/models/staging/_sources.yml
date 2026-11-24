@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: raw
+    database: empire-city-taxi
+    schema: raw
+    description: >
+      Daily incremental extracts from ECT's source systems, loaded by data-platform/ (ect-load).
+      Change-log tables append a full copy of a record each day it is created or changed.
+    config:
+      loaded_at_field: "timestamp(_batch_date)"
+      freshness:   # the daily run loads yesterday's batch, so the newest batch is normally 1 day old
+        warn_after: {count: 2, period: day}
+        error_after: {count: 4, period: day}
+    tables:
+      - name: hris_employees
+        config:
+          freshness: null   # not every day has an HR change
+      - name: fleet_drivers
+        config:
+          freshness: null   # not every day has a fleet change
+      - name: app_riders
+      - name: payments_rider_cards
+      - name: app_trips
+      - name: app_trip_surveys
+      - name: payments_financial_ledger
+        config:
+          freshness: null   # posts monthly
+      - name: app_marketing_campaigns
+        config:
+          freshness: null   # irregular
+      - name: app_rider_segments
+        config:
+          freshness: null   # monthly
+      - name: gov_planted_defects
+        config:
+          freshness: null   # only on days with a planted defect
+      - name: tlc_taxi_zones
+        config:
+          loaded_at_field: null
+          freshness: null   # static reference copy

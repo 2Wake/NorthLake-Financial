@@ -7,8 +7,9 @@ Running log of all work, decisions and open items. It's the source for progress 
 ## 📋 Backlog
 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
-- [ ] **Daily runs:** until GitHub Actions is set up, new days are generated and loaded by hand (`ect-generate` then `ect-load`).
-- [ ] **Reference-data gap:** trip zone IDs 264/265 ("Unknown" / "Outside NYC") and 57 have no row in `tlc_taxi_zones`. Add a small seed for 264/265 in dbt and log 57 as a reference-data issue.
+- [ ] **Daily runs:** until GitHub Actions is set up, new days are generated and loaded by hand (`ect-generate`, `ect-load`, then `dbt build`).
+- [ ] **dbt marts layer:** `dim_*`/`fct_*` capped at Sensitive (masking or aggregating Confidential data), and a DQ scorecard model (caught vs. planted, per record).
+- [ ] **Reference-data gap:** trip zone IDs 264/265 ("Unknown" / "Outside NYC") and 57 have no row in `tlc_taxi_zones`. Add a small seed for 264/265 in dbt and log 57 as a reference-data issue. Related: the public zone table files zone 57 under 56 and 104/105 under 103 (test REF-01).
 - [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables**, applied in code: the loader for `raw`, dbt `labels` config for staging and marts. Include planted label gaps, tracked in the gap register.
@@ -18,6 +19,38 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — dbt project: staging layer and data-quality tests
+
+### Done
+- Merged `bulk-backfill` to `main` from the CLI at the user's request (`7c4b94e`).
+- Built **`data-platform/dbt/`** (dbt 1.12, BigQuery). It uses the user's Google sign-in with no keys, a 1 GB cap per query, and job labels for cost tracing.
+  - **16 staging views** in `staging`:
+    - a current-version view (`stg_*`) for each raw table;
+    - full-history views (`stg_*_history`, with `valid_from`, `valid_to`, `is_current`) for employees, drivers, riders, cards and segments;
+    - trips, surveys, ledger, taxi zones, and the answer key.
+  - Each view carries its description and **10 labels** (layer `staging`).
+  - **Tests:**
+    - 42 structural tests (unique IDs, plus links between tables: trips→drivers, drivers→HR, cards→riders, campaigns→segments). **All pass.**
+    - The **16 data-quality rules DQ-01 to DQ-16**, as warnings. DQ-13 to DQ-16 are new, so every planted defect type has a rule.
+  - **Freshness checks** on the daily-changing raw tables (warn after 2 days without a load, error after 4).
+- **First scorecard:** every rule catches exactly the number planted, with no false positives. Uniqueness and allowed-values rules count distinct values rather than rows. The table is in `data-quality-rules.md`.
+- **Verified history:** 647 employees and 470 drivers, each with exactly one current version. DRV10200 shows active → suspended → reinstated → inactive.
+
+### Decisions
+- **Revised:** history comes from **`raw` change logs** through dbt views, **not dbt snapshots**. Raw already stores every version, so history covers 2026-01-01 onward and can be rebuilt. Snapshots would only start recording from their first run and couldn't be rebuilt. Snapshots stay available for sources that aren't change logs.
+- **Staging keeps defects as they are:** no clean-up, so the tests can find problems. Fixes happen only after an owner or council decision, which makes the remediation demo.
+- **Data-quality rules are warnings, not failures.** Structural tests are errors.
+- **dbt writes only to existing datasets** (`staging`, later `marts`). A schema-name macro stops dbt from creating new datasets.
+- Staging is views, not tables: no storage cost, and always up to date with `raw`.
+
+### Real-data findings (not planted)
+- **REF-01:** the public taxi zone table has duplicate IDs. Zone 57 (Corona) is filed under 56, and 104/105 (the harbor islands) under 103. This explains why zone 57 trips have no match.
+
+### Next steps
+- Marts (`dim_*`, `fct_*`, capped at Sensitive) and a per-record DQ scorecard; or the GitHub Actions daily run.
 
 ---
 

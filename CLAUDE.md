@@ -33,8 +33,9 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 
 - **Flow:** Faker generator (Python) → GitHub Actions (daily) → BigQuery `raw` → dbt → `staging` → `marts` → Collate (catalog) and Looker Studio.
 - **Code:** [`data-platform/`](data-platform/) (generator, loader, one-time SQL, tests; see its README). Run commands from that folder with `uv run`, and run `uv run pytest` after any change. Bump `GENERATOR_VERSION` when output changes.
+- **dbt:** [`data-platform/dbt/`](data-platform/dbt/). Run `dbt build` from that folder. Staging views keep defects as they are. History is derived from the raw change logs (not snapshots). Data-quality rules (`dq_*`) are warnings; structural tests are errors.
 - **Datasets by layer, domain by label.** Raw tables carry a source-system prefix: `hris_`, `fleet_`, `payments_`, `app_`, `tlc_`. dbt models are `stg_*`, `dim_*`, `fct_*`.
-- **`raw` is append-only.** Lifecycle changes arrive as new rows or events, and history comes from dbt snapshots.
+- **`raw` is append-only.** Lifecycle changes arrive as new full-record versions, and history is derived from them in dbt (`stg_*_history`).
 - **The generator is deterministic**: the same date always produces the same output. IDs are prefixed (`DRV10042`, `EMP10001`, `RDR…`, `VEH…`).
 - **Governance records** (issues `GOV-###`, decisions `GOV-D-###`, org, ownership) live as repo files and load as dbt seeds.
 - **Every governance conflict scenario is backed by a defect planted in the data.** Planted defects and documentation and label gaps are tracked in answer-key or gap-register files.

@@ -1,0 +1,217 @@
+version: 2
+
+# Labels per the Labeling Standard (01-governance-program/governance/labeling-standard.md).
+# Each label set is written out once (&name) and reused below (*name).
+# Staging keeps raw values as they are, defects included, so the data-quality tests can
+# find them. Fixes happen only after the owner or council decides (see the council charter).
+
+models:
+  # ---------------------------------------------------------------- people
+  - name: stg_hris_employees
+    description: Current version of each employee record in the HR system (drivers included).
+    config: {labels: &people {domain: people, layer: staging, data_owner: vp-people, data_steward: hr-data-steward, classification: secret, source_system: hris, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: employee_id
+        data_tests: [unique, not_null]
+      - name: email
+        data_tests:
+          - unique:
+              name: dq_14_employee_email_unique
+              config: {severity: warn, meta: {rule_id: DQ-14, dimension: Uniqueness}}
+      - name: ssn
+        data_tests:
+          - matches_pattern:
+              name: dq_13_employee_ssn_format
+              arguments: {pattern: '^\d{3}-\d{2}-\d{4}$'}
+              config: {severity: warn, meta: {rule_id: DQ-13, dimension: Validity}}
+    data_tests:
+      - expression_is_true:
+          name: dq_11_employee_salary_positive
+          arguments: {expression: "salary > 0"}
+          config: {severity: warn, meta: {rule_id: DQ-11, dimension: Validity}}
+
+  - name: stg_hris_employees_history
+    description: Every version of every employee record, with valid_from / valid_to / is_current.
+    config: {labels: *people}
+
+  # ---------------------------------------------------------------- driver
+  - name: stg_fleet_drivers
+    description: Current version of each driver record in the fleet system.
+    config: {labels: &driver {domain: driver, layer: staging, data_owner: vp-driver-operations, data_steward: driver-data-steward, classification: secret, source_system: fleet, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: driver_id
+        data_tests: [unique, not_null]
+      - name: employee_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_hris_employees'), field: employee_id}}
+      - name: ssn
+        data_tests:
+          - matches_pattern:
+              name: dq_04_driver_ssn_format
+              arguments: {pattern: '^\d{3}-\d{2}-\d{4}$'}
+              config: {severity: warn, meta: {rule_id: DQ-04, dimension: Validity}}
+      - name: tlc_license
+        data_tests:
+          - not_null:
+              name: dq_05_driver_tlc_license_present
+              config: {severity: warn, meta: {rule_id: DQ-05, dimension: Completeness}}
+      - name: background_check_status
+        data_tests:
+          - accepted_values:
+              name: dq_06_driver_background_status_values
+              arguments: {values: [clear, pending, flagged]}
+              config: {severity: warn, meta: {rule_id: DQ-06, dimension: Consistency}}
+      - name: payout_bank_account
+        data_tests:
+          - matches_pattern:
+              name: dq_16_driver_payout_account_format
+              arguments: {pattern: '^\d{9}$'}
+              config: {severity: warn, meta: {rule_id: DQ-16, dimension: Validity}}
+
+  - name: stg_fleet_drivers_history
+    description: Every version of every driver record, with valid_from / valid_to / is_current.
+    config: {labels: *driver}
+
+  # ---------------------------------------------------------------- rider
+  - name: stg_app_riders
+    description: Current version of each rider account in the rider app.
+    config: {labels: &rider {domain: rider, layer: staging, data_owner: vp-rider-experience, data_steward: rider-data-steward, classification: confidential, source_system: app, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: rider_id
+        data_tests: [unique, not_null]
+      - name: email
+        data_tests:
+          - not_null:
+              name: dq_01_rider_email_present
+              config: {severity: warn, meta: {rule_id: DQ-01, dimension: Completeness}}
+          - matches_pattern:
+              name: dq_02_rider_email_format
+              arguments: {pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'}
+              config: {severity: warn, meta: {rule_id: DQ-02, dimension: Validity}}
+          - unique:
+              name: dq_03_rider_email_unique
+              config: {severity: warn, meta: {rule_id: DQ-03, dimension: Uniqueness}}
+
+  - name: stg_app_riders_history
+    description: Every version of every rider account, with valid_from / valid_to / is_current.
+    config: {labels: *rider}
+
+  - name: stg_app_trip_surveys
+    description: Post-trip surveys (immutable; one row per survey).
+    config: {labels: *rider}
+    columns:
+      - name: survey_id
+        data_tests: [unique, not_null]
+      - name: trip_id
+        data_tests:
+          - relationships:
+              name: dq_09_survey_trip_exists
+              arguments: {to: ref('stg_app_trips'), field: trip_id}
+              config: {severity: warn, meta: {rule_id: DQ-09, dimension: Integrity}}
+      - name: comment
+        data_tests:
+          - no_contact_details_in_text:
+              name: dq_10_survey_comment_no_pii
+              config: {severity: warn, meta: {rule_id: DQ-10, dimension: Privacy}}
+    data_tests:
+      - expression_is_true:
+          name: dq_08_survey_rating_range
+          arguments: {expression: "rating between 1 and 5"}
+          config: {severity: warn, meta: {rule_id: DQ-08, dimension: Validity}}
+
+  # ---------------------------------------------------------------- finance
+  - name: stg_payments_rider_cards
+    description: Current version of each rider payment card. PCI scope.
+    config: {labels: &cards {domain: finance, layer: staging, data_owner: cfo, data_steward: finance-data-steward, classification: secret, source_system: payments, data_origin: synthetic, contains_pii: "true", pci_scope: "true", retention: 3y}}
+    columns:
+      - name: card_id
+        data_tests: [unique, not_null]
+      - name: rider_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_app_riders'), field: rider_id}}
+      - name: card_number
+        data_tests:
+          - matches_pattern:
+              name: dq_07_card_number_format
+              arguments: {pattern: '^\d{4} \d{4} \d{4} \d{4}$'}
+              config: {severity: warn, meta: {rule_id: DQ-07, dimension: Validity}}
+
+  - name: stg_payments_rider_cards_history
+    description: Every version of every card record, with valid_from / valid_to / is_current.
+    config: {labels: *cards}
+
+  - name: stg_payments_financial_ledger
+    description: General ledger postings, latest version of each entry.
+    config: {labels: &ledger {domain: finance, layer: staging, data_owner: cfo, data_steward: finance-data-steward, classification: sensitive, source_system: payments, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: entry_id
+        data_tests: [unique, not_null]
+      - name: account
+        data_tests:
+          - not_null:
+              name: dq_15_ledger_account_present
+              config: {severity: warn, meta: {rule_id: DQ-15, dimension: Completeness}}
+
+  # ---------------------------------------------------------------- trips and reference
+  - name: stg_app_trips
+    description: >
+      Completed trips (immutable). Trip details are real NYC TLC 2022 trips replayed on the
+      simulated date; drivers and riders are synthetic. rider_id is empty for street hails.
+    config: {labels: &trips {domain: trips, layer: staging, data_owner: vp-operations, data_steward: ops-data-steward, classification: confidential, source_system: app, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: trip_id
+        data_tests: [unique, not_null]
+      - name: driver_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('stg_fleet_drivers'), field: driver_id}}
+
+  - name: stg_tlc_taxi_zones
+    description: NYC TLC taxi zones (public reference data).
+    config: {labels: &zones {domain: reference, layer: staging, data_owner: data-governance-manager, data_steward: ops-data-steward, classification: public, source_system: tlc, data_origin: public, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: zone_id
+        data_tests:
+          - not_null
+          # Real defect in the public copy: zone 57 (Corona) is filed under 56, and
+          # zones 104 and 105 (the harbor islands) are filed under 103.
+          - unique:
+              name: ref_01_taxi_zone_id_unique
+              config: {severity: warn, meta: {rule_id: REF-01, dimension: Uniqueness}}
+
+  # ---------------------------------------------------------------- marketing
+  - name: stg_app_marketing_campaigns
+    description: Current version of each marketing campaign.
+    config: {labels: &marketing {domain: marketing, layer: staging, data_owner: vp-marketing, data_steward: marketing-data-steward, classification: sensitive, source_system: app, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: campaign_id
+        data_tests: [unique, not_null]
+      - name: target_segment_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_app_rider_segments'), field: segment_id}}
+    data_tests:
+      - expression_is_true:
+          name: dq_12_campaign_dates_ordered
+          arguments: {expression: "end_date >= start_date"}
+          config: {severity: warn, meta: {rule_id: DQ-12, dimension: Validity}}
+
+  - name: stg_app_rider_segments
+    description: Current version of each rider segment.
+    config: {labels: &segments {domain: marketing, layer: staging, data_owner: vp-marketing, data_steward: marketing-data-steward, classification: internal, source_system: app, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: segment_id
+        data_tests: [unique, not_null]
+
+  - name: stg_app_rider_segments_history
+    description: Every monthly version of each segment's size estimate.
+    config: {labels: *segments}
+
+  # ---------------------------------------------------------------- governance
+  - name: stg_gov_planted_defects
+    description: >
+      ANSWER KEY of planted data-quality defects. For scoring the data-quality tests only;
+      no test or production model may read it.
+    config: {labels: &governance {domain: governance, layer: staging, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: defect_id
+        data_tests: [unique, not_null]
