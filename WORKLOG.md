@@ -38,7 +38,7 @@ Owner approved all 6 drafts. Created as Tasks with no epic:
 - **GOV-80** Move the Classification and Labeling standards to Confluence as STD-02 and STD-03.
 
 ### Risks
-- PR #3 was created with the blank template, not the prepped description, so it didn't meet POL-07 5.3 (description complete at creation). It's closed unmerged and replaced by a new PR from the prepped link. This is the first recorded use of the control catching a miss.
+- PR #3 was created with the blank template, not the prepped description, so it didn't meet POL-07 5.3 (description complete at creation). Claude recommended closing it unmerged and creating a new PR from the prepped link. This is the first time the review step caught a miss.
 
 ---
 
