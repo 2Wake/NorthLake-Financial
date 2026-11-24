@@ -16,11 +16,31 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
+- [ ] **Atlassian (Jira + Confluence):** site + MCP (user), then confirm the docs/tickets split.
+- [ ] **SOC 2 policy set + policy register**, then a **controls framework** as dbt seeds mapped to automated checks.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Plan: Jira + Confluence, then SOC 2 policies and a controls framework
+
+### Decisions (direction agreed with the user; details to confirm)
+- **Policies before more data work.** Project 2's control GOV-01 claims an information security policy set that doesn't exist; an auditor's first request would expose it. Plan: ~12–14 policies scoped to Security, Availability and Confidentiality, plus a **policy register** seed (owner role, approver, version, approval date, next review). Plant gaps for the audit: an overdue review, an unapproved policy, a control with no policy, a policy with no control, and a policy the data contradicts (e.g. leaver revocation within 24h vs. ACC-02). Full set vs. core 8: not yet decided.
+- **Then a controls framework as data:** move `02-soc2-iso-audit/control-matrix.csv` into dbt seeds linking policy → control → SOC 2 / ISO 27001 / NIST → owner (roster role; "GRC Lead" and "IT Manager" don't exist in the roster) → automated check (ACC / CLS / DQ) → evidence. This is the start of Project 3 (continuous control monitoring).
+- **Atlassian for planning and documents:** the user is creating a free Atlassian Cloud site (Jira + Confluence). Site addresses can't be renamed on the free plan, so pick a company-style name once. Connection through Atlassian's official remote MCP server (Rovo MCP; one server for both products; browser sign-in; nothing installed locally).
+- **Proposed split (to confirm):** Confluence holds policy text, minutes and process docs. Jira holds planning, findings, remediation and audit requests. The repo keeps everything the pipeline reads (policy register, control framework, issue register) and a copy of each published policy, because the Atlassian site is private and the repo is the public portfolio. WORKLOG stays the decision log.
+
+### Risks
+- Two places for documents can drift; the policy register in the repo records each Confluence page's link and version to keep them tied.
+
+### Next steps
+- User: create the site, add the MCP (`claude mcp add --transport http --scope user atlassian https://mcp.atlassian.com/v2/mcp`, then `/mcp`).
+- Confirm whether Claude may create pages and tickets directly or drafts them for approval.
+- Start the policy set.
 
 ---
 
