@@ -1,5 +1,5 @@
 doc_id,title,doc_type,owner_role,approver_roles,status,version,approval_date,next_review_date,jira_key,confluence_page_id
-STD-01,Policy Management Standard,standard,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-3,327917
+STD-01,Policy Management Standard,standard,ciso,ciso,approved,2.0,2026-11-24,2027-11-24,GOV-3,327917
 DOC-01,PCI DSS Scope & Cardholder Data Flow,supporting_document,ciso,ciso,draft,,,,GOV-2,
 POL-01,Information Security Policy,policy,ciso,ceo,draft,,,,GOV-4,
 POL-02,Access Control Policy,policy,ciso,ciso,draft,,,,GOV-5,

@@ -26,6 +26,39 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Single source of truth; STD-01 v2.0 after late review; acknowledgments seed
+
+### Done
+- **Option (b) for the STD-01 review gap: an honest late review, dated today.** On the STD-01 page:
+  - *[Simulated]* comments from Elena Popescu (GRC Analyst) and Robert Feld (General Counsel), and author replies from Jordan Ellis.
+  - Elena: remove repo copies (one source of truth) → **accepted**.
+  - Robert: Legal sign-off on every exception → **rejected with reason** (section 10 already bars waiving legal/regulatory/PCI requirements); compromise accepted by Robert: owner must consult General Counsel on exceptions touching legal, regulatory or contractual obligations.
+  - Changes a responsibility → **major change, v2.0** (STD-01 section 6). Sections 4, 10, 11 revised; change-history row explains the late review. *[Simulated]* "Approved version 2.0" comment from Victor Hale, CISO. Next review unchanged (2027-11-24).
+  - The v1.0 approval comment relabeled *[Simulated]*.
+- **Policy Register:** STD-01 → v2.0; intro now says the page is the only source of truth and the repo seed is an extract; change-log entry. `policy_register.csv` updated.
+- **Space home page:** warning panel disclosing that ECT is fictional and staff reviews/approvals/acknowledgments are simulated, posted from the owner's account, never backdated.
+- **Repo copies deleted:** `01-governance-program/policies/` removed (created earlier today).
+- **New seed `policy_acknowledgments.csv` (simulated)**: one row per employee per approved document version (`ack_id`, `doc_id`, `doc_version`, `employee_id`, `basis`, `assigned_on`, `due_on`, `acknowledged_on`, `evidence`). STD-01 v2.0: 19 people (policy owners/approvers, policy admins, data stewards who author, named reviewers), due 2026-12-08 (10 business days). 4 acknowledged today through their review/approval comments (evidence = Confluence comment IDs); 15 pending. Tests: `ack_id` unique/not null, `doc_id` must exist in `policy_register`. All 19 employees confirmed active in `stg_hris_employees` (read-only, capped query). `dbt parse` OK, pytest 12/12.
+- **Jira:** decision comment on epic GOV-1 withdrawing every "copy to the repo" step in its 29 open tickets (descriptions left as written, as history).
+
+### Decisions
+- **Confluence is the single source of truth for policy text (user).** No policy copies in the repo, no blog/announcement post: Confluence page history and Jira record what was published and when. Recorded in `CLAUDE.md` #5 and STD-01 v2.0.
+- **Simulation rules (user agreed):** simulated staff responses are labeled *[Simulated]*, dated the day they're recorded, and never backdated to hide a gap.
+- The `policy_register` seed stays as an *extract* (dbt can't read Confluence). A later automation (Project 3) could generate it from the page.
+- Acknowledgments use employee IDs, not names (data rule).
+
+### Risks / audit material (not fixed)
+- STD-01 v1.0 was approved before review (late review recorded in v2.0).
+- `01-governance-program/governance/access-control-policy.md` (Project 1) is a second access control policy outside Confluence; resolve when POL-02 is drafted.
+- Org roster: Arjun Mehta (VP Engineering) has no `role_code`, but the register names `vp-engineering` as POL-07 owner.
+- New seed columns not in the classification register (CLS-01).
+
+### Next steps
+- GOV-2: PCI DSS scope (DOC-01).
+- Dec 1: record further STD-01 acknowledgments; leave some missing past the Dec 8 due date as a gap.
+
+---
+
 ## 2026-11-24 — STD-01 and template approved; GOV-3 closed; closing-comment rule
 
 ### Done

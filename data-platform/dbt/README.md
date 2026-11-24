@@ -12,7 +12,7 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 | `models/marts/governance/` | `fct_dq_findings` (every failing record), `fct_dq_scorecard` (caught vs. planted per rule), `dim_dq_rules` |
 | `models/marts/_marts.yml` | Marts descriptions, labels, tests, and one test per data-quality rule |
 | `seeds/` | `dq_rules.csv` (the rule catalog) and `taxi_zone_supplement.csv` (zones missing from the public zone table) |
-| `seeds/governance/` | Governance records: classification register, access policy matrix, role accounts, answer keys, and `policy_register.csv` (see below) |
+| `seeds/governance/` | Governance records: classification register, access policy matrix, role accounts, answer keys, `policy_register.csv` and `policy_acknowledgments.csv` (see below) |
 | `tests/assert_marts_classification_cap.sql` | **Governance control:** fails if any marts table is labeled above Sensitive or contains a Secret/Confidential column |
 | `models/staging/_sources.yml` | The raw tables and their freshness checks (warns if the daily load stops) |
 | `macros/change_log.sql` | How "current version" and "history" are worked out from the raw change logs |
@@ -21,7 +21,9 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 
 **Staging keeps defects as they are.** It doesn't fix bad values, so the tests can find them. Fixes happen only after the data owner or the council decides, which is the remediation story.
 
-**The policy register has two copies.** The official one is the *Policy Register* page in Confluence (space ECTG), governed by STD-01 Policy Management Standard. `seeds/governance/policy_register.csv` is a data copy so approvals and review dates can be checked automatically. Whenever a row changes on the Confluence page (status, version, approval date, next review date, page link), make the same change in the CSV in the same working session, by pull request. If they ever differ, Confluence is right and the CSV gets corrected. Dates are `YYYY-MM-DD`; `approver_roles` uses `;` when two approvals are needed.
+**Policy documents live only in Confluence** (space ECTG), per STD-01 Policy Management Standard v2.0. The repo holds no copies of policy text. `seeds/governance/policy_register.csv` is a data *extract* of the Confluence *Policy Register* page, so approvals and review dates can be checked automatically. It's never edited on its own: when a row changes on the Confluence page, the same change is made in the CSV in the same working session. If they differ, the CSV is corrected from Confluence. Dates are `YYYY-MM-DD`; `approver_roles` uses `;` when two approvals are needed.
+
+`seeds/governance/policy_acknowledgments.csv` (simulated) records who must acknowledge each approved document version, the due date (10 business days after approval) and when they did. It is the only record of acknowledgments; a blank `acknowledged_on` means not yet acknowledged.
 
 **History comes from `raw`, not dbt snapshots.** Raw already holds every version of every record, so history can be rebuilt at any time, back to 2026-01-01. A snapshot would only start recording from its first run.
 
