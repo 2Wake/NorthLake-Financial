@@ -6,7 +6,8 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ## 📋 Backlog
 
-- [ ] **Phase 0: generator framework.** Event-driven and repeatable (the same date always produces the same data). Prefixed IDs. The existing 9 tables move to daily lifecycle batches. Real TLC trips plus taxi zones. The loader appends to `raw` instead of replacing.
+- [ ] **Phase 0: generator framework.** Code built and tested (`data-platform/`). **Remaining:** the user approves and runs the one-time TLC setup (`sql/01`, `sql/02`), then the backfill load from 2026-01-01.
+- [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables**, applied in code: the loader for `raw`, dbt `labels` config for staging and marts. Include planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
@@ -15,6 +16,41 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Phase 0: daily data generator and loader
+
+### Done
+- Merged `project-context` (CLAUDE.md, public WORKLOG) to `main` from the CLI at the user's request (`fc55a41`).
+- Built **`data-platform/`**: a Python package (uv, Python 3.12, Faker 37) with a generator, a loader, one-time SQL and tests.
+  - **Generator** (`uv run ect-generate`): replays company life from **2026-01-01** day by day, and writes each day's new and changed records to `output/<date>/*.jsonl` with a manifest (row counts, SHA-256).
+  - **Lifecycle:** hires and terminations; driver onboarding → background check → active; suspensions and reinstatements; a March 1 annual review; rider sign-ups, profile changes and closures; cards added and removed; new campaigns; monthly segment refresh; ledger postings on the 3rd.
+  - **Drivers are now employees**, so every `DRV` has an `EMP` in HR. That is the foundation for GOV-004 (terminated in HR, still active in fleet), which gets planted in Phase 3.
+  - **Trips:** about 1,000 real 2022 NYC yellow-taxi trips a day, replayed on the same weekday (52-week cycle). Synthetic drivers are assigned; riders only on app-booked card trips, while street hails have no rider. Surveys go on about 6% of app trips.
+  - **Planted defects:** the 16 Project 1 defect types carry over. Every one is logged in the answer key `gov_planted_defects` (record and column only, never the bad value). The epoch batch plants 292.
+  - **Loader** (`uv run ect-load`): creates each `raw` table on first load with its schema, description and labels. Tables are partitioned by `_batch_date`, and each day replaces only its own partition, so history is append-only and re-runs can't duplicate.
+  - **One-time SQL** (validated with dry runs; **not run yet**): `sql/01` copies a fixed 1% sample of 2022 TLC trips (~6.8 GB scan, ~360k rows), and `sql/02` copies the 263 taxi zones (~2 MB).
+  - **Tests:** 9 passing. They cover same date → identical data, byte-identical files, weekday-aligned TLC mapping, prefixed IDs, trips only to active drivers, schema and label coverage, Luhn-valid cards, and an answer key with no values.
+- Checked the simulated state on 2026-11-23: 331 active drivers, 494 active employees, 3,714 active riders, 3,385 active cards, 0 HR/fleet mismatches.
+
+### Decisions
+- **2023 TLC data is not usable.** The public 2023 table is empty, so 2022 is replayed in a 52-week cycle that keeps weekdays aligned. Trips repeat yearly, but driver and rider assignments differ.
+- **Replay-from-start design:** state on any date is rebuilt from 2026-01-01 (under 1 second for a year), so no state files need storing. The trade-off is that changing generator code changes history; `_generator_version` on every row traces which code made it.
+- **Incremental extracts:** raw holds full record images each time a record changes, not just events. That is the standard input for dbt snapshots.
+- **Code lives in `data-platform/`** at the repo root, because it serves all four projects. The Project 1 generator and CSVs stay as they are, as Project 1 artifacts.
+- **The answer key goes in the warehouse** (`raw.gov_planted_defects`), so a data-quality scorecard (caught vs. planted) can run in SQL. Checks must not read it.
+- **Safe synthetic values:** 555 phone numbers, reserved email domains, a test-style `4000 00` card prefix. Card numbers are Luhn-valid, so Google Sensitive Data Protection will recognise them.
+- Labels are applied when the loader creates each raw table (part of the "labels on tables" backlog item). Planted label gaps are still to come.
+
+### Risks / watch items
+- `trip_distance`, fares and other TLC values pass through untouched, including the real data's errors. That is intended.
+- The epoch batch is about 4,900 records; later days are a few dozen records plus about 1,000 trips.
+
+### Next steps
+1. The user approves running `sql/01` and `sql/02` (one-time; ~6.8 GB scanned).
+2. Backfill: `ect-generate --backfill`, then `ect-load` for 2026-01-01 → yesterday.
+3. Check the tables in the BigQuery console.
 
 ---
 

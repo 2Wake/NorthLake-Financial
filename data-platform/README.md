@@ -1,0 +1,66 @@
+# Empire City Taxi — Data Platform
+
+The living data behind the governance program. Each day the generator simulates one more
+day of company life (hires, terminations, rider sign-ups, card changes, campaigns, ledger
+postings and real NYC taxi trips) and the loader adds that day to BigQuery.
+
+```
+generator (Python + Faker) ──► output/<date>/*.jsonl ──► loader ──► BigQuery raw.<table>  (partition = that day)
+         ▲                                                                       │
+         └── real trips: raw.tlc_yellow_trips_sample (1% of NYC TLC 2022)        └──► dbt ► staging ► marts (next)
+```
+
+## Key ideas, in plain language
+
+| Idea | What it means |
+|---|---|
+| **Repeatable** | The same date always produces exactly the same data, so any day can be rebuilt and any finding can be reproduced. (Tests check this.) |
+| **Incremental, append-only** | Each day's batch holds only records created or changed that day, like a nightly extract from each source system. Nothing is deleted: a termination is a new row with status `terminated`. History is never overwritten. |
+| **Safe to re-run** | Each day loads into its own partition. Loading the same day twice replaces that day rather than duplicating it. |
+| **Real trips, fake people** | Trip times, distances, fares and zones are real 2022 NYC yellow-taxi trips, replayed on the matching weekday. Drivers and riders assigned to them are fictional. Card-paid trips are partly app bookings (with a rider); the rest are street hails (no rider). |
+| **Planted defects with an answer key** | The generator plants data-quality defects (bad SSN formats, missing emails, truncated card numbers, PII in survey comments, ...) and records every one in `gov_planted_defects`, without the bad value itself. Data-quality checks are scored against it. The real TLC data brings its own unplanted defects (negative fares, impossible distances). |
+| **Fictional and safe values** | Phones use the 555 exchange, emails use `example.com` / `empirecitytaxi.example`, card numbers use a test-style `4000 00` prefix. |
+
+## Raw tables
+
+| Table | Source system | Classification | What changes over time |
+|---|---|---|---|
+| `hris_employees` | HR | Secret | Hires, terminations, annual review on March 1 (ratings, raises) |
+| `fleet_drivers` | Fleet | Secret | Hires (onboarding → background check → active), suspensions, terminations |
+| `app_riders` | Rider app | Confidential | Sign-ups, phone and address changes, account closures |
+| `payments_rider_cards` | Payments | Secret (PCI) | Cards added and removed |
+| `app_trips` | Dispatch | Confidential | ~1,000 real trips per day |
+| `app_trip_surveys` | Rider app | Confidential | ~6% of app-booked trips |
+| `payments_financial_ledger` | Payments | Sensitive | Prior month posted on the 3rd |
+| `app_marketing_campaigns` | Marketing | Sensitive | New campaigns every ~2 weeks |
+| `app_rider_segments` | Marketing | Internal | Size estimates refresh on the 1st |
+| `gov_planted_defects` | Governance | Internal | Answer key for planted defects |
+| `tlc_yellow_trips_sample` | NYC TLC (public) | Public | Fixed one-time copy (`sql/01_…`) |
+| `tlc_taxi_zones` | NYC TLC (public) | Public | Fixed one-time copy (`sql/02_…`) |
+
+Every table carries the labels from the [Labeling Standard](../01-governance-program/governance/labeling-standard.md) and has two extra columns: `_batch_date` (the day it arrived) and `_generator_version` (the code that made it).
+
+The simulation starts on **2026-01-01** with 150 office staff, 300 drivers, 2,000 riders and 1,800 cards.
+
+## Commands
+
+Run from this folder (`data-platform/`).
+
+| Task | Command |
+|---|---|
+| Run the tests | `uv run pytest` |
+| Generate yesterday | `uv run ect-generate` |
+| Generate one day / a range / everything | `uv run ect-generate --date 2026-11-23` · `--start … --end …` · `--backfill` |
+| Generate without trips (offline) | add `--no-trips` |
+| Preview a load (changes nothing) | `uv run ect-load --date 2026-11-23 --dry-run` |
+| Load into BigQuery | `uv run ect-load --date 2026-11-23` |
+
+## Cost
+
+- **One-time:** `sql/01_tlc_yellow_trips_sample.sql` scans ~6.8 GB, and `sql/02_tlc_taxi_zones.sql` ~2 MB.
+- **Daily:** loads are free. The trip fetch reads one small partition (billed at the 10 MB minimum) and is capped at 1 GB by `maximum_bytes_billed`.
+- **Storage:** about 1,000 trips a day plus a few dozen changed records, well under 1 GB a year.
+
+## Not yet done
+
+Column descriptions and the description gap register; planted label gaps; Phase 1–4 tables; council scenario defects (Phase 3); the dbt project; the GitHub Actions schedule.
