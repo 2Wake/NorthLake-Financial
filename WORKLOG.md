@@ -26,6 +26,39 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Jira timeline: start and due dates on all 69 tickets
+
+### Done
+- Moved the uncommitted CLAUDE.md / WORKLOG changes off `main` to branch **`atlassian-setup`** and pushed it (user asked). Not merged.
+- **Set Start date and Due date on every GOV ticket (69/69, verified by JQL)** so the Jira Timeline tab shows the plan. Field: `Start date` = `customfield_10015`; due = `duedate`.
+
+  | Wave | Stories | Dates |
+  |---|---|---|
+  | Foundation | GOV-3 Register & standard | Nov 30 – Dec 11 |
+  | Foundation | GOV-2 PCI scope | Dec 7 – Dec 23 |
+  | Wave 1 | GOV-4 Info Sec, GOV-5 Access, GOV-6 Classification, GOV-9 Risk | Dec 14 – Jan 22 |
+  | Wave 2 (needs PCI scope) | GOV-7 Cardholder Data | Jan 4 – Feb 5 |
+  | | GOV-14 Encryption, GOV-15 Vendor | Jan 11 – Feb 12 |
+  | Wave 3 | GOV-8 Acceptable Use, GOV-17 HR Security | Jan 18 – Feb 19 |
+  | | GOV-10 Change, GOV-11 Incident Response | Jan 25 – Feb 26 |
+  | Wave 4 | GOV-12 Logging, GOV-13 Vulnerability | Feb 1 – Mar 5 |
+  | | GOV-16 Retention, GOV-18 BC/DR | Feb 15 – Mar 19 |
+  | Epic | GOV-1 | Nov 30, 2026 – Mar 19, 2027 |
+
+### Decisions
+- **Standard rhythm per policy:** draft 2 weeks → review 2 weeks → approval & publish 1 week. Wave 1 drafts are shortened to Dec 14–23, then review resumes Jan 4 (no work scheduled Dec 24 – Jan 1).
+- **Dependencies built into the dates:** policy template approved (Dec 11) before any policy draft starts; PCI scope approved (Dec 23) before card-data policies start; Cardholder Data approved (Feb 5) before Encryption approval (Feb 8–12); Access Control approved (Jan 22) before HR Security review (Feb 1).
+- At most 4 policies in review at once, to spread approver load.
+
+### Risks
+- Dependencies are only in the dates, not Jira links; a slip won't move dependent tickets automatically.
+- Approver availability (CISO approves 9 policies) is the biggest schedule risk.
+
+### Next steps
+- Start GOV-22 (policy template & standard) on Nov 30.
+
+---
+
 ## 2026-11-24 — Jira: policy-set epic created (GOV-1 to GOV-69)
 
 ### Done
