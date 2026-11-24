@@ -26,6 +26,21 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — POL-07 small-team allowance rewritten for one maintainer; PR #2 reviewed
+
+### Done
+- **PR #2** (created by the owner, the first under the new rule) reviewed by Claude as a PR comment: ready to merge.
+- **POL-07** (page v3, still document v0.9), owner change after review:
+  - The section 6 small-team allowance now describes the real flow: PR drafted by the author or Claude; the maintainer creates it; Claude posts a written review before merge; the maintainer merges (the merge is the approval); every use counts in the quarterly sample. It's labeled a compensating control, not separation of duties, and still never covers IAM, security or cardholder-data changes.
+  - 5.3 now requires the PR description at creation.
+  - The gaps panel says PRs started with PR #1.
+  - Noted in the 0.9 change-history row and in a GOV-10 comment for the approver.
+
+### Decisions
+- No simulated re-review: it's an owner change, flagged for the approver (GOV-61) instead, the same way DOC-01's in-cab addition was handled.
+
+---
+
 ## 2026-11-24 — Pull-request workflow; council IDs renamed GOV → GV
 
 ### Done
