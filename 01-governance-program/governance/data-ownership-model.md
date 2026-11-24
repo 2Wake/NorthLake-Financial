@@ -39,9 +39,9 @@ ECT runs a **hub-and-spoke** operating model. A central **data-governance functi
 
 ## How ownership shows up in the catalog
 
-In OpenMetadata, each table/dataset is assigned an **Owner** (team or user) and domain. Stewards are the reviewers for quality incidents and glossary changes. This is also what makes the **access-review** control real: owners certify who should have access to their domain's Restricted data each quarter, feeding control **AC-02** in the [audit project](../../02-soc2-iso-audit/).
+In OpenMetadata, each table/dataset is assigned an **Owner** (team or user) and domain. Stewards are the reviewers for quality incidents and glossary changes. This is also what makes the **access-review** control real: owners certify who should have access to their domain's Secret and Confidential data each quarter, feeding control **AC-02** in the [audit project](../../02-soc2-iso-audit/).
 
 ## Why this model
 
 - **Accountability without central bottleneck** — the people closest to the data own its quality and access, while the hub keeps the rules consistent.
-- **Auditable** — every Restricted table (rider PII, driver PII, cardholder data, HR) has a named owner who can be shown to certify access, which is exactly what a SOC 2 / ISO access-review control needs.
+- **Auditable** — every Secret or Confidential table (rider PII, driver PII, cardholder data, HR) has a named owner who can be shown to certify access, which is exactly what a SOC 2 / ISO access-review control needs.

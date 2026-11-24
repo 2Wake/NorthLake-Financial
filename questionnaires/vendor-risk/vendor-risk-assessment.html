@@ -216,7 +216,7 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 118px);display:fle
 const TIERS=["low","moderate","high","critical"];
 const TLABEL={low:"Low",moderate:"Moderate",high:"High",critical:"Critical"};
 const INH_FIELDS=[
-  {id:"data",label:"Data sensitivity",opts:[["Public / none",1],["Internal",2],["Confidential",3],["Restricted · PII / PHI / cardholder",4]]},
+  {id:"data",label:"Data sensitivity",opts:[["Public / none",1],["Internal / Sensitive",2],["Confidential · PII / PHI",3],["Secret · SSN / cardholder / credentials",4]]},
   {id:"access",label:"System access",opts:[["No access",1],["Limited / read-only",2],["Application / system access",3],["Privileged / administrative",4]]},
   {id:"crit",label:"Business criticality",opts:[["Low",1],["Moderate",2],["High",3],["Mission-critical",4]]},
 ];

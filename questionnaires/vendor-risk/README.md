@@ -30,7 +30,7 @@ Three inputs, each rated 1–4 (1 = lowest exposure, 4 = highest):
 
 | Input | 1 | 2 | 3 | 4 |
 |---|---|---|---|---|
-| Data sensitivity | Public / none | Internal | Confidential | Restricted (PII/PHI/cardholder) |
+| Data sensitivity | Public / none | Internal / Sensitive | Confidential (PII/PHI) | Secret (SSN/cardholder/credentials) |
 | System access | None | Limited / read-only | Application / system | Privileged / admin |
 | Business criticality | Low | Moderate | High | Mission-critical |
 

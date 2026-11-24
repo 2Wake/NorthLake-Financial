@@ -29,16 +29,16 @@ Because ECT accepts card payments and employs/contracts drivers, it holds a broa
 
 | Data type | Examples | Classification |
 |---|---|---|
-| Rider PII | Name, email, phone, home address | Restricted |
-| Cardholder data | Card number, expiry, cardholder name (PCI) | Restricted |
-| Driver PII | Name, **TLC license**, SSN, address, payout bank account, background-check status | Restricted |
-| Employee data | HR records, compensation, SSN | Restricted |
-| Financial data | Revenue, driver earnings, ledgers | Confidential |
-| Trip / operational | Pickup/dropoff, fare, distance, payment type | Internal |
-| Marketing | Campaigns, rider segments | Confidential / Internal |
+| Rider PII | Name, email, phone, home address | Confidential (name: Sensitive) |
+| Cardholder data | Card number, expiry, cardholder name (PCI) | Secret |
+| Driver PII | Name, **TLC license**, SSN, address, payout bank account, background-check status | Secret (SSN, bank account) / Confidential |
+| Employee data | HR records, compensation, SSN | Secret (SSN) / Confidential |
+| Financial data | Revenue, driver earnings, ledgers | Sensitive (payout bank accounts: Secret) |
+| Trip / operational | Pickup/dropoff, fare, distance, payment type | Confidential (pickup/dropoff) / Sensitive (fare) / Internal |
+| Marketing | Campaigns, rider segments | Sensitive (budgets) / Internal |
 | Public | Published fares, marketing site | Public |
 
-Classification scheme: **Restricted → Confidential → Internal → Public** (defined in the Data Classification Standard, Project 1).
+Classification scheme: **Secret → Confidential → Sensitive → Internal → Public** (defined in the Data Classification Standard, Project 1).
 
 ## Technology environment (audit scope)
 

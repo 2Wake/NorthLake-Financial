@@ -76,7 +76,7 @@ You won't know the counts until you run them — that's the point. Profile the t
 
 1. A failing rule raises an issue assigned to the **data steward** for that domain.
 2. The steward triages: fix at source, backfill, or risk-accept with an expiry.
-3. High-severity integrity/validity/DLP issues block downstream use until resolved. The DLP finding (DQ-10) also triggers reclassification of the column to Restricted.
+3. High-severity integrity/validity/DLP issues block downstream use until resolved. The DLP finding (DQ-10) also triggers reclassification of the column to Confidential.
 4. Rules run on a schedule; trends feed the governance KPIs reported to leadership.
 
 In OpenMetadata these become **Table/Column Tests** with the same thresholds, so the catalog shows a live quality status per table — and the same signal supports control monitoring in [Project 3](../../03-grc-automation/).

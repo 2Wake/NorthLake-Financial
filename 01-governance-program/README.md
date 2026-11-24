@@ -82,7 +82,7 @@ Open **http://localhost:8585** — log in with `admin@open-metadata.org` / `admi
 3. Run **Metadata** ingestion — the `ect` tables appear. Run the **Profiler** to populate column statistics (profile `trips` to see the real mess).
 
 ### Step 5 — Classify, define, and own
-- **Classification tags:** create a `DataClassification` tag group with `Restricted / Confidential / Internal / Public`. Run OpenMetadata's **auto-classification/PII** first, then check it against [`column-classification-map.csv`](governance/column-classification-map.csv) — note what it missed (the `commonly_missed = Yes` columns are the interesting ones, e.g., the free-text `comment` and the trip locations).
+- **Classification tags:** create a `DataClassification` tag group with `Secret / Confidential / Sensitive / Internal / Public`. Run OpenMetadata's **auto-classification/PII** first, then check it against [`column-classification-map.csv`](governance/column-classification-map.csv) — note what it missed (the `commonly_missed = Yes` columns are the interesting ones, e.g., the free-text `comment` and the trip locations).
 - **Glossary:** **Govern → Glossary → Import** and upload [`business-glossary.csv`](governance/business-glossary.csv). Link terms (e.g., *Cardholder Data*, *TLC License*) to the relevant columns.
 - **Ownership:** assign each table an **Owner** and domain per [`data-ownership-model.md`](governance/data-ownership-model.md).
 
@@ -90,7 +90,7 @@ Open **http://localhost:8585** — log in with `admin@open-metadata.org` / `admi
 Recreate the [DQ rules](governance/data-quality-rules.md) as **Table/Column Tests** (e.g., `rating` between 1–5; `tlc_license` not-null; the trips reconciliation). Run them; the catalog shows live pass/fail per table. The committed [`remediation_log.csv`](data/) is the synthetic-table checks run locally.
 
 ### Step 7 — Capture it for the portfolio
-Screenshot the running catalog into [`screenshots/`](screenshots/): a classified table (e.g., `drivers` with Restricted tags), the glossary, a failing DQ test, the `trips` profiler showing real anomalies, and an owned domain.
+Screenshot the running catalog into [`screenshots/`](screenshots/): a classified table (e.g., `drivers` with Secret and Confidential tags), the glossary, a failing DQ test, the `trips` profiler showing real anomalies, and an owned domain.
 
 ---
 

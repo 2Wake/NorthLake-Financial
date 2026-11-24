@@ -103,7 +103,7 @@ for i in range(1, 3001):
     surveys.append([900000+i,tid,rid,rating,c,ts(300)])
 write("trip_surveys",["survey_id","trip_id","rider_id","rating","comment","submitted_at"],surveys)
 
-# -------------------------------------------------------------- employees (HR, Restricted)
+# -------------------------------------------------------------- employees (HR, Secret/Confidential)
 emps=[]; used_e=set(); seed["emp_bad_ssn"]=seed["emp_neg_salary"]=seed["emp_dup_email"]=0
 for i in range(1, 151):
     fn,ln=random.choice(FIRST),random.choice(LAST)

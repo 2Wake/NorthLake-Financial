@@ -58,7 +58,7 @@ rec("DQ-08","Validity","trip_surveys","rating","Medium",len(br),len(surveys),br[
 orf=[s for s in surveys if not (1<=int(s["trip_id"])<=TRIP_SAMPLE_SIZE)]
 rec("DQ-09","Integrity","trip_surveys","trip_id","High",len(orf),len(surveys),orf[0]["trip_id"] if orf else "-","Enforce FK to trips; reconcile orphaned surveys.")
 pii=[s for s in surveys if EMAIL_ANY.search(s["comment"]) or PHONE_RE.search(s["comment"])]
-rec("DQ-10","Privacy (DLP)","trip_surveys","comment","High",len(pii),len(surveys),"(PII redacted)","Free-text contains PII — classify Restricted; add DLP scan/redaction; restrict access.")
+rec("DQ-10","Privacy (DLP)","trip_surveys","comment","High",len(pii),len(surveys),"(PII redacted)","Free-text contains PII — classify Confidential; add DLP scan/redaction; restrict access.")
 
 # employees
 def i_(v):

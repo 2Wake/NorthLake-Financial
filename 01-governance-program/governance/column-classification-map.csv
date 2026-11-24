@@ -6,55 +6,55 @@ trips,pickup_datetime,Internal,Operational,No,Trip event time
 trips,dropoff_datetime,Internal,Operational,No,Trip event time
 trips,passenger_count,Internal,Operational,No,Trip attribute
 trips,trip_distance,Internal,Operational,No,Trip attribute
-trips,fare_amount,Confidential,Financial,No,Transaction value
-trips,tip_amount,Confidential,Financial,No,Transaction value
+trips,fare_amount,Sensitive,Financial,No,Transaction value
+trips,tip_amount,Sensitive,Financial,No,Transaction value
 trips,tolls_amount,Internal,Operational,No,Pass-through charge
-trips,total_amount,Confidential,Financial,No,Transaction value
+trips,total_amount,Sensitive,Financial,No,Transaction value
 trips,payment_type,Internal,Operational,No,Payment method code
 trips,pickup_location_id,Confidential,Location,Yes,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
 trips,dropoff_location_id,Confidential,Location,Yes,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
 drivers,driver_id,Internal,Identifier,No,Surrogate key
-drivers,first_name,Confidential,PII,No,Personal identifier
-drivers,last_name,Confidential,PII,No,Personal identifier
-drivers,tlc_license,Restricted,Regulated Identifier,Yes,"Driver's TLC license; regulated identifier often treated as low-sensitivity"
-drivers,ssn,Restricted,Sensitive PII,No,Government identifier
-drivers,phone,Restricted,PII (contact),No,Direct contact identifier
-drivers,home_address,Restricted,PII,No,Locational personal data
-drivers,payout_bank_account,Restricted,Financial/Secret,Yes,Bank account for payouts; both financial and sensitive
-drivers,background_check_status,Restricted,Sensitive,Yes,"Background-check result; adverse-action relevant; often under-classified"
+drivers,first_name,Sensitive,PII,No,Personal identifier
+drivers,last_name,Sensitive,PII,No,Personal identifier
+drivers,tlc_license,Confidential,Regulated Identifier,Yes,Driver's TLC license; regulated identifier often treated as low-sensitivity
+drivers,ssn,Secret,Sensitive PII,No,Government identifier
+drivers,phone,Confidential,PII (contact),No,Direct contact identifier
+drivers,home_address,Confidential,PII,No,Locational personal data
+drivers,payout_bank_account,Secret,Financial/Secret,Yes,Bank account for payouts; both financial and sensitive
+drivers,background_check_status,Confidential,Sensitive,Yes,Background-check result; adverse-action relevant; often under-classified
 drivers,hired_at,Internal,Operational,No,Record metadata
 riders,rider_id,Internal,Identifier,No,Surrogate key
-riders,first_name,Confidential,PII,No,Personal identifier
-riders,last_name,Confidential,PII,No,Personal identifier
-riders,email,Restricted,PII (contact),No,Direct identifier and contact
-riders,phone,Restricted,PII (contact),No,Direct contact identifier
-riders,home_address,Restricted,PII,No,Locational personal data
+riders,first_name,Sensitive,PII,No,Personal identifier
+riders,last_name,Sensitive,PII,No,Personal identifier
+riders,email,Confidential,PII (contact),No,Direct identifier and contact
+riders,phone,Confidential,PII (contact),No,Direct contact identifier
+riders,home_address,Confidential,PII,No,Locational personal data
 riders,created_at,Internal,Operational,No,Record metadata
 rider_cards,card_id,Internal,Identifier,No,Surrogate key
 rider_cards,rider_id,Internal,Identifier (FK),No,Links to riders
-rider_cards,card_number,Restricted,Cardholder Data (PCI),No,Primary Account Number; PCI DSS in scope
-rider_cards,card_expiry,Restricted,Cardholder Data (PCI),Yes,Cardholder data; often forgotten next to the PAN
-rider_cards,cardholder_name,Restricted,Cardholder Data / PII,Yes,PII and cardholder data
+rider_cards,card_number,Secret,Cardholder Data (PCI),No,Primary Account Number; PCI DSS in scope
+rider_cards,card_expiry,Secret,Cardholder Data (PCI),Yes,Cardholder data; often forgotten next to the PAN
+rider_cards,cardholder_name,Secret,Cardholder Data / PII,Yes,PII and cardholder data
 trip_surveys,survey_id,Internal,Identifier,No,Surrogate key
 trip_surveys,trip_id,Internal,Identifier (FK),No,Links to trips
 trip_surveys,rider_id,Internal,Identifier (FK),No,Links to riders
 trip_surveys,rating,Internal,Operational,No,Survey score
-trip_surveys,comment,Restricted,Free-text (PII risk),Yes,"Free-text may contain PII (phone, email); requires DLP; commonly missed"
+trip_surveys,comment,Confidential,Free-text (PII risk),Yes,"Free-text may contain PII (phone, email); requires DLP; commonly missed"
 trip_surveys,submitted_at,Internal,Operational,No,Record metadata
 employees,employee_id,Internal,Identifier,No,Surrogate key
-employees,first_name,Confidential,PII,No,Personal identifier
-employees,last_name,Confidential,PII,No,Personal identifier
-employees,email,Confidential,Workforce PII,No,Business contact
-employees,ssn,Restricted,Sensitive PII,No,Government identifier
+employees,first_name,Sensitive,PII,No,Personal identifier
+employees,last_name,Sensitive,PII,No,Personal identifier
+employees,email,Sensitive,Workforce PII,No,Business contact
+employees,ssn,Secret,Sensitive PII,No,Government identifier
 employees,department,Internal,Operational,No,Org attribute
 employees,title,Internal,Operational,No,Org attribute
-employees,salary,Restricted,Sensitive HR,No,Compensation
-employees,performance_rating,Restricted,Sensitive HR,Yes,"Performance data; HR-sensitive; often under-classified"
+employees,salary,Confidential,Sensitive HR,No,Compensation
+employees,performance_rating,Confidential,Sensitive HR,Yes,Performance data; HR-sensitive; often under-classified
 employees,hired_at,Internal,Operational,No,Record metadata
 financial_ledger,entry_id,Internal,Identifier,No,Surrogate key
 financial_ledger,period,Internal,Operational,No,Accounting period
 financial_ledger,account,Internal,Reference,No,GL account
-financial_ledger,amount,Confidential,Financial,No,Financial figure
+financial_ledger,amount,Sensitive,Financial,No,Financial figure
 financial_ledger,currency,Public,Reference,No,Non-sensitive code
 financial_ledger,recorded_at,Internal,Operational,No,Record metadata
 marketing_campaigns,campaign_id,Internal,Identifier,No,Surrogate key
@@ -62,7 +62,7 @@ marketing_campaigns,name,Internal,Operational,No,Campaign name
 marketing_campaigns,channel,Internal,Operational,No,Channel
 marketing_campaigns,start_date,Internal,Operational,No,Schedule
 marketing_campaigns,end_date,Internal,Operational,No,Schedule
-marketing_campaigns,budget,Confidential,Financial,No,Spend figure
+marketing_campaigns,budget,Sensitive,Financial,No,Spend figure
 marketing_campaigns,target_segment_id,Internal,Identifier (FK),No,Links to rider_segments
 rider_segments,segment_id,Internal,Identifier,No,Surrogate key
 rider_segments,name,Internal,Operational,No,Segment name

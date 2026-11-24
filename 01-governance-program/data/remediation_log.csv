@@ -8,6 +8,6 @@ DQ-06,Consistency,drivers,background_check_status,Medium,37,300,12.33,PENDING,"N
 DQ-07,Validity,rider_cards,card_number,High,45,1800,2.5,(masked),"Validate PAN length/Luhn; this is PCI data — handle via the processor, do not store raw."
 DQ-08,Validity,trip_surveys,rating,Medium,64,3000,2.13,6,Constrain rating to 1-5 at capture.
 DQ-09,Integrity,trip_surveys,trip_id,High,55,3000,1.83,101741,Enforce FK to trips; reconcile orphaned surveys.
-DQ-10,Privacy (DLP),trip_surveys,comment,High,79,3000,2.63,(PII redacted),Free-text contains PII — classify Restricted; add DLP scan/redaction; restrict access.
+DQ-10,Privacy (DLP),trip_surveys,comment,High,79,3000,2.63,(PII redacted),Free-text contains PII — classify Confidential; add DLP scan/redaction; restrict access.
 DQ-11,Validity,employees,salary,Medium,2,150,1.33,-132882,Salary must be positive; correct payroll feed.
 DQ-12,Validity,marketing_campaigns,end_date,Low,3,40,7.5,2026-10-10,End date must be >= start date.
