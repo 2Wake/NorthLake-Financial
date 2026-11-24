@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 # Bump when a code change alters generated output, so raw rows can be traced to the code that made them.
-GENERATOR_VERSION = "0.1.0"
+GENERATOR_VERSION = "0.2.0"
 
 # Master seed. Every random choice derives from (SEED, stream name, date), so the
 # same date always produces the same data no matter when or how often it is run.
@@ -40,6 +40,9 @@ MAX_BYTES_BILLED = 1 * 1024**3  # 1 GiB
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = ROOT / "output"
 TLC_CACHE_DIR = ROOT / ".cache" / "tlc"
+# Named employees (leaders, stewards, staff) and the access policy matrix (shared with dbt)
+ROSTER_PATH = Path(__file__).resolve().parent / "data" / "org_roster.csv"
+ACCESS_POLICY_PATH = ROOT / "dbt" / "seeds" / "governance" / "access_policy.csv"
 
 # Daily lifecycle rates (average events per day, Poisson)
 RATES = {
@@ -54,6 +57,9 @@ RATES = {
     "extra_cards": 0.8,
     "card_removals": 0.4,
     "new_campaigns": 0.08,
+    "corporate_transfers": 0.03,
+    "security_investigations": 0.05,
+    "analyst_raw_requests": 0.01,
 }
 
 # Share of card-paid trips booked through the ECT app (the rest are street hails with no rider).
@@ -80,4 +86,11 @@ DEFECT_RATES = {
     "employee_email_duplicate": 0.02,
     "ledger_account_missing": 0.02,
     "campaign_end_before_start": 0.05,
+    # access control (per grant, termination, transfer or expiry)
+    "access_self_approved": 0.02,
+    "access_missing_approval": 0.02,
+    "access_wrong_approver": 0.02,
+    "access_not_revoked_on_termination": 0.2,
+    "access_retained_after_transfer": 0.3,
+    "access_expired_still_active": 0.2,
 }

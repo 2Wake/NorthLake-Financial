@@ -12,6 +12,7 @@ DOMAINS = {
     "finance": ("cfo", "finance-data-steward"),
     "people": ("vp-people", "hr-data-steward"),
     "marketing": ("vp-marketing", "marketing-data-steward"),
+    "risk": ("ciso", "risk-data-steward"),
     "governance": ("data-governance-manager", "data-governance-manager"),
     "reference": ("data-governance-manager", "ops-data-steward"),
 }
@@ -37,7 +38,7 @@ TABLES = {
             ("employee_id", "STRING"), ("first_name", "STRING"), ("last_name", "STRING"),
             ("email", "STRING"), ("ssn", "STRING"), ("department", "STRING"), ("title", "STRING"),
             ("pay_type", "STRING"), ("salary", "INT64"), ("performance_rating", "STRING"),
-            ("hired_at", "DATE"), ("employment_status", "STRING"), ("terminated_at", "DATE"),
+            ("manager_id", "STRING"), ("role_code", "STRING"), ("hired_at", "DATE"), ("employment_status", "STRING"), ("terminated_at", "DATE"),
             ("record_updated_at", "TIMESTAMP"),
         ],
     },
@@ -115,6 +116,19 @@ TABLES = {
         "columns": [
             ("segment_id", "STRING"), ("name", "STRING"), ("definition", "STRING"),
             ("size_estimate", "INT64"), ("record_updated_at", "TIMESTAMP"),
+        ],
+    },
+    "iam_access_grants": {
+        "description": "Access management system extract: one row per warehouse access grant each time it is "
+                       "requested, approved, expired or revoked. Grants follow the access policy matrix "
+                       "(dbt/seeds/governance/access_policy.csv).",
+        "labels": _labels("risk", "sensitive", "iam", pii=False, retention="3y"),
+        "columns": [
+            ("grant_id", "STRING"), ("employee_id", "STRING"), ("access_role", "STRING"), ("dataset", "STRING"),
+            ("domain_scope", "STRING"), ("privilege", "STRING"), ("granted_for_department", "STRING"),
+            ("request_ticket", "STRING"), ("requested_by", "STRING"), ("approved_by", "STRING"),
+            ("granted_at", "TIMESTAMP"), ("expires_at", "DATE"), ("revoked_at", "TIMESTAMP"),
+            ("revoke_reason", "STRING"), ("grant_status", "STRING"), ("record_updated_at", "TIMESTAMP"),
         ],
     },
     "gov_planted_defects": {

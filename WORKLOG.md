@@ -15,11 +15,40 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
+- [ ] **Access control:** rebuild `raw` for generator v0.2, then real role service accounts (user, console) and a verification test; access logs come with Phase 2.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Org build-out and access control (simulated)
+
+### Done (branch `org-access`, not yet merged or loaded)
+- **Decision logged (user, 2026-11-24):** for classification changes, *"stewards propose and owners approve. Draft the changes as a steward would and I approve them."* Claude drafts as the steward; the user approves as owner.
+- **Named roster** `data-platform/src/ect_platform/data/org_roster.csv`: 68 named people across 12 departments plus the CEO (the leaders and stewards from `governance-org-structure.md` plus 3–5 staff per department), each with a title, manager, role slug and access role. They are the first employees generated, so the CEO is `EMP10001` and Jordan Ellis is `EMP10003`.
+- **HR data:** departments now match the org doc (12 departments). New columns `manager_id` and `role_code`. New lifecycle event: **transfers** between departments (movers).
+- **Access policy matrix** `dbt/seeds/governance/access_policy.csv` (role × dataset → privilege, max classification, time limit, approver) and the policy doc `01-governance-program/governance/access-control-policy.md`. Analysts get `marts` only; security gets `raw` for 14 days per investigation; privacy gets rider `raw` for data subject requests.
+- **New raw table `iam_access_grants`** (domain `risk`): grants on joining, revoked on leaving or transfer, expiring time-bound grants. 
+- **Planted access scenarios ACC-01 to ACC-07** (analyst with raw, leaver not revoked, mover creep, self-approval, expired still active, no approval, wrong approver). Simulated through 2026-11-23: 183 grants, 27 planted defects across all 7 rules.
+- **dbt:** `stg_iam_access_grants` (+ `_history`), ACC rules in `fct_dq_findings` and `dq_rules.csv`, `marts.fct_access_grants` (access review list) and `marts.dim_access_policy`; `dim_employees` gains `manager_id` and `role_code`.
+- Generator version **0.2.0**. Tests: 12 pass (3 new: stable roster IDs and managers, unplanted grants follow the policy, business users and drivers have no access).
+
+### Decisions
+- **Roster inside the generator, not a separate seed:** named people must exist in HR data so grants, approvers and managers join to real employee IDs.
+- **Named people never leave or transfer**, and employees carrying a planted access defect are protected from later random events, so a defect can't be cleaned up by accident.
+- **`raw` needs a one-time rebuild**: departments and IDs change for all history, so v0.1 and v0.2 rows can't be mixed. All raw data is regenerable from the deterministic generator. Waiting for the user's go-ahead.
+
+### Risks
+- The scheduled run (05:30 New York) on `main` must not run between the merge and the rebuild, or it will fail on the new columns. Do both together.
+- New columns are not yet in the classification register, so CLS-01 will flag them until the steward proposes classifications.
+
+### Next steps
+- User approval → merge, rebuild `raw`, full `dbt build`, check the ACC scorecard.
+- Steward-drafted register rows for the new columns (for owner approval).
+- Real role service accounts (3–4), set up by the user in the console, plus a verification test.
 
 ---
 

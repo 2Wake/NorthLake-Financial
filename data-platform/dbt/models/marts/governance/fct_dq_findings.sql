@@ -11,6 +11,33 @@ trips     as (select * from {{ ref('stg_app_trips') }}),
 campaigns as (select * from {{ ref('stg_app_marketing_campaigns') }}),
 ledger    as (select * from {{ ref('stg_payments_financial_ledger') }}),
 zones     as (select * from {{ ref('stg_tlc_taxi_zones') }}),
+grants    as (select * from {{ ref('stg_iam_access_grants') }}),
+policy    as (select * from {{ ref('access_policy') }}),
+as_of     as (select max(_batch_date) as as_of_date from {{ ref('stg_app_trips') }}),
+
+-- ACC-07: who should have approved each grant. Domain-owner approvals resolve to the owner of the
+-- grant's domain; nobody approves their own access, so that case escalates to the CDO (or the CEO
+-- for the CDO's own access).
+expected_approver as (
+    select g.grant_id, g.employee_id, g.approved_by,
+           if(h.employee_id = g.employee_id, if(b.base_role = 'cdo', 'ceo', 'cdo'), b.base_role) as expected_role
+    from grants g
+    join (
+        select g2.grant_id,
+               case p.approver_role
+                   when 'domain-owner' then case g2.domain_scope
+                       when 'rider' then 'vp-rider-experience' when 'driver' then 'vp-driver-operations'
+                       when 'trips' then 'vp-operations' when 'finance' then 'cfo' when 'people' then 'vp-people'
+                       when 'marketing' then 'vp-marketing' when 'risk' then 'ciso'
+                       when 'governance' then 'data-governance-manager' end
+                   else p.approver_role
+               end as base_role
+        from grants g2
+        join policy p using (access_role, dataset)
+    ) b using (grant_id)
+    left join employees h on h.role_code = b.base_role
+    where g.approved_by is not null and g.approved_by != g.employee_id
+),
 
 findings as (
     select 'DQ-01' as rule_id, rider_id as record_id from riders where email is null
@@ -47,6 +74,25 @@ findings as (
     select 'DQ-15', entry_id from ledger where account is null
     union all
     select 'DQ-16', driver_id from drivers where not regexp_contains(payout_bank_account, r'^\d{9}$')
+    union all
+    select 'ACC-01', g.grant_id from grants g left join policy p using (access_role, dataset)
+        where g.grant_status = 'active' and p.access_role is null
+    union all
+    select 'ACC-02', g.grant_id from grants g join employees e using (employee_id)
+        where g.grant_status = 'active' and e.employment_status = 'terminated'
+    union all
+    select 'ACC-03', g.grant_id from grants g join employees e using (employee_id)
+        where g.grant_status = 'active' and g.granted_for_department != e.department
+    union all
+    select 'ACC-04', grant_id from grants where approved_by = employee_id
+    union all
+    select 'ACC-05', g.grant_id from grants g cross join as_of
+        where g.grant_status = 'active' and g.expires_at < as_of.as_of_date
+    union all
+    select 'ACC-06', grant_id from grants where approved_by is null or request_ticket is null
+    union all
+    select 'ACC-07', x.grant_id from expected_approver x left join employees a on a.employee_id = x.approved_by
+        where a.role_code is distinct from x.expected_role
     union all
     select 'T1', trip_id from trips where fare_amount <= 0
     union all

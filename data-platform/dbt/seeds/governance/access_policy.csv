@@ -1,0 +1,20 @@
+access_role,dataset,domain_scope,privilege,max_classification,time_bound_days,approver_role,purpose
+platform_admin,raw,all,admin,Secret,,ciso,Custodian: runs and repairs the pipeline
+platform_admin,staging,all,admin,Secret,,ciso,Custodian: runs and repairs the pipeline
+platform_admin,marts,all,admin,Sensitive,,ciso,Custodian: runs and repairs the pipeline
+analytics_engineer,raw,all,read,Secret,,ciso,Builds dbt models from raw sources
+analytics_engineer,staging,all,write,Secret,,data-analytics,Builds dbt models
+analytics_engineer,marts,all,write,Sensitive,,data-analytics,Builds dbt models
+data_analyst,marts,all,read,Sensitive,,data-analytics,Company-wide analysis on marts only
+domain_analyst,marts,own,read,Sensitive,,domain-owner,Analysis of their own department's data
+data_steward,staging,own,read,Secret,,domain-owner,Investigates data-quality findings in their domain
+data_steward,marts,all,read,Sensitive,,data-analytics,Checks what consumers see
+security_analyst,staging,all,read,Secret,,ciso,Security monitoring
+security_analyst,marts,all,read,Sensitive,,ciso,Security monitoring
+security_analyst,raw,all,read,Secret,14,ciso,Time-bound access for a specific investigation (max 14 days)
+privacy_analyst,raw,rider,read,Secret,,privacy-officer,Locate rider data for data subject requests
+privacy_analyst,staging,rider,read,Secret,,privacy-officer,Locate rider data for data subject requests
+privacy_analyst,marts,all,read,Sensitive,,privacy-officer,Privacy monitoring
+governance_admin,staging,all,read,Secret,,cdo,Governance metadata and data-quality investigation
+governance_admin,marts,all,read,Sensitive,,cdo,Governance reporting
+executive,marts,all,read,Sensitive,,cdo,Dashboards and reports
