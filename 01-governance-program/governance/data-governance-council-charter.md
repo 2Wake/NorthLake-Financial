@@ -142,7 +142,7 @@ Reported monthly by the Data Governance Manager, mostly measured automatically f
 
 ## 11. Initial issue backlog
 
-These six disputes are planned for the council's first sessions. Each is backed by a defect **planted in the data**, so detection, decision and remediation can be shown end to end.
+These disputes are planned for the council's first sessions. GV-001 to GV-006 were the original six; GV-007 was added on November 24, 2026, when drafting POL-03 and POL-04 showed that card data had two stewards. Each is backed by a defect **planted in the data**, so detection, decision and remediation can be shown end to end.
 
 | ID | Issue | Departments | Planted evidence |
 |---|---|---|---|
@@ -152,6 +152,7 @@ These six disputes are planned for the council's first sessions. Each is backed 
 | GV-004 | Terminated employees still active as drivers | People vs. Driver Ops | HR shows terminated; fleet shows active driver and vehicle |
 | GV-005 | Two definitions of "revenue" | Finance vs. Operations | Conflicting calculations in ledger and fare tables |
 | GV-006 | Analyst request for row-level rider data | Analytics vs. Security | Access request on file; the masked alternative exists |
+| GV-007 | Who stewards cardholder data: Rider or Finance | Rider Experience vs. Finance | Classification register scenario S11: the `raw.payments_rider_cards` rows list the Rider Data Steward, while the `staging` and `marts` card rows list the Finance Data Steward (owner is the CFO throughout). Raised while drafting POL-03 and POL-04 on Nov 24, 2026 |
 
 ## 12. Review of this charter
 
