@@ -17,7 +17,8 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 2. **Cloud and account changes are made by the owner in the web UI.** This covers Google Cloud, GitHub settings and Collate. Give step-by-step instructions instead of running CLI or API changes. **Never change a setting without explicit approval.** Read-only checks are fine; say what each one does.
 3. **Git:** commit on a feature branch and push the branch. **Always ask before merging anything to `main`.** Offer three options: the owner merges through a PR in GitHub, Claude opens a PR, or Claude merges directly.
 4. **Log every meaningful step in `WORKLOG.md`** (newest first): done, decisions with rationale, risks, next steps. Keep the backlog at the top current.
-5. **Integrity:** synthetic data only, apart from the public NYC TLC trips. All people are fictional. Never commit keys, credentials, billing account IDs or personal emails.
+5. **Jira and Confluence (Atlassian MCP):** Claude may **create Confluence pages directly**, and posts a short summary of each page in the chat. Claude **drafts Jira tickets** for the owner to approve before creating them. Every ticket has these sections: **Description**, **Why it matters**, **Potential blockers**, **Intended outcome**.
+6. **Integrity:** synthetic data only, apart from the public NYC TLC trips. All people are fictional. Never commit keys, credentials, billing account IDs or personal emails.
 
 ## Environment
 
