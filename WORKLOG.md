@@ -37,6 +37,8 @@ Running log of all work, decisions and open items. It's the source for progress 
 ### Risks
 - Two places for documents can drift; the policy register in the repo records each Confluence page's link and version to keep them tied.
 
+- **Confirmed by the user:** Claude creates Confluence pages directly (with a summary in chat); Jira tickets are drafted for approval and always have Description / Why it matters / Potential blockers / Intended outcome. **Full policy set** (not core 8), written once the MCP is connected. Recorded in `CLAUDE.md` working agreement #5.
+
 ### Next steps
 - User: create the site, add the MCP (`claude mcp add --transport http --scope user atlassian https://mcp.atlassian.com/v2/mcp`, then `/mcp`).
 - Confirm whether Claude may create pages and tickets directly or drafts them for approval.
