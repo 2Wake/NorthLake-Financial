@@ -26,6 +26,30 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — STD-01 and template approved; GOV-3 closed; closing-comment rule
+
+### Done
+- **User approved STD-01 Policy Management Standard and the Policy Template.** Recorded per STD-01 section 8 (three places):
+  1. STD-01 page: status banner APPROVED v1.0, version 1.0, approval/effective date 2026-11-24, next review 2027-11-24, v1.0 change-history row (approver Victor Hale, CISO).
+  2. "Approved version 1.0" footer comment on the STD-01 page.
+  3. Policy Register page: STD-01 row Approved, v1.0, dates filled; change-log entry. `policy_register.csv` updated to match.
+  - Policy Template page: green "Template status: APPROVED v1.0" banner added. The DRAFT placeholders stay, because they're for the new policy copied from it.
+- **Repo copies of approved documents:** new folder `01-governance-program/policies/` with `README.md` (index), `STD-01-policy-management-standard.md`, `policy-template.md`. (The Confluence markdown export dropped dates; restored by hand.)
+- **Jira:** GOV-24 and GOV-3 → Done. Closing comments added to GOV-22, GOV-23, GOV-24 and GOV-3.
+
+### Decisions
+- **New working rule (user):** every ticket gets a closing comment before Done: *What happened* + *Open items*. Added to `CLAUDE.md` agreement #5.
+- The Policy Template is not a numbered register document; its approval is recorded on its page and in the register change log.
+
+### Risks / audit material (not fixed)
+- STD-01 went from v0.1 straight to v1.0: no recorded comments from the named reviewers (Elena Popescu, Robert Feld) and no v0.9, which STD-01 section 7 requires. Approval comment was posted from the site owner's account on the CISO's behalf.
+- The staff announcement of STD-01 within 10 business days (section 11) is not yet sent.
+
+### Next steps
+- GOV-2: PCI DSS scope & cardholder data flow (DOC-01). Then tomorrow's 8 policies.
+
+---
+
 ## 2026-11-24 — GOV-22 approved; GOV-23 Policy Register built
 
 ### Done
