@@ -30,7 +30,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ### Done
 - **Council IDs renamed** at the owner's request: issues `GOV-###` → `GV-###`, decisions `GOV-D-###` → `GV-D-###` (charter, classification register, CLAUDE.md, this log). The charter now says why: `GV` is the council register, `GOV` is the Jira project. No Confluence page or Jira ticket used the old IDs (searched).
-- **Pull-request workflow** (owner decision): every change reaches `main` through a PR. Claude opens it with a full description at creation (new `.github/pull_request_template.md`, aligned with POL-07: change type, DOC-01 scope check, testing, rollback) and posts a review comment. CLAUDE.md agreement #3 and memory updated.
+- **Pull-request workflow** (owner decision): every change reaches `main` through a PR. **Refined the same day (owner chose option 2): Claude preps the PR and gives a pre-filled link; the owner clicks Create.** PR #1 was opened by Claude before this refinement. Each PR gets a full description at creation (new `.github/pull_request_template.md`, aligned with POL-07: change type, DOC-01 scope check, testing, rollback) and posts a review comment. CLAUDE.md agreement #3 and memory updated.
 
 ### Decisions
 - **Claude can review but not approve in GitHub.** Claude acts through the owner's account (2Wake), and GitHub blocks authors from approving their own PRs. So the owner is the approver (by merging or explicitly telling Claude to merge). An AI review is evidence a review happened; it isn't segregation of duties between two people. That's the honest compensating control for a one-person repo.
