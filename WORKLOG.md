@@ -6,7 +6,9 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ## 📋 Backlog
 
-- [ ] **Phase 0: generator framework.** Code built and tested (`data-platform/`). **Remaining:** the user approves and runs the one-time TLC setup (`sql/01`, `sql/02`), then the backfill load from 2026-01-01.
+- [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
+- [ ] **Daily runs:** until GitHub Actions is set up, new days are generated and loaded by hand (`ect-generate` then `ect-load`).
+- [ ] **Reference-data gap:** trip zone IDs 264/265 ("Unknown" / "Outside NYC") and 57 have no row in `tlc_taxi_zones`. Add a small seed for 264/265 in dbt and log 57 as a reference-data issue.
 - [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables**, applied in code: the loader for `raw`, dbt `labels` config for staging and marts. Include planted label gaps, tracked in the gap register.
@@ -16,6 +18,43 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Backfill loaded into BigQuery `raw`
+
+### Done
+- Merged `tlc-december-fix` to `main` from the CLI at the user's request (`5088859`).
+- Added **bulk backfill** to the loader (`--bulk`): one load job per table for a whole date range, instead of one job per table per day (~2,300 jobs). It refuses to run if any of those days is already loaded, and it checks row counts.
+- **Loaded 2026-01-01 → 2026-11-23** in about 1.5 minutes (loads are free). All 10 tables were created with their descriptions and 10 labels each, partitioned by `_batch_date`:
+
+  | Table | Rows |
+  |---|---|
+  | `app_trips` | 357,049 (91 MB) |
+  | `app_trip_surveys` | 10,908 |
+  | `app_riders` | 4,645 |
+  | `payments_rider_cards` | 3,894 |
+  | `gov_planted_defects` | 1,237 |
+  | `hris_employees` | 954 |
+  | `fleet_drivers` | 783 |
+  | `payments_financial_ledger` | 204 |
+  | `app_rider_segments` | 132 |
+  | `app_marketing_campaigns` | 62 |
+
+- **Verified:**
+  - Every row count matches the generator's manifests.
+  - All 12 `raw` tables carry 10 labels.
+  - **Re-loading 2026-11-23 left it at 1,090 trips**, so re-runs replace rather than duplicate.
+  - Trip IDs are unique.
+
+### Real-data findings (not planted)
+- **5,000 trips have pickup zones that aren't in the zone reference table:** 264 "Unknown" (4,199), 265 "Outside NYC" (792), and zone 57 (2). That's a genuine reference-data gap, good material for a referential-integrity check and a reference-data issue.
+
+### Risks / watch items
+- Storage usage per table (`INFORMATION_SCHEMA.TABLE_STORAGE`) needs an extra permission the user's account doesn't have. Table details in the console show the sizes anyway.
+
+### Next steps
+- Suggested order: (1) dbt project (staging models and snapshots over `raw`), (2) GitHub Actions daily run, (3) column descriptions and the gap register, (4) Phase 1 tables.
 
 ---
 

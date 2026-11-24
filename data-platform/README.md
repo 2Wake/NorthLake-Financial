@@ -54,12 +54,13 @@ Run from this folder (`data-platform/`).
 | Generate without trips (offline) | add `--no-trips` |
 | Preview a load (changes nothing) | `uv run ect-load --date 2026-11-23 --dry-run` |
 | Load into BigQuery | `uv run ect-load --date 2026-11-23` |
+| First-time backfill of a range (one job per table) | `uv run ect-load --start 2026-01-01 --end 2026-11-23 --bulk` |
 
 ## Cost
 
 - **One-time:** `sql/01_tlc_yellow_trips_sample.sql` scans ~6.8 GB, and `sql/02_tlc_taxi_zones.sql` ~2 MB.
 - **Daily:** loads are free. The trip fetch reads one small partition (billed at the 10 MB minimum) and is capped at 1 GB by `maximum_bytes_billed`.
-- **Storage:** about 1,000 trips a day plus a few dozen changed records, well under 1 GB a year.
+- **Storage:** after the 327-day backfill, all of `raw` is about 170 MB (trips 91 MB plus the 76 MB TLC sample). Roughly 2% of the 10 GB free tier after a year.
 
 ## Not yet done
 
