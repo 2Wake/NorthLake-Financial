@@ -8,20 +8,54 @@ ever deleted: terminations, closures and removals arrive as changed rows.
 Each part of the business (HR, riders, marketing, ...) draws from its own random stream
 keyed by date, so adding a feature to one part doesn't shift the data of the others.
 """
+import csv
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from . import fakes
-from .config import (APP_BOOKED_SHARE, DEFECT_RATES as DR, EPOCH, RATES, SURVEY_SHARE,
-                     tlc_date_for)
+from .config import (ACCESS_POLICY_PATH, APP_BOOKED_SHARE, DEFECT_RATES as DR, EPOCH, RATES,
+                     ROSTER_PATH, SURVEY_SHARE, tlc_date_for)
 from .fakes import poisson, rng
 
 NY = ZoneInfo("America/New_York")
 
-CORP_DEPARTMENTS = ["Engineering", "Finance", "Customer Support", "Marketing", "People",
-                    "Security", "Operations", "Data & Analytics"]
+# Departments (governance-org-structure.md) and how many generic employees each gets, relatively
+DEPARTMENT_WEIGHTS = {
+    "Customer Support": 4, "Engineering": 3, "Operations": 2, "Finance": 2, "Marketing": 2, "People": 2,
+    "Security": 2, "Data & Analytics": 2, "Rider Experience": 2, "Driver Operations": 2,
+    "Legal & Privacy": 1, "Data Governance": 1,
+}
+# The data domain each department's "own domain" access refers to
+DEPARTMENT_DOMAIN = {
+    "Rider Experience": "rider", "Customer Support": "rider", "Driver Operations": "driver",
+    "Operations": "trips", "Engineering": "trips", "Finance": "finance", "People": "people",
+    "Marketing": "marketing", "Security": "risk", "Legal & Privacy": "risk",
+    "Data Governance": "governance", "Data & Analytics": "trips", "Executive": "governance",
+}
+DOMAIN_OWNER_ROLE = {
+    "rider": "vp-rider-experience", "driver": "vp-driver-operations", "trips": "vp-operations",
+    "finance": "cfo", "people": "vp-people", "marketing": "vp-marketing", "risk": "ciso",
+    "governance": "data-governance-manager",
+}
+# Warehouse access role a generic (unnamed) employee gets on joining, and how often
+DEFAULT_ACCESS = {
+    "Data & Analytics": ("data_analyst", 1.0), "Data Governance": ("governance_admin", 1.0),
+    "Finance": ("domain_analyst", 0.5), "Marketing": ("domain_analyst", 0.5),
+    "Operations": ("domain_analyst", 0.5), "People": ("domain_analyst", 0.3),
+    "Rider Experience": ("domain_analyst", 0.3), "Driver Operations": ("domain_analyst", 0.3),
+    "Security": ("security_analyst", 0.3),
+}
+
+
+def _read_csv(path):
+    with open(path, newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+ROSTER = _read_csv(ROSTER_PATH)
+POLICY = {(p["access_role"], p["dataset"]): p for p in _read_csv(ACCESS_POLICY_PATH)}
 TITLES = ["Analyst", "Specialist", "Engineer", "Coordinator", "Manager", "Lead", "Director"]
 RATINGS = ["exceeds", "meets", "meets", "meets", "below", "not_rated"]
 CHANNELS = ["email", "paid_social", "search", "referral", "out_of_home", "push"]
@@ -50,6 +84,13 @@ class Simulation:
         self.cards: dict[str, dict] = {}
         self.campaigns: dict[str, dict] = {}
         self.segments: dict[str, dict] = {}
+        self.grants: dict[str, dict] = {}
+        self.roster: dict[str, str] = {}          # roster key -> employee_id
+        self.role_holders: dict[str, str] = {}    # role_code -> employee_id
+        self.department_heads: dict[str, str] = {}
+        # Employees carrying a planted "access left in place" defect. They are kept out of later random
+        # terminations and transfers, so a routine event can't silently clean the defect up.
+        self.protected: set[str] = set()
         self.seq = defaultdict(int)
         self.agenda = defaultdict(list)       # date -> [(action, id)] scheduled follow-ups
         self.rider_emails: list[str] = []
@@ -96,6 +137,7 @@ class Simulation:
         else:
             self._run_agenda()
             self._people(rng("people", day))
+            self._access_events(rng("access", day))
             self._riders(rng("riders", day))
             self._marketing(rng("marketing", day))
             self._finance(rng("finance", day))
@@ -110,9 +152,9 @@ class Simulation:
         return batch
 
     # ------------------------------------------------------------------ people (HR + fleet)
-    def _new_employee(self, r, hired: date, driver: bool) -> dict:
+    def _new_employee(self, r, hired: date, driver: bool, named: dict | None = None) -> dict:
         eid = self._next_id("EMP", 10000)
-        first, last = fakes.person(r)
+        first, last = (named["first_name"], named["last_name"]) if named else fakes.person(r)
         email = f"{first}.{last}@empirecitytaxi.example".lower().replace(" ", "").replace("'", "")
         if email in self.employee_emails:
             email = email.replace("@", f"{self.seq['EMP']}@")
@@ -129,7 +171,12 @@ class Simulation:
         if driver:
             department, title, pay_type, salary = "Driver Operations", "Driver", "commission", None
         else:
-            department, title, pay_type = r.choice(CORP_DEPARTMENTS), r.choice(TITLES), "salaried"
+            if named:
+                department, title = named["department"], named["title"]
+            else:
+                department = r.choices(list(DEPARTMENT_WEIGHTS), weights=list(DEPARTMENT_WEIGHTS.values()))[0]
+                title = r.choice(TITLES)
+            pay_type = "salaried"
             salary = r.randint(55, 210) * 1000 + r.randint(0, 999)
             if self._plant(r, "employee_salary_negative"):
                 salary = -salary
@@ -138,6 +185,9 @@ class Simulation:
             "employee_id": eid, "first_name": first, "last_name": last, "email": email, "ssn": ssn,
             "department": department, "title": title, "pay_type": pay_type, "salary": salary,
             "performance_rating": "not_rated" if hired >= self.day - timedelta(days=90) else r.choice(RATINGS),
+            "manager_id": (self.roster.get(named["manager_key"]) if named
+                           else self.department_heads.get(department)),
+            "role_code": (named["role_code"] or None) if named else None,
             "hired_at": hired.isoformat(), "employment_status": "active", "terminated_at": None,
             "record_updated_at": self._ts(r), "_clean_ssn": clean_ssn,
         }
@@ -151,6 +201,7 @@ class Simulation:
         emp = self.employees[eid]
         emp.update(employment_status="terminated", terminated_at=self.day.isoformat(), record_updated_at=ts)
         self._touch("hris_employees", eid, emp)
+        self._revoke_all(r, eid, "termination", "access_not_revoked_on_termination")
 
     def _background_status(self, r, did: str, status: str) -> str:
         if self._plant(r, "driver_background_status_case"):
@@ -179,6 +230,7 @@ class Simulation:
         else:
             background, status = "pending", "onboarding"
             self.agenda[self.day + timedelta(days=r.randint(3, 12))].append(("background_result", did))
+        emp["manager_id"] = self.department_heads.get("Driver Operations")
         self.drivers[did] = {
             "driver_id": did, "employee_id": emp["employee_id"], "first_name": emp["first_name"],
             "last_name": emp["last_name"], "tlc_license": tlc, "ssn": ssn, "phone": fakes.phone(r),
@@ -197,7 +249,16 @@ class Simulation:
 
     def _run_agenda(self) -> None:
         r = rng("agenda", self.day)
-        for action, did in self.agenda.pop(self.day, []):
+        for action, key in self.agenda.pop(self.day, []):
+            if action == "expire_grant":
+                self._expire_grant(r, key)
+                continue
+            if action == "default_access":
+                emp = self.employees[key]
+                if emp["employment_status"] == "active" and emp.get("_default_role"):
+                    self._grant_role(r, key, emp["_default_role"], self._ts(r))
+                continue
+            did = key
             drv = self.drivers[did]
             if action == "background_result" and drv["driver_status"] == "onboarding":
                 if r.random() < 0.9:
@@ -212,12 +273,16 @@ class Simulation:
 
     def _people(self, r) -> None:
         for _ in range(poisson(r, RATES["corporate_hires"])):
-            self._new_employee(r, self.day, driver=False)
+            emp = self._new_employee(r, self.day, driver=False)
+            self._assign_default_access(r, emp, delay_days=r.randint(1, 5))
         for _ in range(poisson(r, RATES["corporate_terminations"])):
-            corporate = [k for k, v in self.employees.items()
-                         if v["employment_status"] == "active" and v["pay_type"] != "commission"]
-            if corporate:
-                self._terminate_employee(r, r.choice(corporate), self._ts(r))
+            generic = self._generic_corporate()
+            if generic:
+                self._terminate_employee(r, r.choice(generic), self._ts(r))
+        for _ in range(poisson(r, RATES["corporate_transfers"])):
+            generic = self._generic_corporate()
+            if generic:
+                self._transfer(r, r.choice(generic))
         for _ in range(poisson(r, RATES["driver_hires"])):
             self._hire_driver(r, self.day, onboarded=False)
         for _ in range(poisson(r, RATES["driver_terminations"])):
@@ -239,6 +304,128 @@ class Simulation:
                     emp["salary"] = round(emp["salary"] * (1 + r.choice([0, 0.02, 0.03, 0.04, 0.06])))
                     emp["record_updated_at"] = self._ts(r)
                     self._touch("hris_employees", eid, emp)
+
+    # ------------------------------------------------------------------ warehouse access (IAM)
+    def _generic_corporate(self) -> list[str]:
+        named = set(self.roster.values())
+        return [k for k, v in self.employees.items() if v["employment_status"] == "active"
+                and v["pay_type"] == "salaried" and k not in named and k not in self.protected]
+
+    def _assign_default_access(self, r, emp: dict, delay_days: int = 0) -> None:
+        role, share = DEFAULT_ACCESS.get(emp["department"], (None, 0))
+        emp["_default_role"] = role if role and r.random() < share else None
+        if emp["_default_role"] and delay_days:
+            self.agenda[self.day + timedelta(days=delay_days)].append(("default_access", emp["employee_id"]))
+
+    def _expected_approver(self, role: str, dataset: str, scope: str, eid: str) -> str:
+        policy = POLICY.get((role, dataset))
+        approver_role = policy["approver_role"] if policy else "cdo"
+        if approver_role == "domain-owner":
+            approver_role = DOMAIN_OWNER_ROLE[scope]
+        holder = self.role_holders[approver_role]
+        if holder == eid:   # nobody approves their own access: escalate
+            holder = self.role_holders["ceo" if approver_role == "cdo" else "cdo"]
+        return holder
+
+    def _grant_role(self, r, eid: str, role: str, ts: str) -> None:
+        department = self.employees[eid]["department"]
+        for (policy_role, dataset), policy in POLICY.items():
+            if policy_role != role or policy["time_bound_days"]:
+                continue
+            scope = DEPARTMENT_DOMAIN[department] if policy["domain_scope"] == "own" else policy["domain_scope"]
+            self._grant(r, eid, role, dataset, scope, ts)
+
+    def _grant(self, r, eid: str, role: str, dataset: str, scope: str, ts: str, *, days: int | None = None,
+               approver: str | None = None, plants: bool = True) -> str:
+        gid = self._next_id("GRT", 100000)
+        emp = self.employees[eid]
+        expected = self._expected_approver(role, dataset, scope, eid)
+        approved_by, ticket = approver or expected, f"REQ{gid[3:]}"
+        code = None
+        if plants:
+            roll = r.random()
+            if roll < DR["access_self_approved"]:
+                approved_by, code = eid, "access_self_approved"
+            elif roll < DR["access_self_approved"] + DR["access_missing_approval"]:
+                approved_by, ticket, code = None, None, "access_missing_approval"
+            elif roll < DR["access_self_approved"] + DR["access_missing_approval"] + DR["access_wrong_approver"]:
+                others = sorted(h for h in set(self.role_holders.values()) if h not in (expected, eid))
+                approved_by, code = r.choice(others), "access_wrong_approver"
+        policy = POLICY.get((role, dataset))
+        granted_day = date.fromisoformat(ts[:10])
+        self.grants[gid] = {
+            "grant_id": gid, "employee_id": eid, "access_role": role, "dataset": dataset, "domain_scope": scope,
+            "privilege": policy["privilege"] if policy else "read", "granted_for_department": emp["department"],
+            "request_ticket": ticket, "requested_by": emp.get("manager_id") or eid, "approved_by": approved_by,
+            "granted_at": ts, "expires_at": (granted_day + timedelta(days=days)).isoformat() if days else None,
+            "revoked_at": None, "revoke_reason": None, "grant_status": "active", "record_updated_at": ts,
+        }
+        self._touch("iam_access_grants", gid, self.grants[gid])
+        if code:
+            self._log_defect("iam_access_grants", gid, "approved_by", code)
+        if days:
+            self.agenda[granted_day + timedelta(days=days)].append(("expire_grant", gid))
+        return gid
+
+    def _end_grant(self, r, gid: str, status: str, reason: str) -> None:
+        ts = self._ts(r)
+        self.grants[gid].update(grant_status=status, revoked_at=ts, revoke_reason=reason, record_updated_at=ts)
+        self._touch("iam_access_grants", gid, self.grants[gid])
+
+    def _active_grants(self, eid: str) -> list[str]:
+        return [g for g, v in self.grants.items() if v["employee_id"] == eid and v["grant_status"] == "active"]
+
+    def _revoke_all(self, r, eid: str, reason: str, defect: str) -> None:
+        grants = self._active_grants(eid)
+        if not grants:
+            return
+        if self._plant(r, defect):   # access left in place: planted defect on every grant
+            self.protected.add(eid)
+            for gid in grants:
+                self._log_defect("iam_access_grants", gid, "grant_status", defect)
+            return
+        for gid in grants:
+            self._end_grant(r, gid, "revoked", reason)
+
+    def _expire_grant(self, r, gid: str) -> None:
+        if self.grants[gid]["grant_status"] != "active":
+            return
+        if self._plant(r, "access_expired_still_active"):
+            self.protected.add(self.grants[gid]["employee_id"])
+            self._log_defect("iam_access_grants", gid, "expires_at", "access_expired_still_active")
+        else:
+            self._end_grant(r, gid, "expired", "time limit reached")
+
+    def _transfer(self, r, eid: str) -> None:
+        emp = self.employees[eid]
+        new = r.choices([d for d in DEPARTMENT_WEIGHTS if d != emp["department"]],
+                        weights=[w for d, w in DEPARTMENT_WEIGHTS.items() if d != emp["department"]])[0]
+        emp.update(department=new, title=r.choice(TITLES), manager_id=self.department_heads.get(new),
+                   record_updated_at=self._ts(r))
+        self._touch("hris_employees", eid, emp)
+        self._revoke_all(r, eid, "transfer", "access_retained_after_transfer")
+        self._assign_default_access(r, emp, delay_days=r.randint(1, 5))
+
+    def _holders(self, role: str) -> list[str]:
+        return sorted({v["employee_id"] for v in self.grants.values()
+                       if v["access_role"] == role and v["grant_status"] == "active"
+                       and self.employees[v["employee_id"]]["employment_status"] == "active"})
+
+    def _access_events(self, r) -> None:
+        # Security investigations: time-bound raw access (policy maximum 14 days)
+        for _ in range(poisson(r, RATES["security_investigations"])):
+            analysts = self._holders("security_analyst")
+            if analysts:
+                self._grant(r, r.choice(analysts), "security_analyst", "raw", "all", self._ts(r),
+                            days=r.randint(5, 14))
+        # Planted: an analyst asks for raw access and her manager approves it (not allowed by policy)
+        for _ in range(poisson(r, RATES["analyst_raw_requests"])):
+            analysts = [a for a in self._holders("data_analyst") if a != self.role_holders["data-analytics"]]
+            if analysts:
+                gid = self._grant(r, r.choice(analysts), "data_analyst", "raw", "all", self._ts(r),
+                                  approver=self.role_holders["data-analytics"], plants=False)
+                self.protected.add(self.grants[gid]["employee_id"])
+                self._log_defect("iam_access_grants", gid, "dataset", "access_exceeds_policy")
 
     # ------------------------------------------------------------------ riders and cards
     def _new_rider(self, r, created_ts: str) -> str:
@@ -365,10 +552,37 @@ class Simulation:
     # ------------------------------------------------------------------ starting population
     def _initial_population(self) -> None:
         r = rng("initial", EPOCH)
+        for person in ROSTER:                       # named staff first: EMP10001 is the CEO
+            if not person["manager_key"] or next(
+                    p for p in ROSTER if p["key"] == person["manager_key"])["department"] != person["department"]:
+                self.department_heads.setdefault(person["department"], None)
+        for person in ROSTER:
+            emp = self._new_employee(r, date.fromisoformat(person["hired_at"]), driver=False, named=person)
+            self.roster[person["key"]] = emp["employee_id"]
+            if person["role_code"]:
+                self.role_holders[person["role_code"]] = emp["employee_id"]
+            if person["department"] in self.department_heads and self.department_heads[person["department"]] is None:
+                self.department_heads[person["department"]] = emp["employee_id"]
+        for emp in list(self.employees.values()):   # managers are known only once everyone exists
+            person = next(p for p in ROSTER if p["first_name"] == emp["first_name"] and p["last_name"] == emp["last_name"])
+            emp["manager_id"] = self.roster.get(person["manager_key"])
+            emp["_default_role"] = person["access_role"] if person["access_role"] != "business_user" else None
+            self._touch("hris_employees", emp["employee_id"], emp)
         for _ in range(150):
-            self._new_employee(r, EPOCH - timedelta(days=r.randint(30, 2500)), driver=False)
+            emp = self._new_employee(r, EPOCH - timedelta(days=r.randint(30, 2500)), driver=False)
+            self._assign_default_access(r, emp)
         for _ in range(300):
             self._hire_driver(r, EPOCH - timedelta(days=r.randint(60, 2200)), onboarded=True)
+        # Warehouse access for everyone who has a role, granted a few days after hire
+        for eid, emp in list(self.employees.items()):
+            if emp.get("_default_role"):
+                hired = date.fromisoformat(emp["hired_at"])
+                self._grant_role(r, eid, emp["_default_role"], self._ts(r, hired + timedelta(days=r.randint(1, 5))))
+        # Planted: an analyst holds raw access, approved by her manager (policy allows analysts marts only)
+        chloe = self.roster["chloe.bennett"]
+        gid = self._grant(r, chloe, "data_analyst", "raw", "all", self._ts(r, EPOCH - timedelta(days=40)),
+                          approver=self.roster["aisha.karim"], plants=False)
+        self._log_defect("iam_access_grants", gid, "dataset", "access_exceeds_policy")
         for _ in range(2000):
             self._new_rider(r, self._ts(r, EPOCH - timedelta(days=r.randint(1, 1460)), lo=0, hi=24))
         rider_ids = list(self.riders)

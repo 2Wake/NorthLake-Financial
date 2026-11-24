@@ -186,6 +186,34 @@ models:
           name: ref_03_app_trips_dropoff_location_id
           arguments: {rule_id: REF-03}
           config: {severity: warn, meta: {rule_id: REF-03, dimension: Integrity, origin: real}}
+      - rule_has_no_findings:
+          name: acc_01_iam_access_grants_dataset
+          arguments: {rule_id: ACC-01}
+          config: {severity: warn, meta: {rule_id: ACC-01, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_02_iam_access_grants_not_revoked_on_termination
+          arguments: {rule_id: ACC-02}
+          config: {severity: warn, meta: {rule_id: ACC-02, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_03_iam_access_grants_retained_after_transfer
+          arguments: {rule_id: ACC-03}
+          config: {severity: warn, meta: {rule_id: ACC-03, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_04_iam_access_grants_self_approved
+          arguments: {rule_id: ACC-04}
+          config: {severity: warn, meta: {rule_id: ACC-04, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_05_iam_access_grants_expired_still_active
+          arguments: {rule_id: ACC-05}
+          config: {severity: warn, meta: {rule_id: ACC-05, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_06_iam_access_grants_missing_approval
+          arguments: {rule_id: ACC-06}
+          config: {severity: warn, meta: {rule_id: ACC-06, dimension: Access, origin: planted}}
+      - rule_has_no_findings:
+          name: acc_07_iam_access_grants_wrong_approver
+          arguments: {rule_id: ACC-07}
+          config: {severity: warn, meta: {rule_id: ACC-07, dimension: Access, origin: planted}}
   - name: fct_dq_scorecard
     description: >
       One row per data-quality rule: failing records, and for planted defects how many the rule
@@ -239,3 +267,12 @@ models:
   - name: fct_classification_scorecard
     description: "Register vs. answer key for every column: correct, under-classified, over-classified, missing or invalid, and which check (if any) flagged it. The only model that reads the classification answer key."
     config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+  - name: fct_access_grants
+    description: "Current warehouse access with employee and approver names, for user access reviews. Sensitive: names and entitlements."
+    config: {labels: {domain: risk, layer: marts, data_owner: ciso, data_steward: risk-data-steward, classification: sensitive, source_system: derived, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: grant_id
+        data_tests: [unique, not_null]
+  - name: dim_access_policy
+    description: "The access policy matrix (from the access_policy seed)."
+    config: {labels: {domain: risk, layer: marts, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}

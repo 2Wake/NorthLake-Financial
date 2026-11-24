@@ -32,6 +32,9 @@ sources:
       - name: app_rider_segments
         config:
           freshness: null   # monthly
+      - name: iam_access_grants
+        config:
+          freshness: null   # grants change on irregular days
       - name: gov_planted_defects
         config:
           freshness: null   # only on days with a planted defect

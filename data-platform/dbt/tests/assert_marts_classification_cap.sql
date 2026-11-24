@@ -6,7 +6,8 @@
 {%- set marts = ['dim_employees', 'dim_drivers', 'dim_riders', 'dim_rider_cards', 'dim_taxi_zones',
                  'dim_campaigns', 'dim_rider_segments', 'dim_dq_rules', 'fct_trips',
                  'fct_daily_zone_trips', 'fct_trip_surveys', 'fct_ledger_entries',
-                 'fct_dq_findings', 'fct_dq_scorecard'] %}
+                 'fct_dq_findings', 'fct_dq_scorecard', 'fct_access_grants', 'dim_access_policy',
+                 'fct_classification_findings', 'fct_classification_scorecard'] %}
 {%- for m in marts %}
 -- depends_on: {{ ref(m) }}
 {%- endfor %}

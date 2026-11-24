@@ -117,6 +117,21 @@ models:
     description: Every monthly version of each segment's size estimate.
     config: {labels: *segments}
 
+  # ---------------------------------------------------------------- access (IAM)
+  - name: stg_iam_access_grants
+    description: Current version of each warehouse access grant (who can access which dataset, approved by whom).
+    config: {labels: &access {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: sensitive, source_system: iam, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 3y}}
+    columns:
+      - name: grant_id
+        data_tests: [unique, not_null]
+      - name: employee_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_hris_employees'), field: employee_id}}
+
+  - name: stg_iam_access_grants_history
+    description: Every version of every access grant (requested, approved, expired, revoked), with valid_from / valid_to / is_current.
+    config: {labels: *access}
+
   # ---------------------------------------------------------------- governance
   - name: stg_gov_planted_defects
     description: >

@@ -1,0 +1,69 @@
+key,first_name,last_name,department,title,role_code,access_role,manager_key,hired_at
+marcus.delgado,Marcus,Delgado,Executive,Chief Executive Officer,ceo,executive,,2015-03-02
+renee.okonkwo,Renée,Okonkwo,Data Governance,Chief Data Officer,cdo,executive,marcus.delgado,2019-06-17
+jordan.ellis,Jordan,Ellis,Data Governance,Data Governance Manager,data-governance-manager,governance_admin,renee.okonkwo,2021-09-13
+ines.moreau,Inès,Moreau,Data Governance,Data Governance Analyst,,governance_admin,jordan.ellis,2023-02-06
+tobias.lindgren,Tobias,Lindgren,Data Governance,Metadata and Catalog Specialist,,governance_admin,jordan.ellis,2022-08-22
+amara.nwosu,Amara,Nwosu,Data Governance,Data Quality Analyst,,governance_admin,jordan.ellis,2024-04-15
+aisha.karim,Aisha,Karim,Data & Analytics,Head of Data & Analytics,data-analytics,data_analyst,renee.okonkwo,2020-01-27
+ravi.menon,Ravi,Menon,Data & Analytics,Senior Data Analyst,,data_analyst,aisha.karim,2021-05-10
+chloe.bennett,Chloe,Bennett,Data & Analytics,Data Analyst,,data_analyst,aisha.karim,2024-09-03
+diego.alvarez,Diego,Alvarez,Data & Analytics,Analytics Engineer,,analytics_engineer,aisha.karim,2022-03-14
+hana.sato,Hana,Sato,Data & Analytics,Data Scientist,,data_analyst,aisha.karim,2023-07-24
+kwame.boateng,Kwame,Boateng,Data & Analytics,BI Developer,,data_analyst,aisha.karim,2022-11-07
+victor.hale,Victor,Hale,Security,Chief Information Security Officer,ciso,executive,marcus.delgado,2018-10-01
+yusuf.rahman,Yusuf,Rahman,Security,Risk Data Steward,risk-data-steward,data_steward,victor.hale,2021-02-22
+mateo.silva,Mateo,Silva,Security,Head of Platform / SRE,platform-sre,platform_admin,victor.hale,2019-11-04
+natalia.kowalski,Natalia,Kowalski,Security,Security Analyst,,security_analyst,victor.hale,2022-06-06
+ben.adler,Ben,Adler,Security,Security Engineer,,security_analyst,victor.hale,2023-01-16
+elena.popescu,Elena,Popescu,Security,GRC Analyst,,security_analyst,victor.hale,2023-10-09
+farah.siddiqui,Farah,Siddiqui,Security,Platform Engineer,,platform_admin,mateo.silva,2021-08-30
+jonas.weber,Jonas,Weber,Security,Data Engineer,,platform_admin,mateo.silva,2022-04-25
+robert.feld,Robert,Feld,Legal & Privacy,General Counsel,general-counsel,business_user,marcus.delgado,2017-05-15
+priya.raman,Priya,Raman,Legal & Privacy,Privacy Officer,privacy-officer,executive,robert.feld,2020-08-03
+daniel.okafor,Daniel,Okafor,Legal & Privacy,Privacy Analyst,,privacy_analyst,priya.raman,2022-09-19
+sofia.marchetti,Sofia,Marchetti,Legal & Privacy,Privacy Operations Specialist,,privacy_analyst,priya.raman,2023-12-04
+michael.tran,Michael,Tran,Legal & Privacy,Corporate Counsel,,business_user,robert.feld,2021-03-29
+hannah.cho,Hannah,Cho,Rider Experience,VP Rider Experience,vp-rider-experience,executive,marcus.delgado,2019-02-11
+nadia.petrov,Nadia,Petrov,Rider Experience,Rider Data Steward,rider-data-steward,data_steward,hannah.cho,2021-10-18
+olivia.grant,Olivia,Grant,Rider Experience,Rider Insights Analyst,,domain_analyst,hannah.cho,2023-03-20
+andre.williams,Andre,Williams,Rider Experience,Product Manager,,business_user,hannah.cho,2022-01-10
+leila.haddad,Leila,Haddad,Rider Experience,UX Researcher,,business_user,hannah.cho,2024-02-26
+tom.becker,Tom,Becker,Rider Experience,Rider Programs Lead,,business_user,hannah.cho,2020-11-16
+keisha.monroe,Keisha,Monroe,Driver Operations,VP Driver Operations,vp-driver-operations,executive,marcus.delgado,2018-04-09
+sam.whitaker,Sam,Whitaker,Driver Operations,Driver Data Steward,driver-data-steward,data_steward,keisha.monroe,2020-06-22
+rosa.jimenez,Rosa,Jiménez,Driver Operations,Driver Onboarding Manager,,business_user,keisha.monroe,2019-09-30
+patrick.shea,Patrick,Shea,Driver Operations,Fleet Analyst,,domain_analyst,keisha.monroe,2022-07-11
+aaliyah.brooks,Aaliyah,Brooks,Driver Operations,Driver Support Lead,,business_user,keisha.monroe,2023-05-08
+igor.petrenko,Igor,Petrenko,Driver Operations,Compliance Coordinator,,business_user,keisha.monroe,2021-12-06
+luis.ortega,Luis,Ortega,Operations,VP Operations,vp-operations,executive,marcus.delgado,2017-08-21
+grace.adeyemi,Grace,Adeyemi,Operations,Operations Data Steward,ops-data-steward,data_steward,luis.ortega,2020-03-16
+sanjay.rao,Sanjay,Rao,Operations,Operations Analyst,,domain_analyst,luis.ortega,2022-10-03
+megan.doyle,Megan,Doyle,Operations,Dispatch Manager,,business_user,luis.ortega,2019-07-08
+kenji.watanabe,Kenji,Watanabe,Operations,Network Planner,,domain_analyst,luis.ortega,2023-08-14
+thomas.brennan,Thomas,Brennan,Finance,Chief Financial Officer,cfo,executive,marcus.delgado,2018-01-15
+owen.park,Owen,Park,Finance,Finance Data Steward,finance-data-steward,data_steward,thomas.brennan,2021-06-28
+laura.chen,Laura,Chen,Finance,Financial Analyst,,domain_analyst,thomas.brennan,2022-02-14
+ahmed.karimi,Ahmed,Karimi,Finance,Revenue Accountant,,domain_analyst,thomas.brennan,2020-10-26
+beatriz.santos,Beatriz,Santos,Finance,Payroll Specialist,,business_user,thomas.brennan,2023-04-03
+greg.holloway,Greg,Holloway,Finance,Controller,,domain_analyst,thomas.brennan,2019-05-20
+simone.laurent,Simone,Laurent,People,VP People,vp-people,executive,marcus.delgado,2018-09-10
+lena.fischer,Lena,Fischer,People,HR Data Steward,hr-data-steward,data_steward,simone.laurent,2021-01-11
+jasmine.reid,Jasmine,Reid,People,HR Business Partner,,business_user,simone.laurent,2020-07-27
+paul.nakamura,Paul,Nakamura,People,People Analyst,,domain_analyst,simone.laurent,2023-09-18
+clara.svensson,Clara,Svensson,People,Recruiter,,business_user,simone.laurent,2024-01-22
+derek.sullivan,Derek,Sullivan,Marketing,VP Marketing,vp-marketing,executive,marcus.delgado,2019-04-01
+carlos.mendes,Carlos,Mendes,Marketing,Marketing Data Steward,marketing-data-steward,data_steward,derek.sullivan,2021-11-29
+emily.zhang,Emily,Zhang,Marketing,Marketing Analyst,,domain_analyst,derek.sullivan,2022-05-16
+noah.kaplan,Noah,Kaplan,Marketing,CRM Manager,,domain_analyst,derek.sullivan,2020-12-14
+isabel.ruiz,Isabel,Ruiz,Marketing,Growth Marketer,,business_user,derek.sullivan,2023-06-26
+liam.oconnor,Liam,O'Connor,Marketing,Brand Manager,,business_user,derek.sullivan,2021-04-19
+renata.alves,Renata,Alves,Customer Support,Head of Customer Support,,business_user,hannah.cho,2019-12-02
+dev.patel,Dev,Patel,Customer Support,Support Team Lead,,business_user,renata.alves,2021-07-19
+monique.harris,Monique,Harris,Customer Support,Support Agent,,business_user,renata.alves,2023-11-13
+yuto.mori,Yuto,Mori,Customer Support,Support Agent,,business_user,renata.alves,2024-06-10
+arjun.mehta,Arjun,Mehta,Engineering,VP Engineering,,executive,marcus.delgado,2018-06-04
+lucas.martin,Lucas,Martin,Engineering,Backend Engineer,,business_user,arjun.mehta,2021-09-27
+zoe.kim,Zoe,Kim,Engineering,Mobile Engineer,,business_user,arjun.mehta,2022-12-05
+ella.johansson,Ella,Johansson,Engineering,QA Engineer,,business_user,arjun.mehta,2023-03-06
+omar.farouk,Omar,Farouk,Engineering,Site Reliability Engineer,,business_user,arjun.mehta,2020-05-11

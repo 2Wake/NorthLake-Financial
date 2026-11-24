@@ -22,3 +22,10 @@ T4,Consistency,app_trips,dropoff_datetime,Medium,After pickup_datetime,real,
 REF-01,Uniqueness,tlc_taxi_zones,zone_id,Medium,Unique (later copies flagged),real,
 REF-02,Integrity,app_trips,pickup_location_id,Medium,Zone exists in the zone reference table,real,
 REF-03,Integrity,app_trips,dropoff_location_id,Medium,Zone exists in the zone reference table,real,
+ACC-01,Access,iam_access_grants,dataset,High,Active grant is allowed by the access policy matrix,planted,access_exceeds_policy
+ACC-02,Access,iam_access_grants,grant_status,High,Access revoked when the employee leaves,planted,access_not_revoked_on_termination
+ACC-03,Access,iam_access_grants,grant_status,High,Access revoked when the employee changes department,planted,access_retained_after_transfer
+ACC-04,Access,iam_access_grants,approved_by,High,Not approved by the person receiving access,planted,access_self_approved
+ACC-05,Access,iam_access_grants,expires_at,High,Time-bound access ends at its expiry date,planted,access_expired_still_active
+ACC-06,Access,iam_access_grants,approved_by,Medium,Approval and request ticket recorded,planted,access_missing_approval
+ACC-07,Access,iam_access_grants,approved_by,Medium,Approved by the role the policy names,planted,access_wrong_approver

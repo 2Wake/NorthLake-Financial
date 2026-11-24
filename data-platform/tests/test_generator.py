@@ -102,3 +102,38 @@ def test_answer_key_never_stores_values():
     batch = _run([EPOCH])[EPOCH]
     for row in batch["gov_planted_defects"]:
         assert set(row) == {"defect_id", "table_name", "record_id", "column_name", "defect_code"}
+
+
+def _simulate_through(target):
+    sim, day, planted = Simulation(), EPOCH, set()
+    while day <= target:
+        batch = sim.step(day, emit=True)
+        planted |= {(d["record_id"], d["defect_code"]) for d in batch["gov_planted_defects"]}
+        day += timedelta(days=1)
+    return sim, planted
+
+
+def test_named_roster_has_stable_ids_and_managers():
+    sim, _ = _simulate_through(EPOCH)
+    assert sim.roster["marcus.delgado"] == "EMP10001"
+    assert sim.employees[sim.roster["jordan.ellis"]]["manager_id"] == sim.roster["renee.okonkwo"]
+    assert sim.role_holders["ciso"] == sim.roster["victor.hale"]
+
+
+def test_unplanted_grants_follow_the_access_policy():
+    from ect_platform.sim import POLICY
+    sim, planted = _simulate_through(date(2026, 6, 30))
+    flagged = {gid for gid, _ in planted}
+    for gid, g in sim.grants.items():
+        if gid in flagged:
+            continue
+        assert (g["access_role"], g["dataset"]) in POLICY, g
+        assert g["approved_by"] and g["approved_by"] != g["employee_id"], g
+
+
+def test_business_users_and_drivers_have_no_warehouse_access():
+    sim, _ = _simulate_through(EPOCH)
+    support = sim.roster["monique.harris"]
+    with_access = {g["employee_id"] for g in sim.grants.values()}
+    assert support not in with_access
+    assert not any(sim.employees[e]["title"] == "Driver" for e in with_access)
