@@ -29,7 +29,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 ## 2026-11-24 — Story GOV-81 for the follow-ups; council issue GV-007 added
 
 ### Done
-- **GOV-81** (Story, no epic): "Policy drafting follow-ups", grouping GOV-75 to GOV-80. They're being converted from Tasks to sub-tasks of GOV-81. Jira uses its Move for this and drops the default Priority field; this needs the owner's OK.
+- **GOV-81** (Story, no epic): "Policy drafting follow-ups", grouping GOV-75 to GOV-80. Converted from Tasks to sub-tasks of GOV-81 with Jira's Move (owner approved). Status stays To Do; the default Priority field was dropped; the blocking links were kept.
 - **GV-007** added to the council charter backlog (section 11): who stewards cardholder data, Rider or Finance. It's backed by planted scenario **S11**: `raw.payments_rider_cards` rows list `rider-data-steward`; `staging`/`marts` card rows list `finance-data-steward`; the owner is `cfo` throughout. The first council issue under the `GV` prefix.
 
 ### Decisions
