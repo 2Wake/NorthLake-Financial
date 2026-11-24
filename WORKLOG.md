@@ -8,11 +8,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
 - [ ] **Reference-data issue:** raise REF-01 to REF-03 as a governance issue (reference domain owner: Data Governance Manager) in the issue register.
-- [ ] **Remediate the classification scenarios** (S01–S12) through the council process, starting with GOV-003 (S01). Watch KPI #2 rise from 72.5%.
+- [ ] **Remediate the classification scenarios** (S01–S12) through the council process, starting with GV-003 (S01). Watch KPI #2 rise from 72.5%.
 - [ ] **Push classifications out:** Collate column tags from the register; optionally BigQuery policy tags on Secret columns (UI, user).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
-- [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
+- [ ] **Council operations.** Issue register (`GV-###`) and decision log (`GV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
@@ -23,6 +23,21 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Pull-request workflow; council IDs renamed GOV → GV
+
+### Done
+- **Council IDs renamed** at the owner's request: issues `GOV-###` → `GV-###`, decisions `GOV-D-###` → `GV-D-###` (charter, classification register, CLAUDE.md, this log). The charter now says why: `GV` is the council register, `GOV` is the Jira project. No Confluence page or Jira ticket used the old IDs (searched).
+- **Pull-request workflow** (owner decision): every change reaches `main` through a PR. Claude opens it with a full description at creation (new `.github/pull_request_template.md`, aligned with POL-07: change type, DOC-01 scope check, testing, rollback) and posts a review comment. CLAUDE.md agreement #3 and memory updated.
+
+### Decisions
+- **Claude can review but not approve in GitHub.** Claude acts through the owner's account (2Wake), and GitHub blocks authors from approving their own PRs. So the owner is the approver (by merging or explicitly telling Claude to merge). An AI review is evidence a review happened; it isn't segregation of duties between two people. That's the honest compensating control for a one-person repo.
+
+### Next steps
+- POL-07's small-team allowance should describe this workflow before approval (owner to confirm).
+- Proposed tickets (incl. protecting `main` with a ruleset, owner UI change), then the audit findings.
 
 ---
 
@@ -53,7 +68,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - No approved tools list (software/AI by data tier) for POL-05. Blocks GOV-59.
 - POL-07 walk-through: today's merges went straight to `main` (no PR, no second reviewer); `main` has no branch protection; console changes recorded only in WORKLOG.
 - SOC 2 control matrix marks IR-01/IR-02 "Implemented" but no IR plan exists; evidence tracker PBC-002 says Q1–Q4 risk register exports "Collected" but no register exists.
-- Council charter's `GOV-###` issue IDs clash with Jira GOV keys.
+- Council charter's issue IDs clashed with Jira GOV keys. **Resolved 2026-11-24 at the owner's request:** council IDs renamed to `GV-###` / `GV-D-###`.
 - Card-data stewardship unclear (register says Rider steward, table owner label is CFO); referred to council in POL-03.
 - `01-governance-program/governance/access-control-policy.md` superseded by POL-02; ACC-02/ACC-03 have no 24h / 5-day allowance matching POL-02 s6–7.
 - Classification & Labeling standards still repo-only (DRAFT v0.1); proposed to move to Confluence as STD-02/STD-03.
@@ -438,7 +453,7 @@ Running log of all work, decisions and open items. It's the source for progress 
   - **Checks** `marts.fct_classification_findings`: CLS-01 to CLS-08 (coverage, orphans, approval, table-label consistency, lineage drift, marts cap, steward mismatch, invalid tier), each a dbt warning test.
   - **Scorecard** `marts.fct_classification_scorecard`: register vs. answer key per column, plus which check flagged it.
   - **Process doc** `01-governance-program/governance/classification-register.md`.
-- **12 planted scenarios (S01–S12), 36 register rows:** location (GOV-003), free-text PII, partial cardholder data, regulated ID, consistent HR under-classification, lineage drift, over-classification, masked value, unclassified new columns, approval backlog, wrong steward, retired tier name.
+- **12 planted scenarios (S01–S12), 36 register rows:** location (GV-003), free-text PII, partial cardholder data, regulated ID, consistent HR under-classification, lineage drift, over-classification, masked value, unclassified new columns, approval backlog, wrong steward, retired tier name.
 - **First scorecard:** 27 of 508 columns wrong or missing; **24 flagged by checks**; the 3 unflagged are S05, a deliberate blind spot. **KPI #2 (high-risk columns correct): 72.5%** (37 of 51).
 - Full dbt build: 126 nodes, 96 pass, 30 warn, 0 errors.
 
@@ -452,7 +467,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - The one-off bootstrap script was not committed; the CSVs are now maintained by hand through PRs.
 
 ### Next steps
-- Remediation through the council (GOV-003 first), council roles (federated), and DQ rule ownership columns.
+- Remediation through the council (GV-003 first), council roles (federated), and DQ rule ownership columns.
 
 ---
 
@@ -619,7 +634,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - Built **`data-platform/`**: a Python package (uv, Python 3.12, Faker 37) with a generator, a loader, one-time SQL and tests.
   - **Generator** (`uv run ect-generate`): replays company life from **2026-01-01** day by day, and writes each day's new and changed records to `output/<date>/*.jsonl` with a manifest (row counts, SHA-256).
   - **Lifecycle:** hires and terminations; driver onboarding → background check → active; suspensions and reinstatements; a March 1 annual review; rider sign-ups, profile changes and closures; cards added and removed; new campaigns; monthly segment refresh; ledger postings on the 3rd.
-  - **Drivers are now employees**, so every `DRV` has an `EMP` in HR. That is the foundation for GOV-004 (terminated in HR, still active in fleet), which gets planted in Phase 3.
+  - **Drivers are now employees**, so every `DRV` has an `EMP` in HR. That is the foundation for GV-004 (terminated in HR, still active in fleet), which gets planted in Phase 3.
   - **Trips:** about 1,000 real 2022 NYC yellow-taxi trips a day, replayed on the same weekday (52-week cycle). Synthetic drivers are assigned; riders only on app-booked card trips, while street hails have no rider. Surveys go on about 6% of app trips.
   - **Planted defects:** the 16 Project 1 defect types carry over. Every one is logged in the answer key `gov_planted_defects` (record and column only, never the bad value). The epoch batch plants 292.
   - **Loader** (`uv run ect-load`): creates each `raw` table on first load with its schema, description and labels. Tables are partitioned by `_batch_date`, and each day replaces only its own partition, so history is append-only and re-runs can't duplicate.
@@ -654,7 +669,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ### Done
 - **Org structure** (`01-governance-program/governance/governance-org-structure.md`): reporting lines, fictional named role holders, owners and stewards per domain, custodian and consumer roles, and the department objectives that create governance tensions.
-- **Council charter** (`01-governance-program/governance/data-governance-council-charter.md`): purpose, authority, membership and voting, meetings and quorum, decision rules, issue lifecycle with severity targets, escalation path, a RACI for 12 decision types, standing agenda, 7 KPIs, and the initial backlog GOV-001 to GOV-006, each tied to a defect planted in the data.
+- **Council charter** (`01-governance-program/governance/data-governance-council-charter.md`): purpose, authority, membership and voting, meetings and quorum, decision rules, issue lifecycle with severity targets, escalation path, a RACI for 12 decision types, standing agenda, 7 KPIs, and the initial backlog GV-001 to GV-006, each tied to a defect planted in the data.
 - Committed as `245c3e7` on branch `governance-council`; **merged to `main` from the CLI** at the user's request.
 - Added `CLAUDE.md` (project context and working agreements) and moved this log into the repo as `WORKLOG.md`. The user chose to keep the log **public**. Committed as `8fe21bb` on branch `project-context`; **merged to `main` from the CLI** at the user's request.
 

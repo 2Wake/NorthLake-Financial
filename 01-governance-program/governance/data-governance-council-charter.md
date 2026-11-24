@@ -51,7 +51,7 @@ Data stewards attend when an item in their domain is on the agenda.
 2. **Vote if needed.** A simple majority of voting members present. The Chair breaks ties.
 3. **Vetoes.** The CISO may veto on security grounds and the Privacy Officer on privacy or legal grounds. A veto must be justified in the minutes, and it escalates the matter to the CDO for a final decision. The CDO decides after hearing the vetoing member and the affected owners, and records the reasoning in the decision log.
 4. **Conflict of interest.** An owner whose own domain is in dispute presents the case but **does not vote** on it.
-5. **Every decision is recorded** with the following, in the decision log (`GOV-D-###`):
+5. **Every decision is recorded** with the following, in the decision log (`GV-D-###`):
    - the options considered
    - the rationale
    - the decision owner
@@ -60,7 +60,7 @@ Data stewards attend when an item in their domain is on the agenda.
 
 ## 6. Issue lifecycle
 
-Every governance issue gets an ID (`GOV-###`) in the issue register and moves through six stages:
+Every governance issue gets an ID (`GV-###`; decisions are `GV-D-###`) in the issue register. The `GV` prefix keeps council records separate from the Jira project key `GOV`, which tracks program work such as policies and remediation. Each issue moves through six stages:
 
 ```
 Identify ─► Assign ─► Assess ─► Decide ─► Remediate ─► Validate ─► Closed
@@ -71,7 +71,7 @@ Identify ─► Assign ─► Assess ─► Decide ─► Remediate ─► Valid
 | **Identify** | Anyone (often an automated check, a steward, or an analyst) | Issue logged with evidence: query, test result, screenshot |
 | **Assign** | Data Governance Manager | Accountable owner and responsible steward named; severity set |
 | **Assess** | Steward + affected departments | Business impact, regulatory implications, options |
-| **Decide** | Data owner, or the **council** if departments disagree or risk exceeds the owner's authority | Decision logged (`GOV-D-###`) |
+| **Decide** | Data owner, or the **council** if departments disagree or risk exceeds the owner's authority | Decision logged (`GV-D-###`) |
 | **Remediate** | Action owner (usually the custodian or steward) | Technical or process fix |
 | **Validate** | Data Governance Manager | Fix confirmed with evidence (e.g. the test now passes); issue closed |
 
@@ -146,12 +146,12 @@ These six disputes are planned for the council's first sessions. Each is backed 
 
 | ID | Issue | Departments | Planted evidence |
 |---|---|---|---|
-| GOV-001 | Rider deletion requests vs. marketing's historical segments | Privacy vs. Marketing | Deleted riders still present in segment and campaign tables |
-| GOV-002 | Driver payouts don't reconcile with trip revenue | Finance vs. Operations | Payout totals differ from completed-trip fares for some drivers |
-| GOV-003 | Classification of precise rider location data | Marketing vs. Governance and Security | Location columns tagged Internal in some tables |
-| GOV-004 | Terminated employees still active as drivers | People vs. Driver Ops | HR shows terminated; fleet shows active driver and vehicle |
-| GOV-005 | Two definitions of "revenue" | Finance vs. Operations | Conflicting calculations in ledger and fare tables |
-| GOV-006 | Analyst request for row-level rider data | Analytics vs. Security | Access request on file; the masked alternative exists |
+| GV-001 | Rider deletion requests vs. marketing's historical segments | Privacy vs. Marketing | Deleted riders still present in segment and campaign tables |
+| GV-002 | Driver payouts don't reconcile with trip revenue | Finance vs. Operations | Payout totals differ from completed-trip fares for some drivers |
+| GV-003 | Classification of precise rider location data | Marketing vs. Governance and Security | Location columns tagged Internal in some tables |
+| GV-004 | Terminated employees still active as drivers | People vs. Driver Ops | HR shows terminated; fleet shows active driver and vehicle |
+| GV-005 | Two definitions of "revenue" | Finance vs. Operations | Conflicting calculations in ledger and fare tables |
+| GV-006 | Analyst request for row-level rider data | Analytics vs. Security | Access request on file; the masked alternative exists |
 
 ## 12. Review of this charter
 
