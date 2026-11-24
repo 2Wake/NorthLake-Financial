@@ -137,3 +137,12 @@ def test_business_users_and_drivers_have_no_warehouse_access():
     with_access = {g["employee_id"] for g in sim.grants.values()}
     assert support not in with_access
     assert not any(sim.employees[e]["title"] == "Driver" for e in with_access)
+
+
+def test_roster_correction_arrives_on_its_day_and_leaves_history_unchanged():
+    fix_day = date(2026, 11, 24)
+    out = _run([EPOCH, fix_day - timedelta(days=1), fix_day])
+    arjun = lambda batch: [e for e in batch.get("hris_employees", []) if e["last_name"] == "Mehta"]
+    assert arjun(out[EPOCH])[0]["role_code"] is None                 # as originally loaded
+    assert arjun(out[fix_day - timedelta(days=1)]) == []              # no change emitted before the fix
+    assert arjun(out[fix_day])[0]["role_code"] == "vp-engineering"   # HR correction on fix_day

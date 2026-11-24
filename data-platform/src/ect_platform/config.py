@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 # Bump when a code change alters generated output, so raw rows can be traced to the code that made them.
-GENERATOR_VERSION = "0.2.0"
+GENERATOR_VERSION = "0.3.0"
 
 # Master seed. Every random choice derives from (SEED, stream name, date), so the
 # same date always produces the same data no matter when or how often it is run.
@@ -93,4 +93,12 @@ DEFECT_RATES = {
     "access_not_revoked_on_termination": 0.2,
     "access_retained_after_transfer": 0.3,
     "access_expired_still_active": 0.2,
+}
+
+
+# Roster corrections that take effect on a given day, so history already loaded stays as it was.
+# Before that day the person's HR record has a blank role_code (as originally generated); on that
+# day HR corrects it and a new version of the record is emitted. Key: roster key.
+ROSTER_CORRECTIONS = {
+    "arjun.mehta": date(2026, 11, 24),   # VP Engineering was missing role_code vp-engineering
 }

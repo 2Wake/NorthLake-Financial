@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from . import fakes
 from .config import (ACCESS_POLICY_PATH, APP_BOOKED_SHARE, DEFECT_RATES as DR, EPOCH, RATES,
-                     ROSTER_PATH, SURVEY_SHARE, tlc_date_for)
+                     ROSTER_CORRECTIONS, ROSTER_PATH, SURVEY_SHARE, tlc_date_for)
 from .fakes import poisson, rng
 
 NY = ZoneInfo("America/New_York")
@@ -247,9 +247,23 @@ class Simulation:
         self._touch("fleet_drivers", did, drv)
         return ts
 
+    def _correct_roster(self, key: str) -> None:
+        """HR fixes a named person's role_code (see ROSTER_CORRECTIONS) and a new record version is emitted.
+        Uses its own random stream so no other output for the day changes."""
+        person = next(p for p in ROSTER if p["key"] == key)
+        eid = self.roster[key]
+        emp = self.employees[eid]
+        emp["role_code"] = person["role_code"]
+        emp["record_updated_at"] = self._ts(rng("roster_correction", self.day), lo=9, hi=17)
+        self.role_holders[person["role_code"]] = eid
+        self._touch("hris_employees", eid, emp)
+
     def _run_agenda(self) -> None:
         r = rng("agenda", self.day)
         for action, key in self.agenda.pop(self.day, []):
+            if action == "roster_correction":
+                self._correct_roster(key)
+                continue
             if action == "expire_grant":
                 self._expire_grant(r, key)
                 continue
@@ -557,10 +571,14 @@ class Simulation:
                     p for p in ROSTER if p["key"] == person["manager_key"])["department"] != person["department"]:
                 self.department_heads.setdefault(person["department"], None)
         for person in ROSTER:
-            emp = self._new_employee(r, date.fromisoformat(person["hired_at"]), driver=False, named=person)
+            fix_day = ROSTER_CORRECTIONS.get(person["key"])
+            as_hired = {**person, "role_code": ""} if fix_day else person   # role_code arrives on fix_day
+            emp = self._new_employee(r, date.fromisoformat(person["hired_at"]), driver=False, named=as_hired)
             self.roster[person["key"]] = emp["employee_id"]
-            if person["role_code"]:
+            if as_hired["role_code"]:
                 self.role_holders[person["role_code"]] = emp["employee_id"]
+            if fix_day:
+                self.agenda[fix_day].append(("roster_correction", person["key"]))
             if person["department"] in self.department_heads and self.department_heads[person["department"]] is None:
                 self.department_heads[person["department"]] = emp["employee_id"]
         for emp in list(self.employees.values()):   # managers are known only once everyone exists

@@ -26,6 +26,23 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Roster fix: Arjun Mehta role_code (generator 0.3.0)
+
+### Done
+- **User asked to fix** the missing `role_code` for Arjun Mehta (VP Engineering, EMP10064). The register names `vp-engineering` as owner of POL-07.
+- `org_roster.csv`: role_code `vp-engineering` added.
+- **Applied as a dated HR correction, not a rewrite of history.** New `ROSTER_CORRECTIONS` in `config.py` (`arjun.mehta: 2026-11-24`). Before that day the record keeps a blank role_code exactly as loaded. On Nov 24 (the first day not yet loaded; raw is loaded through Nov 23) the simulation emits a new version of his HR record with the role code. It uses its own random stream, so nothing else changes.
+- `GENERATOR_VERSION` 0.2.0 → **0.3.0** (output from Nov 24 on differs: his new record version, and he now counts as a role holder).
+- **Verified:** batches for Jan 1, Jun 15, Nov 22 and Nov 23 hash-identical between the old code (0.2.0, checked out separately) and the new code. New test `test_roster_correction_arrives_on_its_day_and_leaves_history_unchanged`; pytest 13/13.
+
+### Decisions
+- Fix forward with a dated correction so `raw` stays append-only and `stg_hris_employees_history` shows the blank → `vp-engineering` change on Nov 24 (an honest record that HR data was corrected).
+
+### Next steps
+- Takes effect in BigQuery after `atlassian-setup` is merged to `main` and the daily run generates Nov 24. **If tonight's daily run (from `main`) generates Nov 24 before the merge, the correction must move to the next unloaded day.**
+
+---
+
 ## 2026-11-24 — Single source of truth; STD-01 v2.0 after late review; acknowledgments seed
 
 ### Done

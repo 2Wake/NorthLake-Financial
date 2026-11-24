@@ -62,7 +62,7 @@ renata.alves,Renata,Alves,Customer Support,Head of Customer Support,,business_us
 dev.patel,Dev,Patel,Customer Support,Support Team Lead,,business_user,renata.alves,2021-07-19
 monique.harris,Monique,Harris,Customer Support,Support Agent,,business_user,renata.alves,2023-11-13
 yuto.mori,Yuto,Mori,Customer Support,Support Agent,,business_user,renata.alves,2024-06-10
-arjun.mehta,Arjun,Mehta,Engineering,VP Engineering,,executive,marcus.delgado,2018-06-04
+arjun.mehta,Arjun,Mehta,Engineering,VP Engineering,vp-engineering,executive,marcus.delgado,2018-06-04
 lucas.martin,Lucas,Martin,Engineering,Backend Engineer,,business_user,arjun.mehta,2021-09-27
 zoe.kim,Zoe,Kim,Engineering,Mobile Engineer,,business_user,arjun.mehta,2022-12-05
 ella.johansson,Ella,Johansson,Engineering,QA Engineer,,business_user,arjun.mehta,2023-03-06
