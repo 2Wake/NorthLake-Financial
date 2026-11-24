@@ -44,6 +44,10 @@ jobs:
       - name: Generate and load new days
         run: uv run ect-daily
 
+      - name: Access check (role accounts)
+        # Acts as each role account to prove BigQuery enforces the access policy. Never fails the run.
+        run: uv run ect-access-check
+
       - name: Build and test (dbt)
         id: dbt
         working-directory: data-platform/dbt

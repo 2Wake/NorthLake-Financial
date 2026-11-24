@@ -1,0 +1,4 @@
+service_account,dataset,issue,rule_id,planted_on,note
+ect-role-steward@empire-city-taxi.iam.gserviceaccount.com,raw,excess_access,ACC-08,2026-11-24,Deliberate: steward account given Data Viewer on raw; policy allows staging and marts only
+ect-role-analyst@empire-city-taxi.iam.gserviceaccount.com,raw,excess_access,ACC-08,2026-11-24,Analyst account given Data Viewer on raw instead of the security account (kept as a finding)
+ect-role-security@empire-city-taxi.iam.gserviceaccount.com,raw,missing_access,ACC-09,2026-11-24,Security account never granted raw; the grant went to the analyst account
