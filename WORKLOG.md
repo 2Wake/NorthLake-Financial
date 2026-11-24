@@ -47,8 +47,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 - `trip_distance`, fares and other TLC values pass through untouched, including the real data's errors. That is intended.
 - The epoch batch is about 4,900 records; later days are a few dozen records plus about 1,000 trips.
 
+- Committed as `629742a` on branch `phase-0-generator`; **merged to `main` from the CLI** at the user's request.
+- The user chose to **run the one-time SQL themselves in the BigQuery console**.
+
 ### Next steps
-1. The user approves running `sql/01` and `sql/02` (one-time; ~6.8 GB scanned).
+1. The user runs `sql/01` and `sql/02` in the BigQuery console (one-time; ~6.8 GB scanned).
 2. Backfill: `ect-generate --backfill`, then `ect-load` for 2026-01-01 → yesterday.
 3. Check the tables in the BigQuery console.
 
