@@ -26,6 +26,18 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — DOC-01 in-cab payments added; atlassian-setup merged to main
+
+### Done
+- **DOC-01** (page v3, still document v0.9): owner asked to add in-cab card payments. Added to 3.5 *Not yet known* (provider, path, whether card data returns to ECT; Finance to confirm, vendor inventory GOV-15), as a second entry point on the data-flow diagram, and as a transfer-table row. Recorded in the 0.9 change-history row as an owner addition after review.
+- **Merged `atlassian-setup` → `main`** (owner chose "Claude merges directly"). Fast-forward, no conflicts; main at 3831ec1. The Arjun roster correction (2026-11-24) is now on main before the next daily run (10:30 UTC Nov 25), which is the first run to generate Nov 24.
+
+### Next steps
+- Owner approves the drafted story + 4 sub-tasks for the DOC-01 observations (bucketed by policy: encryption, access, retention/disposal, cardholder data inventory).
+- GOV-2 closing comment will list observations 1–5 and point to the new story; posted when GOV-21 sign-off is recorded.
+
+---
+
 ## 2026-11-24 — How-To's folder: reading DOC-01 and running a PCI scoping exercise
 
 ### Done
