@@ -16,13 +16,64 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
-- [ ] **Atlassian (Jira + Confluence):** site + MCP (user), then confirm the docs/tickets split.
-- [ ] **SOC 2 policy set + policy register**, then a **controls framework** as dbt seeds mapped to automated checks.
+- [x] **Atlassian (Jira + Confluence):** site, MCP and docs/tickets split all done (2026-11-24).
+- [ ] **Policy set (SOC 2 + ISO 27001 + PCI DSS) + policy register:** tracked in Jira epic GOV-1. Then a **Common Control Framework** (CCF) as dbt seeds mapping policies → controls → frameworks → automated checks.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Jira: policy-set epic created (GOV-1 to GOV-69)
+
+### Done
+- **Created 69 tickets in Jira project `GOV`** (user approved the format and said "create the tickets"):
+  - **GOV-1 (Epic):** Information Security Policy Set (SOC 2 · ISO 27001 · PCI DSS).
+  - **GOV-2 to GOV-18 (Stories, 17):** GOV-2 PCI DSS scope & cardholder data flow; GOV-3 Policy Register & policy management standard; then one per policy: GOV-4 Information Security (umbrella), GOV-5 Access Control, GOV-6 Data Classification & Handling, GOV-7 Cardholder Data Protection, GOV-8 Acceptable Use, GOV-9 Risk Management, GOV-10 Change Management, GOV-11 Incident Response, GOV-12 Logging & Monitoring, GOV-13 Vulnerability & Patch, GOV-14 Encryption & Key Management, GOV-15 Vendor & Third-Party Risk, GOV-16 Data Retention & Disposal, GOV-17 HR Security, GOV-18 BC/DR.
+  - **GOV-19 to GOV-69 (Subtasks, 51):** 3 per story. GOV-2: inventory → data-flow diagram → CISO scope sign-off. GOV-3: standard & template → register page + `policy_register` seed → CISO approval. Policy stories: **draft** (GOV-25–39) → **review** (GOV-40–54) → **owner approval & publish** (GOV-55–69).
+- Every ticket has Description (with steps), Why it matters, Potential blockers, Intended outcome. Owners, approvers and reviewers are named people from the org roster. Labels: `policy-set` on all, `pci` where card data is involved.
+
+### Decisions
+- **Combined policy set** for SOC 2, ISO 27001 and PCI DSS (user confirmed).
+- **No framework mapping in the policy tickets** (user): mapping comes later in a separate **Common Control Framework (CCF)** project.
+- **Jira hierarchy convention (user):** Epic = large project; Story = medium piece within it; Subtask = daily/weekly task.
+- Planted policy gaps are **not** visible in tickets; the answer key stays in the repo.
+
+### Next steps
+- Start GOV-3 (policy management standard + register), then GOV-2 (PCI scope), then the policies.
+- Later epic: Common Control Framework.
+
+---
+
+## 2026-11-24 — PCI DSS added to the policy scope; Jira structure
+
+### Done
+- The user asked whether payment data means PCI DSS applies, not just SOC 2. **Yes.** The README already says ECT must meet PCI DSS. Also, `raw.payments_rider_cards` and `staging.stg_rider_cards` hold **full card numbers, expiry dates and cardholder names**, so BigQuery `raw` and `staging` (and the pipeline that writes them) are in the cardholder data environment (CDE). Only `marts.dim_rider_cards` (last 4 digits) is out of scope.
+- The control matrix (`02-soc2-iso-audit/control-matrix.csv`) maps to SOC 2, ISO 27001 and NIST only. **It has no PCI DSS column.**
+
+### Decisions (proposed, awaiting the user)
+- **One policy set mapped to SOC 2 + ISO 27001 + PCI DSS v4.0.1**, not a separate PCI set. PCI Req 12.1 needs an information security policy anyway, and each PCI requirement asks for documented policies. Add PCI-specific content: CDE scoping and card-data flow, a Cardholder Data Protection policy, targeted risk analyses (12.3.1), service-provider management (12.8).
+- **Jira structure (user's rule):** Epic = large project; Story = medium piece within it (e.g. one policy); Subtask = daily/weekly task (drafting, mapping, review, approval).
+
+### Risks / findings (left open for the audit)
+- **Full card numbers stored in clear in the warehouse.** BigQuery's default encryption is storage-level, which PCI DSS 4.0.1 (3.5.1 / 3.5.1.2) doesn't accept on its own for non-removable storage. Storing card numbers in an analytics warehouse also conflicts with data minimization (3.2.1). Not planted, but realistic. Not fixed, per the findings rule.
+
+---
+
+## 2026-11-24 — Atlassian connected; split confirmed
+
+### Done
+- **Atlassian MCP connected** (official Rovo MCP, user sign-in). Site `empire-city-taxi.atlassian.net`.
+- **User set up the workspace in the UI:** renamed the Jira project key from the default `KAN` to `GOV` (project "ECT GRC", no issues yet). Created the Confluence space **Empire City Taxi Governance** (`ECTG`). Claude verified both with read-only checks.
+- **The default "My first space" (`MFS`) is still on the site.** It's unused; the user can delete or archive it in the UI if they want.
+
+### Decisions
+- **Split confirmed by the user:** Confluence holds policy text, minutes and process docs. Jira holds planning, findings, remediation and audit requests. The repo holds what the pipeline reads plus a copy of each published policy, because the Atlassian site is private and the repo is the public portfolio. WORKLOG stays the decision log. Recorded in `CLAUDE.md` working agreement #5.
+
+### Next steps
+- SOC 2 policy set (~14 policies) in Confluence, with planted gaps, plus the policy register seed in the repo.
 
 ---
 

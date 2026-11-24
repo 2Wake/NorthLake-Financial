@@ -18,6 +18,8 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 3. **Git:** commit on a feature branch and push the branch. **Always ask before merging anything to `main`.** Offer three options: the owner merges through a PR in GitHub, Claude opens a PR, or Claude merges directly.
 4. **Log every meaningful step in `WORKLOG.md`** (newest first): done, decisions with rationale, risks, next steps. Keep the backlog at the top current.
 5. **Jira and Confluence (Atlassian MCP):** Claude may **create Confluence pages directly**, and posts a short summary of each page in the chat. Claude **drafts Jira tickets** for the owner to approve before creating them. Every ticket has these sections: **Description**, **Why it matters**, **Potential blockers**, **Intended outcome**.
+   - Site: `empire-city-taxi.atlassian.net` (cloudId `7afb79ce-b26f-4945-b14a-8b27a4be498e`). Jira project **ECT GRC**, key `GOV`. Confluence space **Empire City Taxi Governance**, key `ECTG` (space id `327685`).
+   - **Where things live:** Confluence holds policy text, minutes and process docs. Jira holds planning, findings, remediation and audit requests. The repo holds everything the pipeline reads (policy register, control framework, issue register as dbt seeds) plus a copy of each published policy, because the Atlassian site is private. `WORKLOG.md` stays the decision log.
 6. **Integrity:** synthetic data only, apart from the public NYC TLC trips. All people are fictional. Never commit keys, credentials, billing account IDs or personal emails.
 
 ## Environment
