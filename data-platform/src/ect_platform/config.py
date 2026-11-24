@@ -15,13 +15,17 @@ EPOCH = date(2026, 1, 1)
 # Real trips come from the public NYC TLC 2022 yellow-taxi data (the newest full year
 # in BigQuery's public dataset). Each simulated day maps to the 2022 day with the same
 # weekday, cycling every 52 weeks, so weekday/weekend patterns stay realistic.
+# The public 2022 table stops at 2022-11-30, so December dates replay the trips from
+# 5 weeks earlier (same weekday, late Oct–Nov).
 TLC_CYCLE_START = date(2022, 1, 3)   # a Monday
+TLC_LAST_DAY = date(2022, 11, 30)    # last day present in the public 2022 table
 _SIM_CYCLE_START = date(2025, 12, 29)  # the Monday on or before EPOCH
 
 
 def tlc_date_for(day: date) -> date:
     """The 2022 TLC date whose trips are replayed on a simulated day."""
-    return TLC_CYCLE_START + timedelta(days=(day - _SIM_CYCLE_START).days % 364)
+    src = TLC_CYCLE_START + timedelta(days=(day - _SIM_CYCLE_START).days % 364)
+    return src - timedelta(weeks=5) if src > TLC_LAST_DAY else src
 
 
 # Google Cloud

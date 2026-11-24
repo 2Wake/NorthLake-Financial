@@ -19,6 +19,25 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — TLC setup run; December gap fixed; backfill generated
+
+### Done
+- **The user ran `sql/01` and `sql/02` in the BigQuery console.** Verified read-only:
+  - `raw.tlc_yellow_trips_sample`: **362,834 trips**, 76 MB, partitioned by day, 10 labels, no duplicate keys.
+  - `raw.tlc_taxi_zones`: 263 zones, 10 labels.
+- **Found:** the public 2022 table stops on **2022-11-30** (no December). **Fixed:** simulated dates that land in December now replay the trips from 5 weeks earlier, on the same weekday. The test now checks every day for two years.
+- **Generated the backfill locally:** 2026-01-01 → 2026-11-23 (327 days). It contains 357,049 trips, 10,908 surveys, 4,645 rider records, 3,894 card records, 954 HR records, 783 fleet records, and 1,237 planted defects. Nothing is loaded yet.
+- Checked a spurious alarm: every `tlc_sample_key` ends in "00". That is expected, because the 1% sample keeps only trips whose hash is divisible by 100.
+
+### Real-data findings (not planted; future data-quality material)
+- **2022-09-18 has only 36 trips** (normal is ~1,100), an apparent gap in the public data. It is replayed as **2026-09-13**, which makes a good test for a volume anomaly check.
+- **2022-01-29 is low (339)** because of the real blizzard. That's a true dip, not an error.
+
+### Next steps
+- The user approves the backfill load into `raw` (loads are free).
+
+---
+
 ## 2026-11-24 — Phase 0: daily data generator and loader
 
 ### Done
