@@ -26,6 +26,43 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Policies POL-01 to POL-08 drafted and reviewed to v0.9 (parallel)
+
+### Done
+- New Confluence folder **Policies** (458802) under Policy Management.
+- **POL-01 Information Security Policy** (491531) written first as a v0.1 frame, so the 7 topic policies could cite it. Then 7 parallel agents each drafted one policy from the approved template, ran its simulated review (dated today, marked [Simulated], ≥1 accepted and ≥1 rejected-with-reason) and closed its draft + review sub-tasks with closing comments.
+  | ID | Page | Story | Approval sub-task |
+  |---|---|---|---|
+  | POL-01 Information Security | 491531 | GOV-4 | GOV-55 (CEO) |
+  | POL-02 Access Control | 557061 | GOV-5 | GOV-56 |
+  | POL-03 Data Classification & Handling | 426094 | GOV-6 | GOV-57 |
+  | POL-04 Cardholder Data Protection | 557113 | GOV-7 | GOV-58 (CFO + CISO) |
+  | POL-05 Acceptable Use | 426073 | GOV-8 | GOV-59 (VP People + CISO) |
+  | POL-06 Risk Management | 557136 | GOV-9 | GOV-60 |
+  | POL-07 Change Management | 557087 | GOV-10 | GOV-61 |
+  | POL-08 Incident Response | 458805 | GOV-11 | GOV-62 |
+- POL-01 v0.2 folded in the agents' findings (card data → POL-04, risk acceptance roles, yearly acknowledgment, security reporting channel, change management, monitoring notice, CFO/GC roles, POL-04 exceptions need CFO+CISO, links). Leadership review (GOV-40) → v0.9: accepted classification-drives-controls and lawful monitoring with §52-c notice; rejected CDO co-ownership (one accountable owner, STD-01 s8). GOV-25, GOV-40 Done.
+- Register page v6 + extract: POL-01 to POL-08 `in_review`, 0.9, page IDs.
+- Approval sub-tasks (GOV-55 to GOV-62) untouched, waiting for the owner.
+
+### Decisions
+- Draft the umbrella first, approve it first or same day (owner agreed). Shared files (register, CSV, WORKLOG, git) kept with the main session so parallel agents can't collide.
+
+### Found (audit material; not fixed)
+- No security incident reporting channel exists (POL-01 s7, POL-08 s1 point to it). Blocks approval of POL-01 and POL-08.
+- No approved tools list (software/AI by data tier) for POL-05. Blocks GOV-59.
+- POL-07 walk-through: today's merges went straight to `main` (no PR, no second reviewer); `main` has no branch protection; console changes recorded only in WORKLOG.
+- SOC 2 control matrix marks IR-01/IR-02 "Implemented" but no IR plan exists; evidence tracker PBC-002 says Q1–Q4 risk register exports "Collected" but no register exists.
+- Council charter's `GOV-###` issue IDs clash with Jira GOV keys.
+- Card-data stewardship unclear (register says Rider steward, table owner label is CFO); referred to council in POL-03.
+- `01-governance-program/governance/access-control-policy.md` superseded by POL-02; ACC-02/ACC-03 have no 24h / 5-day allowance matching POL-02 s6–7.
+- Classification & Labeling standards still repo-only (DRAFT v0.1); proposed to move to Confluence as STD-02/STD-03.
+
+### Next steps
+- Owner decides on proposed tickets, then approvals in order: POL-01 (CEO) first.
+
+---
+
 ## 2026-11-24 — GOV-2 closed: DOC-01 approved v1.0; observations story GOV-70
 
 ### Done
