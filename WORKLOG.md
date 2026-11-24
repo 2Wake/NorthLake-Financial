@@ -24,7 +24,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - **Org structure** (`01-governance-program/governance/governance-org-structure.md`): reporting lines, fictional named role holders, owners and stewards per domain, custodian and consumer roles, and the department objectives that create governance tensions.
 - **Council charter** (`01-governance-program/governance/data-governance-council-charter.md`): purpose, authority, membership and voting, meetings and quorum, decision rules, issue lifecycle with severity targets, escalation path, a RACI for 12 decision types, standing agenda, 7 KPIs, and the initial backlog GOV-001 to GOV-006, each tied to a defect planted in the data.
 - Committed as `245c3e7` on branch `governance-council`; **merged to `main` from the CLI** at the user's request.
-- Added `CLAUDE.md` (project context and working agreements) and moved this log into the repo as `WORKLOG.md`.
+- Added `CLAUDE.md` (project context and working agreements) and moved this log into the repo as `WORKLOG.md`. The user chose to keep the log **public**. Committed as `8fe21bb` on branch `project-context`; **merged to `main` from the CLI** at the user's request.
 
 ### Decisions
 - Council members get **fictional names**. Names appear in docs and minutes only; labels and data use role slugs.
