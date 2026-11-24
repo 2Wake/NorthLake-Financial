@@ -4,7 +4,7 @@ import re
 from datetime import date, timedelta
 
 from ect_platform import fakes
-from ect_platform.config import EPOCH, tlc_date_for
+from ect_platform.config import EPOCH, TLC_CYCLE_START, TLC_LAST_DAY, tlc_date_for
 from ect_platform.generate import generate
 from ect_platform.registry import TABLES, columns
 from ect_platform.sim import Simulation
@@ -47,12 +47,12 @@ def test_written_files_are_byte_identical(tmp_path):
     assert a == b  # manifests include SHA-256 of every file
 
 
-def test_tlc_mapping_keeps_weekday_and_stays_in_2022():
-    for offset in range(0, 800, 7):
+def test_tlc_mapping_keeps_weekday_and_stays_in_available_data():
+    for offset in range(0, 800):
         day = EPOCH + timedelta(days=offset)
         src = tlc_date_for(day)
         assert src.weekday() == day.weekday()
-        assert src.year == 2022
+        assert TLC_CYCLE_START <= src <= TLC_LAST_DAY
 
 
 def test_ids_are_prefixed():
