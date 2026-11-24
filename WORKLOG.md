@@ -26,6 +26,18 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — How-To's folder: reading DOC-01 and running a PCI scoping exercise
+
+### Done
+- New Confluence folder **How-To's** (458756) under the ECTG home.
+- **How to read DOC-01 PCI DSS Scope & Cardholder Data Flow** (458759): PCI DSS basics (PAN, CHD vs sensitive authentication data, 12 requirements, QSA vs SAQ) and a plain-language walkthrough of every DOC-01 section, mapping each observation to its PCI requirement and the policy that will handle it.
+- **How to run a PCI DSS scoping exercise** (426044): 7-step method (set up → payment channels from Finance → follow the data with 5 questions → discovery scans → classify with decision table → draw and cross-check the flow → review, sign off, re-scope triggers), who does what, and a system-owner questionnaire.
+
+### Risks / gaps found
+- Applying the method's "payment channels" step to ECT shows **in-cab card payments are missing from DOC-01** (NYC taxis take cards in the cab, usually through a third-party terminal provider). Flagged to the owner; DOC-01 not yet changed.
+
+---
+
 ## 2026-11-24 — GOV-2: DOC-01 PCI DSS scope drafted and reviewed (v0.9)
 
 ### Done
