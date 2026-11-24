@@ -45,8 +45,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 - Pushing the workflow needed the GitHub CLI's `workflow` permission. The user granted it with `gh auth refresh -s workflow`; in `!` commands use the full path `/opt/homebrew/bin/gh`.
 - **The user completed console setup steps A–F.** Merged `daily-refresh` to `main` from the CLI at the user's request. Run records go to `main` by default, since the user hasn't chosen otherwise.
 
+- **First run failed (403 `iam.serviceAccounts.getAccessToken`).** Cause: in the provider's attribute mapping, the OIDC side read `attribute.repository` instead of `assertion.repository` (same for `repository_owner`), so the step E impersonation grant never matched. Found with read-only `gcloud` checks; **the user fixed it in the console.**
+- **Re-run:** sign-in, catch-up, load and `dbt build` all **succeeded**. Only the run-record push failed, because `main` had moved ahead (the first run had committed its own failure record). **Fixed:** the workflow now rebases before pushing, and records are named `<date>_<time>.md` so same-day runs never clash.
+
 ### Next steps
-1. First workflow run (step G), then check the run record.
+1. Merge the fix and run the workflow again to confirm a fully green run.
 
 ---
 

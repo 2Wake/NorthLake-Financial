@@ -3,7 +3,7 @@
     uv run ect-record
 
 Reads output/last_run.json (from ect-daily) and dbt/target/run_results.json (from dbt build),
-and writes run-records/<run date>.md: days loaded, row counts, and every test result.
+and writes run-records/<date>_<time>.md (one file per run, so same-day runs never clash): days loaded, row counts, and every test result.
 Contains counts and test names only, never data values.
 """
 import json
@@ -48,7 +48,7 @@ def main(argv=None):
         lines.append("")
 
     RECORDS_DIR.mkdir(exist_ok=True)
-    path = RECORDS_DIR / f"{now:%Y-%m-%d}.md"
+    path = RECORDS_DIR / f"{now:%Y-%m-%d_%H%M}.md"
     path.write_text("\n".join(lines))
     print(f"Wrote {path}")
 
