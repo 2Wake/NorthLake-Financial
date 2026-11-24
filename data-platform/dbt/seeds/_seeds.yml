@@ -42,3 +42,25 @@ seeds:
       fct_role_access_scorecard; checks must not read it.
     config:
       labels: {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
+  - name: policy_register
+    description: >
+      Policy Register: one row per governance document (policies, standards, supporting documents)
+      with owner, approver, status, version and review dates. Data copy of the Confluence
+      "Policy Register" page (space ECTG, page 65685), which is the official version; see
+      STD-01 Policy Management Standard. Roles are org-roster role codes; approver_roles is
+      semicolon-separated when two approvals are required.
+    config:
+      column_types: {version: string, confluence_page_id: string, approval_date: date, next_review_date: date}
+      labels: {domain: governance, layer: staging, data_owner: ciso, data_steward: data-governance-manager, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
+    columns:
+      - name: doc_id
+        data_tests: [unique, not_null]
+      - name: doc_type
+        data_tests:
+          - accepted_values:
+              arguments: {values: [policy, standard, procedure, supporting_document]}
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [draft, in_review, approved, retired]}

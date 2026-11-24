@@ -26,6 +26,30 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — GOV-22 approved; GOV-23 Policy Register built
+
+### Done
+- **GOV-22 Done:** user approved STD-01 Policy Management Standard and the Policy Template ("look great").
+- **GOV-23 Done: Policy Register built in two places.**
+  - **Confluence:** *Policy Register* page (65685) in the Policy Management folder. One row per document (17: STD-01, DOC-01, POL-01 to POL-15) with type, owner, approver, status, version, approval date, next review, Jira key and page link. All start as Draft. Includes a change log.
+  - **Repo:** `data-platform/dbt/seeds/governance/policy_register.csv` plus its entry in `seeds/_seeds.yml` (description, labels, tests: `doc_id` unique/not null, `doc_type` and `status` accepted values). `dbt parse` passes and the 5 new tests are registered; `pytest` 12/12 pass.
+  - `dbt/README.md`: added `seeds/governance/` to the layout table and a note on keeping the CSV in sync with Confluence (Confluence wins; same-session update by pull request).
+- **Space home page updated:** replaced the template's placeholder description with a real one, and added a *Key documents* section linking the register, STD-01 and the template.
+
+### Decisions
+- Seed columns: `doc_id, title, doc_type, owner_role, approver_roles, status, version, approval_date, next_review_date, jira_key, confluence_page_id`. Roles are org-roster role slugs (labels rule: no names in data); `approver_roles` is `;`-separated for joint approvals (POL-04 CFO+CISO, POL-05 VP People+CISO).
+- **The seed is not loaded to BigQuery yet.** It loads on the first daily `dbt build` after this branch is merged to `main`; it wasn't run locally to avoid writing to the shared `staging` dataset from a feature branch.
+- **Planted register gaps (overdue review, unapproved policy, etc.) are not in yet.** They go in when approvals are recorded, so the register first reflects real progress.
+
+### Risks
+- The new seed's 11 columns land in `staging` without classification register entries, so CLS-01 (unclassified columns) will count them, like the other governance seeds. Consistent with the existing open CLS-01 finding; not fixed, per the findings rule.
+
+### Next steps
+- GOV-24: STD-01 review and CISO approval (record approval in all three places).
+- GOV-2: PCI DSS scope & cardholder data flow (DOC-01).
+
+---
+
 ## 2026-11-24 — GOV-22 drafted; schedule compressed; dependencies linked
 
 ### Done

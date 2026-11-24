@@ -12,6 +12,7 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 | `models/marts/governance/` | `fct_dq_findings` (every failing record), `fct_dq_scorecard` (caught vs. planted per rule), `dim_dq_rules` |
 | `models/marts/_marts.yml` | Marts descriptions, labels, tests, and one test per data-quality rule |
 | `seeds/` | `dq_rules.csv` (the rule catalog) and `taxi_zone_supplement.csv` (zones missing from the public zone table) |
+| `seeds/governance/` | Governance records: classification register, access policy matrix, role accounts, answer keys, and `policy_register.csv` (see below) |
 | `tests/assert_marts_classification_cap.sql` | **Governance control:** fails if any marts table is labeled above Sensitive or contains a Secret/Confidential column |
 | `models/staging/_sources.yml` | The raw tables and their freshness checks (warns if the daily load stops) |
 | `macros/change_log.sql` | How "current version" and "history" are worked out from the raw change logs |
@@ -19,6 +20,8 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 | `profiles.yml` | Connection to BigQuery, using your Google sign-in. No passwords or keys. 1 GB cap per query. |
 
 **Staging keeps defects as they are.** It doesn't fix bad values, so the tests can find them. Fixes happen only after the data owner or the council decides, which is the remediation story.
+
+**The policy register has two copies.** The official one is the *Policy Register* page in Confluence (space ECTG), governed by STD-01 Policy Management Standard. `seeds/governance/policy_register.csv` is a data copy so approvals and review dates can be checked automatically. Whenever a row changes on the Confluence page (status, version, approval date, next review date, page link), make the same change in the CSV in the same working session, by pull request. If they ever differ, Confluence is right and the CSV gets corrected. Dates are `YYYY-MM-DD`; `approver_roles` uses `;` when two approvals are needed.
 
 **History comes from `raw`, not dbt snapshots.** Raw already holds every version of every record, so history can be rebuilt at any time, back to 2026-01-01. A snapshot would only start recording from its first run.
 
