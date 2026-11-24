@@ -61,7 +61,7 @@ All in `01-governance-program/governance/`:
 |---|---|
 | `data-classification-standard.md` | Five tiers: **Secret → Confidential → Sensitive → Internal → Public**. `marts` is capped at Sensitive. |
 | `labeling-standard.md` | Required labels, the domain register, formatting rules |
-| `column-classification-map.csv` | Column-level classification answer key |
+| `classification-register.md` | How column classification is managed. The register and its answer key are dbt seeds in `data-platform/dbt/seeds/governance/`. (`column-classification-map.csv` is the superseded Project 1 map.) |
 | `data-ownership-model.md`, `governance-org-structure.md`, `data-governance-council-charter.md` | Roles, named people, council, RACI |
 
 Labels and data reference **role slugs**, never people's names.

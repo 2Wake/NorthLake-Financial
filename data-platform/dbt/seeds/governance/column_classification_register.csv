@@ -1,0 +1,501 @@
+layer,table_name,column_name,classification,data_category,treatment,data_owner,data_steward,status,proposed_by,approved_by,approved_on,rationale
+marts,dim_campaigns,campaign_id,Internal,Identifier,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+marts,dim_campaigns,name,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Campaign name
+marts,dim_campaigns,channel,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Channel
+marts,dim_campaigns,start_date,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+marts,dim_campaigns,end_date,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+marts,dim_campaigns,budget,Sensitive,Financial,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Spend figure
+marts,dim_campaigns,target_segment_id,Internal,Identifier (FK),passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Links to rider_segments
+marts,dim_campaigns,updated_at,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+marts,dim_dq_rules,rule_id,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,dimension,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,table_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,column_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,severity,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,expectation,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_dq_rules,origin,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,dim_drivers,driver_id,Internal,Identifier,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Surrogate key
+marts,dim_drivers,employee_id,Internal,Identifier (FK),passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Links driver to HR record
+marts,dim_drivers,first_name,Sensitive,PII,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+marts,dim_drivers,last_name,Sensitive,PII,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+marts,dim_drivers,driver_status,Internal,Operational,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Operational driver state
+marts,dim_drivers,hired_at,Internal,Operational,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+marts,dim_drivers,status_changed_at,Internal,Operational,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+marts,dim_drivers,updated_at,Internal,Operational,passthrough,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+marts,dim_employees,employee_id,Internal,Identifier,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Surrogate key
+marts,dim_employees,first_name,Sensitive,PII,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+marts,dim_employees,last_name,Sensitive,PII,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+marts,dim_employees,work_email,Sensitive,Workforce PII,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact (renamed from email)
+marts,dim_employees,department,Internal,Operational,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+marts,dim_employees,title,Internal,Operational,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+marts,dim_employees,pay_type,Internal,Operational,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,"Pay basis (salaried, commission)"
+marts,dim_employees,hired_at,Internal,Operational,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+marts,dim_employees,employment_status,Sensitive,Workforce PII,passthrough,vp-people,hr-data-steward,proposed,hr-data-steward,,,Employment status reveals terminations
+marts,dim_employees,terminated_at,Sensitive,Workforce PII,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Termination date of a named person
+marts,dim_employees,updated_at,Internal,Operational,passthrough,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+marts,dim_rider_cards,card_id,Internal,Identifier,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+marts,dim_rider_cards,rider_id,Internal,Identifier (FK),passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Links to riders
+marts,dim_rider_cards,card_last4,Secret,Cardholder data (masked),masked,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Last 4 digits only; displayable under PCI DSS
+marts,dim_rider_cards,card_status,Internal,Operational,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Card state
+marts,dim_rider_cards,added_at,Internal,Operational,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+marts,dim_rider_cards,updated_at,Internal,Operational,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+marts,dim_rider_segments,segment_id,Internal,Identifier,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+marts,dim_rider_segments,name,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment name
+marts,dim_rider_segments,definition,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment rule
+marts,dim_rider_segments,size_estimate,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Count estimate
+marts,dim_rider_segments,updated_at,Internal,Operational,passthrough,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+marts,dim_riders,rider_id,Internal,Identifier,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+marts,dim_riders,first_name,Sensitive,PII,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+marts,dim_riders,last_name,Sensitive,PII,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+marts,dim_riders,created_at,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+marts,dim_riders,account_status,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Account state
+marts,dim_riders,closed_at,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+marts,dim_riders,updated_at,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+marts,dim_taxi_zones,zone_id,Public,Public open data,passthrough,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+marts,dim_taxi_zones,zone_name,Public,Public open data,passthrough,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+marts,dim_taxi_zones,borough,Public,Public open data,passthrough,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+marts,dim_taxi_zones,zone_geom,Public,Public open data,passthrough,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+marts,dim_taxi_zones,zone_source,Public,Reference,derived,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Where the zone row came from
+marts,fct_classification_findings,rule_id,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,rule_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,layer,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,table_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,column_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,detail,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_findings,evaluated_at,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,layer,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,table_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,column_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,expected_classification,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,recorded_classification,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,verdict,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,is_high_risk,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,status,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,flagged_by,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,is_flagged,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,rationale,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_classification_scorecard,evaluated_at,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_daily_zone_trips,pickup_date,Internal,Operational,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Day
+marts,fct_daily_zone_trips,pickup_zone_id,Confidential,Location (aggregated),aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Zone totals with no rider or driver
+marts,fct_daily_zone_trips,pickup_zone_name,Confidential,Location (aggregated),aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Zone totals with no rider or driver
+marts,fct_daily_zone_trips,pickup_borough,Internal,Location (aggregated),aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Zone totals with no rider or driver
+marts,fct_daily_zone_trips,trips,Internal,Operational,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Count
+marts,fct_daily_zone_trips,app_bookings,Internal,Operational,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Count
+marts,fct_daily_zone_trips,fare_amount,Sensitive,Financial,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Revenue total
+marts,fct_daily_zone_trips,tip_amount,Sensitive,Financial,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Revenue total
+marts,fct_daily_zone_trips,total_amount,Sensitive,Financial,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Revenue total
+marts,fct_daily_zone_trips,avg_trip_distance,Internal,Operational,aggregated,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Average
+marts,fct_dq_findings,rule_id,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,table_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,record_id,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,column_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,dimension,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,severity,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,origin,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_findings,evaluated_at,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,rule_id,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,dimension,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,severity,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,table_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,column_name,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,expectation,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,origin,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,findings,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,planted,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,planted_caught,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,planted_missed,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,unplanted_findings,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,detection_rate,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_dq_scorecard,evaluated_at,Internal,Governance metadata,derived,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Rule results; IDs and counts only
+marts,fct_ledger_entries,entry_id,Internal,Identifier,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+marts,fct_ledger_entries,period,Internal,Operational,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Accounting period
+marts,fct_ledger_entries,account,Internal,Reference,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,GL account
+marts,fct_ledger_entries,amount,Sensitive,Financial,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Financial figure
+marts,fct_ledger_entries,currency,Public,Reference,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Non-sensitive code
+marts,fct_ledger_entries,recorded_at,Internal,Operational,passthrough,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+marts,fct_trip_surveys,survey_id,Internal,Identifier,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+marts,fct_trip_surveys,trip_id,Internal,Identifier (FK),passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to trips
+marts,fct_trip_surveys,rider_id,Internal,Identifier (FK),passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to riders
+marts,fct_trip_surveys,rating,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Survey score
+marts,fct_trip_surveys,comment_redacted,Sensitive,Free-text (masked),masked,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Phone numbers and emails replaced with [REDACTED]
+marts,fct_trip_surveys,submitted_at,Internal,Operational,passthrough,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+marts,fct_trips,trip_id,Internal,Identifier,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Surrogate key
+marts,fct_trips,driver_id,Internal,Identifier (FK),passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to drivers
+marts,fct_trips,rider_id,Internal,Identifier (FK),passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to riders
+marts,fct_trips,is_app_booking,Internal,Operational,derived,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Booked in app vs. street hail
+marts,fct_trips,pickup_date,Internal,Operational,derived,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Date of pickup
+marts,fct_trips,pickup_datetime,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+marts,fct_trips,dropoff_datetime,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+marts,fct_trips,pickup_borough,Sensitive,Location (generalized),generalized,vp-operations,ops-data-steward,proposed,ops-data-steward,,,Zone generalized to borough; with rider_id still reveals coarse movement
+marts,fct_trips,dropoff_borough,Sensitive,Location (generalized),generalized,vp-operations,ops-data-steward,proposed,ops-data-steward,,,Zone generalized to borough; with rider_id still reveals coarse movement
+marts,fct_trips,passenger_count,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+marts,fct_trips,trip_distance,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+marts,fct_trips,payment_type,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Payment method code
+marts,fct_trips,payment_method,Internal,Operational,derived,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Decoded payment type
+marts,fct_trips,fare_amount,Sensitive,Financial,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+marts,fct_trips,extra,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through surcharge
+marts,fct_trips,mta_tax,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through tax
+marts,fct_trips,tip_amount,Sensitive,Financial,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+marts,fct_trips,tolls_amount,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through charge
+marts,fct_trips,improvement_surcharge,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through surcharge
+marts,fct_trips,airport_fee,Internal,Operational,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through fee
+marts,fct_trips,total_amount,Sensitive,Financial,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+marts,fct_trips,batch_date,Internal,Pipeline metadata,passthrough,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Load metadata
+raw,app_marketing_campaigns,campaign_id,Internal,Identifier,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+raw,app_marketing_campaigns,name,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Campaign name
+raw,app_marketing_campaigns,channel,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Channel
+raw,app_marketing_campaigns,start_date,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+raw,app_marketing_campaigns,end_date,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+raw,app_marketing_campaigns,budget,Sensitive,Financial,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Spend figure
+raw,app_marketing_campaigns,target_segment_id,Internal,Identifier (FK),source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Links to rider_segments
+raw,app_marketing_campaigns,record_updated_at,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+raw,app_marketing_campaigns,_batch_date,Internal,Pipeline metadata,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+raw,app_marketing_campaigns,_generator_version,Internal,Pipeline metadata,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+raw,app_rider_segments,segment_id,Internal,Identifier,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+raw,app_rider_segments,name,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment name
+raw,app_rider_segments,definition,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment rule
+raw,app_rider_segments,size_estimate,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Count estimate
+raw,app_rider_segments,record_updated_at,Internal,Operational,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+raw,app_rider_segments,_batch_date,Internal,Pipeline metadata,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+raw,app_rider_segments,_generator_version,Internal,Pipeline metadata,source,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+raw,app_riders,rider_id,Internal,Identifier,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+raw,app_riders,first_name,Sensitive,PII,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+raw,app_riders,last_name,Sensitive,PII,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+raw,app_riders,email,Confidential,PII (contact),source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct identifier and contact
+raw,app_riders,phone,Confidential,PII (contact),source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct contact identifier
+raw,app_riders,home_address,Confidential,PII,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Locational personal data
+raw,app_riders,created_at,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+raw,app_riders,account_status,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Account state
+raw,app_riders,closed_at,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+raw,app_riders,record_updated_at,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+raw,app_riders,_batch_date,Internal,Pipeline metadata,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+raw,app_riders,_generator_version,Internal,Pipeline metadata,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+raw,app_trip_surveys,survey_id,Internal,Identifier,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+raw,app_trip_surveys,trip_id,Internal,Identifier (FK),source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to trips
+raw,app_trip_surveys,rider_id,Internal,Identifier (FK),source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to riders
+raw,app_trip_surveys,rating,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Survey score
+raw,app_trip_surveys,comment,Internal,Free-text (PII risk),source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,"Free-text may contain PII (phone, email); requires DLP; commonly missed"
+raw,app_trip_surveys,submitted_at,Internal,Operational,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+raw,app_trip_surveys,_batch_date,Internal,Pipeline metadata,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+raw,app_trip_surveys,_generator_version,Internal,Pipeline metadata,source,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+raw,app_trips,trip_id,Internal,Identifier,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Surrogate key
+raw,app_trips,driver_id,Internal,Identifier (FK),source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to drivers
+raw,app_trips,rider_id,Internal,Identifier (FK),source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to riders
+raw,app_trips,pickup_datetime,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+raw,app_trips,dropoff_datetime,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+raw,app_trips,passenger_count,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+raw,app_trips,trip_distance,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+raw,app_trips,rate_code,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Fare rate code
+raw,app_trips,payment_type,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Payment method code
+raw,app_trips,fare_amount,Sensitive,Financial,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+raw,app_trips,extra,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through surcharge
+raw,app_trips,mta_tax,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through tax
+raw,app_trips,tip_amount,Sensitive,Financial,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+raw,app_trips,tolls_amount,Internal,Operational,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through charge
+raw,app_trips,total_amount,Sensitive,Financial,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+raw,app_trips,pickup_location_id,Internal,Location,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
+raw,app_trips,dropoff_location_id,Internal,Location,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
+raw,app_trips,_batch_date,Internal,Pipeline metadata,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Load metadata
+raw,app_trips,_generator_version,Internal,Pipeline metadata,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Load metadata
+raw,fleet_drivers,driver_id,Internal,Identifier,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Surrogate key
+raw,fleet_drivers,employee_id,Internal,Identifier (FK),source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Links driver to HR record
+raw,fleet_drivers,first_name,Sensitive,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+raw,fleet_drivers,last_name,Sensitive,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+raw,fleet_drivers,tlc_license,Internal,Regulated Identifier,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
+raw,fleet_drivers,ssn,Secret,Sensitive PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+raw,fleet_drivers,phone,Confidential,PII (contact),source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
+raw,fleet_drivers,home_address,Confidential,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
+raw,fleet_drivers,payout_bank_account,Secret,Financial/Secret,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+raw,fleet_drivers,background_check_status,Confidential,Sensitive,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
+raw,fleet_drivers,hired_at,Internal,Operational,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+raw,fleet_drivers,status_changed_at,Internal,Operational,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+raw,fleet_drivers,record_updated_at,Internal,Operational,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+raw,fleet_drivers,_batch_date,Internal,Pipeline metadata,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+raw,fleet_drivers,_generator_version,Internal,Pipeline metadata,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+raw,gov_planted_defects,defect_id,Internal,Governance metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+raw,gov_planted_defects,table_name,Internal,Governance metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+raw,gov_planted_defects,record_id,Internal,Governance metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+raw,gov_planted_defects,column_name,Internal,Governance metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+raw,gov_planted_defects,defect_code,Internal,Governance metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+raw,gov_planted_defects,_batch_date,Internal,Pipeline metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Load metadata
+raw,gov_planted_defects,_generator_version,Internal,Pipeline metadata,source,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Load metadata
+raw,hris_employees,employee_id,Internal,Identifier,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Surrogate key
+raw,hris_employees,first_name,Sensitive,PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+raw,hris_employees,last_name,Sensitive,PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+raw,hris_employees,email,Sensitive,Workforce PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
+raw,hris_employees,ssn,Secret,Sensitive PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+raw,hris_employees,department,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+raw,hris_employees,title,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+raw,hris_employees,salary,Confidential,Sensitive HR,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Compensation
+raw,hris_employees,performance_rating,Internal,Sensitive HR,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Performance data; HR-sensitive; often under-classified
+raw,hris_employees,hired_at,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+raw,hris_employees,terminated_at,Sensitive,Workforce PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Termination date of a named person
+raw,hris_employees,record_updated_at,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+raw,hris_employees,_batch_date,Internal,Pipeline metadata,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+raw,hris_employees,_generator_version,Internal,Pipeline metadata,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+raw,payments_financial_ledger,entry_id,Internal,Identifier,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+raw,payments_financial_ledger,period,Internal,Operational,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Accounting period
+raw,payments_financial_ledger,account,Internal,Reference,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,GL account
+raw,payments_financial_ledger,amount,Restricted,Financial,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Financial figure
+raw,payments_financial_ledger,currency,Public,Reference,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Non-sensitive code
+raw,payments_financial_ledger,recorded_at,Internal,Operational,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+raw,payments_financial_ledger,_batch_date,Internal,Pipeline metadata,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+raw,payments_financial_ledger,_generator_version,Internal,Pipeline metadata,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+raw,payments_rider_cards,card_id,Internal,Identifier,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Surrogate key
+raw,payments_rider_cards,rider_id,Internal,Identifier (FK),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Links to riders
+raw,payments_rider_cards,card_number,Secret,Cardholder Data (PCI),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+raw,payments_rider_cards,card_expiry,Confidential,Cardholder Data (PCI),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
+raw,payments_rider_cards,cardholder_name,Sensitive,Cardholder Data / PII,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,PII and cardholder data
+raw,payments_rider_cards,card_status,Internal,Operational,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Card state
+raw,payments_rider_cards,added_at,Internal,Operational,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Record metadata
+raw,payments_rider_cards,record_updated_at,Internal,Operational,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Record metadata
+raw,payments_rider_cards,_batch_date,Internal,Pipeline metadata,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+raw,payments_rider_cards,_generator_version,Internal,Pipeline metadata,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+raw,tlc_taxi_zones,zone_id,Public,Public open data,source,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_taxi_zones,zone_name,Public,Public open data,source,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_taxi_zones,borough,Public,Public open data,source,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_taxi_zones,zone_geom,Public,Public open data,source,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,tlc_sample_key,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,vendor_id,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,pickup_datetime,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,dropoff_datetime,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,passenger_count,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,trip_distance,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,rate_code,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,payment_type,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,fare_amount,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,extra,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,mta_tax,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,tip_amount,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,tolls_amount,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,imp_surcharge,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,airport_fee,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,total_amount,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,pickup_location_id,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+raw,tlc_yellow_trips_sample,dropoff_location_id,Public,Public open data,source,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"NYC TLC open data, published by the city"
+staging,column_classification_answer_key,layer,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,table_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,column_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,classification,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,data_category,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,treatment,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_answer_key,rationale,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,layer,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,table_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,column_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,classification,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,data_category,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,treatment,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,data_owner,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,data_steward,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,status,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,proposed_by,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,approved_by,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,approved_on,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,column_classification_register,rationale,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,rule_id,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,dimension,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,table_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,column_name,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,severity,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,expectation,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,origin,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,dq_rules,defect_code,Internal,Governance metadata,seed,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Governance catalog (rules or classifications); no data values
+staging,stg_app_marketing_campaigns,campaign_id,Internal,Identifier,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+staging,stg_app_marketing_campaigns,name,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Campaign name
+staging,stg_app_marketing_campaigns,channel,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Channel
+staging,stg_app_marketing_campaigns,start_date,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+staging,stg_app_marketing_campaigns,end_date,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Schedule
+staging,stg_app_marketing_campaigns,budget,Sensitive,Financial,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Spend figure
+staging,stg_app_marketing_campaigns,target_segment_id,Internal,Identifier (FK),inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Links to rider_segments
+staging,stg_app_marketing_campaigns,record_updated_at,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+staging,stg_app_marketing_campaigns,_batch_date,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_marketing_campaigns,_generator_version,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_rider_segments,segment_id,Internal,Identifier,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+staging,stg_app_rider_segments,name,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment name
+staging,stg_app_rider_segments,definition,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment rule
+staging,stg_app_rider_segments,size_estimate,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Count estimate
+staging,stg_app_rider_segments,record_updated_at,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+staging,stg_app_rider_segments,_batch_date,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_rider_segments,_generator_version,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_rider_segments_history,segment_id,Internal,Identifier,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Surrogate key
+staging,stg_app_rider_segments_history,name,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment name
+staging,stg_app_rider_segments_history,definition,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Segment rule
+staging,stg_app_rider_segments_history,size_estimate,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Count estimate
+staging,stg_app_rider_segments_history,record_updated_at,Internal,Operational,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Record metadata
+staging,stg_app_rider_segments_history,_batch_date,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_rider_segments_history,_generator_version,Internal,Pipeline metadata,inherited,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,Load metadata
+staging,stg_app_rider_segments_history,valid_from,Internal,Operational,derived,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,History metadata
+staging,stg_app_rider_segments_history,valid_to,Internal,Operational,derived,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,History metadata
+staging,stg_app_rider_segments_history,is_current,Internal,Operational,derived,vp-marketing,marketing-data-steward,approved,marketing-data-steward,vp-marketing,2026-11-20,History metadata
+staging,stg_app_riders,rider_id,Internal,Identifier,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+staging,stg_app_riders,first_name,Sensitive,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+staging,stg_app_riders,last_name,Sensitive,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+staging,stg_app_riders,email,Confidential,PII (contact),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct identifier and contact
+staging,stg_app_riders,phone,Confidential,PII (contact),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct contact identifier
+staging,stg_app_riders,home_address,Confidential,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Locational personal data
+staging,stg_app_riders,created_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders,account_status,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Account state
+staging,stg_app_riders,closed_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders,record_updated_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders,_batch_date,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_riders,_generator_version,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_riders_history,rider_id,Internal,Identifier,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+staging,stg_app_riders_history,first_name,Sensitive,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+staging,stg_app_riders_history,last_name,Sensitive,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Personal identifier
+staging,stg_app_riders_history,email,Confidential,PII (contact),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct identifier and contact
+staging,stg_app_riders_history,phone,Confidential,PII (contact),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Direct contact identifier
+staging,stg_app_riders_history,home_address,Confidential,PII,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Locational personal data
+staging,stg_app_riders_history,created_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders_history,account_status,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Account state
+staging,stg_app_riders_history,closed_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders_history,record_updated_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_riders_history,_batch_date,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_riders_history,_generator_version,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_riders_history,valid_from,Internal,Operational,derived,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,History metadata
+staging,stg_app_riders_history,valid_to,Internal,Operational,derived,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,History metadata
+staging,stg_app_riders_history,is_current,Internal,Operational,derived,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,History metadata
+staging,stg_app_trip_surveys,survey_id,Internal,Identifier,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Surrogate key
+staging,stg_app_trip_surveys,trip_id,Internal,Identifier (FK),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to trips
+staging,stg_app_trip_surveys,rider_id,Internal,Identifier (FK),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Links to riders
+staging,stg_app_trip_surveys,rating,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Survey score
+staging,stg_app_trip_surveys,comment,Internal,Free-text (PII risk),inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,"Free-text may contain PII (phone, email); requires DLP; commonly missed"
+staging,stg_app_trip_surveys,submitted_at,Internal,Operational,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Record metadata
+staging,stg_app_trip_surveys,_batch_date,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_trip_surveys,_generator_version,Internal,Pipeline metadata,inherited,vp-rider-experience,rider-data-steward,approved,rider-data-steward,vp-rider-experience,2026-11-20,Load metadata
+staging,stg_app_trips,trip_id,Internal,Identifier,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Surrogate key
+staging,stg_app_trips,driver_id,Internal,Identifier (FK),inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to drivers
+staging,stg_app_trips,rider_id,Internal,Identifier (FK),inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Links to riders
+staging,stg_app_trips,pickup_datetime,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+staging,stg_app_trips,dropoff_datetime,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip event time
+staging,stg_app_trips,passenger_count,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+staging,stg_app_trips,trip_distance,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Trip attribute
+staging,stg_app_trips,rate_code,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Fare rate code
+staging,stg_app_trips,payment_type,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Payment method code
+staging,stg_app_trips,fare_amount,Sensitive,Financial,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+staging,stg_app_trips,extra,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through surcharge
+staging,stg_app_trips,mta_tax,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through tax
+staging,stg_app_trips,tip_amount,Sensitive,Financial,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+staging,stg_app_trips,tolls_amount,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through charge
+staging,stg_app_trips,improvement_surcharge,Internal,Operational,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Pass-through surcharge
+staging,stg_app_trips,total_amount,Sensitive,Financial,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Transaction value
+staging,stg_app_trips,pickup_location_id,Internal,Location,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
+staging,stg_app_trips,dropoff_location_id,Internal,Location,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,"Combined with rider_id, reveals a person's movements; location privacy often overlooked"
+staging,stg_app_trips,tlc_source_key,Internal,Identifier,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Lineage key to the public TLC sample
+staging,stg_app_trips,_batch_date,Internal,Pipeline metadata,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Load metadata
+staging,stg_app_trips,_generator_version,Internal,Pipeline metadata,inherited,vp-operations,ops-data-steward,approved,ops-data-steward,vp-operations,2026-11-20,Load metadata
+staging,stg_fleet_drivers,driver_id,Internal,Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Surrogate key
+staging,stg_fleet_drivers,employee_id,Internal,Identifier (FK),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Links driver to HR record
+staging,stg_fleet_drivers,first_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+staging,stg_fleet_drivers,last_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+staging,stg_fleet_drivers,tlc_license,Confidential,Regulated Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
+staging,stg_fleet_drivers,ssn,Confidential,Sensitive PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+staging,stg_fleet_drivers,phone,Confidential,PII (contact),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
+staging,stg_fleet_drivers,home_address,Confidential,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
+staging,stg_fleet_drivers,payout_bank_account,Secret,Financial/Secret,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers,background_check_status,Confidential,Sensitive,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
+staging,stg_fleet_drivers,driver_status,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Operational driver state
+staging,stg_fleet_drivers,hired_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers,status_changed_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers,record_updated_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers,_batch_date,Internal,Pipeline metadata,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+staging,stg_fleet_drivers,_generator_version,Internal,Pipeline metadata,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+staging,stg_fleet_drivers_history,driver_id,Internal,Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Surrogate key
+staging,stg_fleet_drivers_history,employee_id,Internal,Identifier (FK),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Links driver to HR record
+staging,stg_fleet_drivers_history,first_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+staging,stg_fleet_drivers_history,last_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
+staging,stg_fleet_drivers_history,tlc_license,Confidential,Regulated Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
+staging,stg_fleet_drivers_history,ssn,Secret,Sensitive PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+staging,stg_fleet_drivers_history,phone,Confidential,PII (contact),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
+staging,stg_fleet_drivers_history,home_address,Confidential,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
+staging,stg_fleet_drivers_history,payout_bank_account,Secret,Financial/Secret,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers_history,background_check_status,Confidential,Sensitive,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
+staging,stg_fleet_drivers_history,driver_status,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Operational driver state
+staging,stg_fleet_drivers_history,hired_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers_history,status_changed_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers_history,record_updated_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
+staging,stg_fleet_drivers_history,_batch_date,Internal,Pipeline metadata,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+staging,stg_fleet_drivers_history,_generator_version,Internal,Pipeline metadata,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Load metadata
+staging,stg_fleet_drivers_history,valid_from,Internal,Operational,derived,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,History metadata
+staging,stg_fleet_drivers_history,valid_to,Internal,Operational,derived,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,History metadata
+staging,stg_fleet_drivers_history,is_current,Internal,Operational,derived,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,History metadata
+staging,stg_gov_planted_defects,defect_id,Internal,Governance metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+staging,stg_gov_planted_defects,table_name,Internal,Governance metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+staging,stg_gov_planted_defects,record_id,Internal,Governance metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+staging,stg_gov_planted_defects,column_name,Internal,Governance metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+staging,stg_gov_planted_defects,defect_code,Internal,Governance metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,"Answer key; IDs and codes only, no values"
+staging,stg_gov_planted_defects,_batch_date,Internal,Pipeline metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Load metadata
+staging,stg_gov_planted_defects,_generator_version,Internal,Pipeline metadata,inherited,data-governance-manager,data-governance-manager,approved,data-governance-manager,data-governance-manager,2026-11-20,Load metadata
+staging,stg_hris_employees,employee_id,Internal,Identifier,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Surrogate key
+staging,stg_hris_employees,first_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+staging,stg_hris_employees,last_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+staging,stg_hris_employees,email,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
+staging,stg_hris_employees,ssn,Secret,Sensitive PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+staging,stg_hris_employees,department,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+staging,stg_hris_employees,title,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+staging,stg_hris_employees,salary,Confidential,Sensitive HR,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Compensation
+staging,stg_hris_employees,performance_rating,Internal,Sensitive HR,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Performance data; HR-sensitive; often under-classified
+staging,stg_hris_employees,hired_at,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+staging,stg_hris_employees,employment_status,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Employment status reveals terminations
+staging,stg_hris_employees,terminated_at,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Termination date of a named person
+staging,stg_hris_employees,record_updated_at,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+staging,stg_hris_employees,_batch_date,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+staging,stg_hris_employees,_generator_version,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+staging,stg_hris_employees_history,employee_id,Internal,Identifier,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Surrogate key
+staging,stg_hris_employees_history,first_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+staging,stg_hris_employees_history,last_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
+staging,stg_hris_employees_history,email,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
+staging,stg_hris_employees_history,ssn,Secret,Sensitive PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+staging,stg_hris_employees_history,department,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+staging,stg_hris_employees_history,title,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
+staging,stg_hris_employees_history,pay_type,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,"Pay basis (salaried, commission)"
+staging,stg_hris_employees_history,salary,Sensitive,Sensitive HR,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Compensation
+staging,stg_hris_employees_history,performance_rating,Internal,Sensitive HR,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Performance data; HR-sensitive; often under-classified
+staging,stg_hris_employees_history,hired_at,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+staging,stg_hris_employees_history,employment_status,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Employment status reveals terminations
+staging,stg_hris_employees_history,terminated_at,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Termination date of a named person
+staging,stg_hris_employees_history,record_updated_at,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
+staging,stg_hris_employees_history,_batch_date,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+staging,stg_hris_employees_history,_generator_version,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+staging,stg_hris_employees_history,valid_from,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
+staging,stg_hris_employees_history,valid_to,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
+staging,stg_hris_employees_history,is_current,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
+staging,stg_payments_financial_ledger,entry_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+staging,stg_payments_financial_ledger,period,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Accounting period
+staging,stg_payments_financial_ledger,account,Internal,Reference,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,GL account
+staging,stg_payments_financial_ledger,amount,restricted,Financial,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Financial figure
+staging,stg_payments_financial_ledger,currency,Public,Reference,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Non-sensitive code
+staging,stg_payments_financial_ledger,recorded_at,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+staging,stg_payments_financial_ledger,_batch_date,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_financial_ledger,_generator_version,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_rider_cards,card_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+staging,stg_payments_rider_cards,rider_id,Internal,Identifier (FK),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Links to riders
+staging,stg_payments_rider_cards,card_number,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards,card_expiry,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
+staging,stg_payments_rider_cards,cardholder_name,Secret,Cardholder Data / PII,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,PII and cardholder data
+staging,stg_payments_rider_cards,card_status,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Card state
+staging,stg_payments_rider_cards,added_at,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+staging,stg_payments_rider_cards,record_updated_at,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+staging,stg_payments_rider_cards,_batch_date,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_rider_cards,_generator_version,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_rider_cards_history,card_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
+staging,stg_payments_rider_cards_history,rider_id,Internal,Identifier (FK),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Links to riders
+staging,stg_payments_rider_cards_history,card_number,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards_history,card_expiry,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
+staging,stg_payments_rider_cards_history,cardholder_name,Secret,Cardholder Data / PII,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,PII and cardholder data
+staging,stg_payments_rider_cards_history,card_status,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Card state
+staging,stg_payments_rider_cards_history,added_at,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+staging,stg_payments_rider_cards_history,record_updated_at,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Record metadata
+staging,stg_payments_rider_cards_history,_batch_date,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_rider_cards_history,_generator_version,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
+staging,stg_payments_rider_cards_history,valid_from,Internal,Operational,derived,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,History metadata
+staging,stg_payments_rider_cards_history,valid_to,Internal,Operational,derived,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,History metadata
+staging,stg_payments_rider_cards_history,is_current,Internal,Operational,derived,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,History metadata
+staging,stg_tlc_taxi_zones,zone_id,Public,Public open data,inherited,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+staging,stg_tlc_taxi_zones,zone_name,Public,Public open data,inherited,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+staging,stg_tlc_taxi_zones,borough,Public,Public open data,inherited,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+staging,stg_tlc_taxi_zones,zone_geom,Public,Public open data,inherited,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,"NYC TLC open data, published by the city"
+staging,taxi_zone_supplement,zone_id,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
+staging,taxi_zone_supplement,zone_name,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
+staging,taxi_zone_supplement,borough,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
+staging,taxi_zone_supplement,reason,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
