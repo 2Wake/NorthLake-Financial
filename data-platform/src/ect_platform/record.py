@@ -34,6 +34,20 @@ def main(argv=None):
                 lines.append(f"| {day['batch_date']} | `{table}` | {rows:,} |")
         lines.append("")
 
+    access_path = OUTPUT_DIR / "access_check.json"
+    if access_path.exists():
+        tests = json.loads(access_path.read_text())
+        lines += ["## Role account access check", "",
+                  "Observed access per role account. Whether each result matches the policy is in "
+                  "`marts.fct_role_access_tests`.", "",
+                  "| Account | Dataset | Config | Enforcement |", "|---|---|---|---|"]
+        cells = {}
+        for t in tests:
+            cells.setdefault((t["service_account"].split("@")[0], t["dataset"]), {})[t["method"]] = t["observed"]
+        for (account, dataset), m in cells.items():
+            lines.append(f"| `{account}` | {dataset} | {m.get('config', '—')} | {m.get('enforcement', '—')} |")
+        lines.append("")
+
     counts = {}
     for r in results:
         counts[r["status"]] = counts.get(r["status"], 0) + 1

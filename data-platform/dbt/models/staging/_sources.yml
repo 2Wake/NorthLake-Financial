@@ -35,6 +35,10 @@ sources:
       - name: iam_access_grants
         config:
           freshness: null   # grants change on irregular days
+      - name: iam_role_access_tests
+        description: Observed daily access checks of the role service accounts (written by ect-access-check).
+        config:
+          freshness: null
       - name: gov_planted_defects
         config:
           freshness: null   # only on days with a planted defect

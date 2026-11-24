@@ -15,12 +15,36 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
-- [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Next: real role service accounts (user, console) and a verification test; access logs come with Phase 2.
+- [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Real role accounts and the daily access check
+
+### Done
+- **User created three role service accounts in the console** (no keys): `ect-role-analyst`, `ect-role-steward`, `ect-role-security`. Each has BigQuery Job User on the project and Data Viewer on its datasets. `ect-pipeline` holds Service Account Token Creator on each of the three (granted per account, not project-wide). Verified with read-only checks.
+- **Explained "borrowing" (impersonation)** at the user's request: the pipeline acting as a role account gets only that account's read-only access, so it can't widen its own. It's needed because a keyless service account can't sign in by itself, and only a real query proves enforcement.
+- **Misconfigurations kept as audit findings** (user's decision): `ect-role-steward` on `raw` (deliberate), and `ect-role-analyst` on `raw` instead of `ect-role-security` (a setup slip the user chose to keep). Recorded in `seeds/governance/role_account_answer_key.csv`.
+- **Built `uv run ect-access-check`** and added it to the daily workflow after `ect-daily`. For each account × dataset it records **config** (on the permission list?) and **enforcement** (acting as the account, does a dry-run query get accepted?). Results go to the new observed table `raw.iam_role_access_tests`, then `marts.fct_role_access_tests` (ACC-08 excess, ACC-09 missing, ACC-10 check failed) and `marts.fct_role_access_scorecard`. The run record gets an access table.
+- Policy doc updated: `access-control-policy.md` → *Enforcement (real)*.
+
+### Decisions
+- **Design vs. operating effectiveness:** both checks are kept because they can disagree, and that disagreement is itself audit evidence.
+- **Expected access comes from the policy matrix**, not from a separate list, so changing the policy changes the test.
+- **Enforcement probes use what a user needs:** `raw.hris_employees`, `staging.stg_hris_employees` (a view), `marts.dim_employees`.
+- The check never fails the daily run; problems are recorded as `error` (ACC-10).
+
+### Risks
+- **Expected first-run surprise:** staging models are *views* over `raw`. In BigQuery, querying a view also needs access to its source tables, unless the view's dataset is authorized on `raw`. So `staging` access probably only works for accounts that also have `raw`. If confirmed, that's a real design gap (the policy gives stewards staging without raw), fixable with an authorized dataset. Leave it as a finding.
+- The enforcement path can't be tested locally (impersonation from the laptop is blocked), so the first GitHub Actions run is the real test.
+
+### Next steps
+- User triggers **Run workflow**; check the results and the scorecard.
 
 ---
 

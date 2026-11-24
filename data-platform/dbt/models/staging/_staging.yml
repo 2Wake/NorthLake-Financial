@@ -132,6 +132,10 @@ models:
     description: Every version of every access grant (requested, approved, expired, revoked), with valid_from / valid_to / is_current.
     config: {labels: *access}
 
+  - name: stg_iam_role_access_tests
+    description: Every daily access check of the role service accounts (config and enforcement), as observed.
+    config: {labels: {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: bigquery, data_origin: observed, contains_pii: "false", pci_scope: "false", retention: 3y}}
+
   # ---------------------------------------------------------------- governance
   - name: stg_gov_planted_defects
     description: >

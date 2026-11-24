@@ -52,6 +52,33 @@ domain owner reviews the grants to their domain and the CISO reviews `raw` (to b
 
 ## Enforcement (real)
 
-The simulated grants above are data. A small set of **real role service accounts** will prove the policy in
-BigQuery itself (for example, an analyst account that is denied `raw`). Their setup is done by the owner in the
-Google Cloud console; see the WORKLOG.
+The simulated grants above are data. Three **real role service accounts** prove the policy in BigQuery itself
+(`dbt/seeds/governance/role_service_accounts.csv`). They were set up by the owner in the Google Cloud console on
+2026-11-24 and have no keys.
+
+| Account | Access role | Intended datasets |
+|---|---|---|
+| `ect-role-analyst` | `data_analyst` | marts |
+| `ect-role-steward` | `data_steward` | staging, marts |
+| `ect-role-security` | `security_analyst` | raw, staging, marts |
+
+The daily run (`ect-access-check`) tests every account against every dataset in two ways:
+
+| Method | Audit question | How |
+|---|---|---|
+| **config** | Is the control designed correctly? | Is the account on the dataset's permission list? |
+| **enforcement** | Does the control operate? | Acting as the account, does BigQuery accept or refuse a dry-run query? (No data read, no cost.) |
+
+The pipeline can act as the role accounts because it holds **Service Account Token Creator** on those three
+accounts only. That can't widen its access: each role account is read-only and weaker than the pipeline.
+
+Results land in `raw.iam_role_access_tests` (observed, not generated) and are judged in `marts.fct_role_access_tests`:
+
+| Rule | Check |
+|---|---|
+| ACC-08 | A role account can reach a dataset the policy doesn't allow (excess access) |
+| ACC-09 | A role account can't reach a dataset the policy allows (missing access) |
+| ACC-10 | The check itself failed |
+
+Misconfigurations left in place on purpose are listed in `role_account_answer_key.csv` and scored in
+`marts.fct_role_access_scorecard`.

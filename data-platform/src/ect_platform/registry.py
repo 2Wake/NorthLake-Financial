@@ -143,5 +143,20 @@ TABLES = {
 }
 
 
+# Observed (not generated) tables: written by ect-access-check, not by the generator
+OBSERVED_TABLES = {
+    "iam_role_access_tests": {
+        "description": "Daily access check of the role service accounts: for each account and dataset, whether it is "
+                       "on the permission list (config) and whether BigQuery accepts a dry-run query as it "
+                       "(enforcement). Observed, not generated.",
+        "labels": _labels("risk", "internal", "bigquery", pii=False, retention="3y", origin="observed"),
+        "columns": [
+            ("run_date", "DATE"), ("tested_at", "TIMESTAMP"), ("service_account", "STRING"), ("dataset", "STRING"),
+            ("probe_table", "STRING"), ("method", "STRING"), ("observed", "STRING"), ("detail", "STRING"),
+        ] + META_COLUMNS,
+    },
+}
+
+
 def columns(table: str) -> list[tuple[str, str]]:
     return TABLES[table]["columns"] + META_COLUMNS

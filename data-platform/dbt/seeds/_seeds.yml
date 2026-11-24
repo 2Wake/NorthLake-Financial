@@ -32,3 +32,13 @@ seeds:
       whom, and for how long. Used by the generator to create grants and by checks ACC-01 and ACC-07.
     config:
       labels: {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
+  - name: role_service_accounts
+    description: The real role service accounts that prove the access policy in BigQuery, and the access role each stands for.
+    config:
+      labels: {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
+  - name: role_account_answer_key
+    description: >
+      ANSWER KEY. Role-account misconfigurations left in place on purpose. Read only by
+      fct_role_access_scorecard; checks must not read it.
+    config:
+      labels: {domain: risk, layer: staging, data_owner: ciso, data_steward: risk-data-steward, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
