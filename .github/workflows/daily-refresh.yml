@@ -59,5 +59,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add run-records
-          git commit -m "Run record $(date -u +%F)" || echo "Nothing to commit"
-          git push
+          git commit -m "Run record $(date -u +%F)" || { echo "Nothing to commit"; exit 0; }
+          # main may have moved since checkout (e.g. a re-run, or an earlier record): rebase, then push
+          git pull --rebase origin main
+          git push origin HEAD:main
