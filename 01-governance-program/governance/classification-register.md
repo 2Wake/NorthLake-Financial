@@ -60,7 +60,7 @@ can be demonstrated. Each one reflects how classification goes wrong in practice
 
 | ID | Scenario | Register rows | Why it happens | Caught by |
 |---|---|---|---|---|
-| S01 | **Precise location tagged Internal** (council issue **GOV-003**) | `app_trips` / `stg_app_trips` pickup and dropoff location: Internal (should be Confidential) | Zone IDs look like harmless codes; combined with `rider_id` they reveal a person's movements | CLS-04 |
+| S01 | **Precise location tagged Internal** (council issue **GV-003**) | `app_trips` / `stg_app_trips` pickup and dropoff location: Internal (should be Confidential) | Zone IDs look like harmless codes; combined with `rider_id` they reveal a person's movements | CLS-04 |
 | S02 | **PII in free text missed** | `app_trip_surveys` / `stg_` comment: Internal (should be Confidential) | "It's just feedback" — but riders type phone numbers and emails | CLS-04 |
 | S03 | **Cardholder data partly classified** | `payments_rider_cards` card_expiry: Confidential, cardholder_name: Sensitive (both should be Secret) | Only the card number is treated as PCI; expiry and name are forgotten | CLS-05 |
 | S04 | **Regulated identifier under-classified** | `fleet_drivers.tlc_license`: Internal (should be Confidential) in raw only | Licence numbers seem public | CLS-05 |

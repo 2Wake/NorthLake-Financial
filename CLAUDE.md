@@ -15,7 +15,7 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 
 1. **The owner is not an engineer.** Explain every step in plain language, give exact click paths and values, and warn about easy mistakes, such as unit dropdowns.
 2. **Cloud and account changes are made by the owner in the web UI.** This covers Google Cloud, GitHub settings and Collate. Give step-by-step instructions instead of running CLI or API changes. **Never change a setting without explicit approval.** Read-only checks are fine; say what each one does.
-3. **Git:** commit on a feature branch and push the branch. **Always ask before merging anything to `main`.** Offer three options: the owner merges through a PR in GitHub, Claude opens a PR, or Claude merges directly.
+3. **Git: every change reaches `main` through a pull request** (owner decision 2026-11-24). Commit on a feature branch and push it. Claude opens the PR with `gh pr create` and a **full description at creation**, following `.github/pull_request_template.md` (summary, why, changes, change type, DOC-01 scope check, testing, risk and rollback, related tickets). Claude then posts its review as a PR comment (`gh pr review --comment`). Claude works through the owner's GitHub account, and GitHub doesn't let an author approve their own PR, so this is a review, not an approval. **The owner approves by merging in GitHub, or by telling Claude to merge that PR.** Never push or merge to `main` without that go-ahead. The daily run's run-record commit is the only direct push.
 4. **Log every meaningful step in `WORKLOG.md`** (newest first): done, decisions with rationale, risks, next steps. Keep the backlog at the top current.
 5. **Jira and Confluence (Atlassian MCP):** Claude may **create Confluence pages directly**, and posts a short summary of each page in the chat. Claude **drafts Jira tickets** for the owner to approve before creating them. Every ticket has these sections: **Description**, **Why it matters**, **Potential blockers**, **Intended outcome**. **Before closing a ticket (moving it to Done), add a closing comment** with two parts: *What happened* (a summary of the work and where it lives) and *Open items* (anything left, deferred or found; "None" if nothing).
    - Site: `empire-city-taxi.atlassian.net` (cloudId `7afb79ce-b26f-4945-b14a-8b27a4be498e`). Jira project **ECT GRC**, key `GOV`. Confluence space **Empire City Taxi Governance**, key `ECTG` (space id `327685`).
@@ -41,7 +41,7 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 - **Datasets by layer, domain by label.** Raw tables carry a source-system prefix: `hris_`, `fleet_`, `payments_`, `app_`, `tlc_`. dbt models are `stg_*`, `dim_*`, `fct_*`.
 - **`raw` is append-only.** Lifecycle changes arrive as new full-record versions, and history is derived from them in dbt (`stg_*_history`).
 - **The generator is deterministic**: the same date always produces the same output. IDs are prefixed (`DRV10042`, `EMP10001`, `RDR…`, `VEH…`).
-- **Governance records** (issues `GOV-###`, decisions `GOV-D-###`, org, ownership) live as repo files and load as dbt seeds.
+- **Governance records** (issues `GV-###`, decisions `GV-D-###`, org, ownership) live as repo files and load as dbt seeds.
 - **Every governance conflict scenario is backed by a defect planted in the data.** Planted defects and documentation and label gaps are tracked in answer-key or gap-register files.
 
 ## Cost rules
