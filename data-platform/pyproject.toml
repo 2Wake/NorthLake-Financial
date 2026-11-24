@@ -1,0 +1,26 @@
+[project]
+name = "ect-platform"
+version = "0.1.0"
+description = "Deterministic daily data generator and BigQuery loader for the Empire City Taxi governance sandbox"
+readme = "README.md"
+authors = [
+    { name = "2Wake", email = "328668218+2Wake@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "faker==37.*",
+    "google-cloud-bigquery>=3.30",
+]
+
+[project.scripts]
+ect-generate = "ect_platform.generate:main"
+ect-load = "ect_platform.load:main"
+
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

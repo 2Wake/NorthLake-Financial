@@ -1,0 +1,79 @@
+"""Fixed settings for the simulation. Changing any value here changes generated history."""
+from datetime import date, timedelta
+from pathlib import Path
+
+# Bump when a code change alters generated output, so raw rows can be traced to the code that made them.
+GENERATOR_VERSION = "0.1.0"
+
+# Master seed. Every random choice derives from (SEED, stream name, date), so the
+# same date always produces the same data no matter when or how often it is run.
+SEED = "ect-2026"
+
+# First simulated day. The batch for this day holds the starting population.
+EPOCH = date(2026, 1, 1)
+
+# Real trips come from the public NYC TLC 2022 yellow-taxi data (the newest full year
+# in BigQuery's public dataset). Each simulated day maps to the 2022 day with the same
+# weekday, cycling every 52 weeks, so weekday/weekend patterns stay realistic.
+TLC_CYCLE_START = date(2022, 1, 3)   # a Monday
+_SIM_CYCLE_START = date(2025, 12, 29)  # the Monday on or before EPOCH
+
+
+def tlc_date_for(day: date) -> date:
+    """The 2022 TLC date whose trips are replayed on a simulated day."""
+    return TLC_CYCLE_START + timedelta(days=(day - _SIM_CYCLE_START).days % 364)
+
+
+# Google Cloud
+GCP_PROJECT = "empire-city-taxi"
+RAW_DATASET = "raw"
+LOCATION = "US"
+TLC_SAMPLE_TABLE = f"{GCP_PROJECT}.{RAW_DATASET}.tlc_yellow_trips_sample"
+# Hard cap on bytes any query from this package may bill. Reads of the TLC sample are tiny.
+MAX_BYTES_BILLED = 1 * 1024**3  # 1 GiB
+
+# Local folders (git-ignored)
+ROOT = Path(__file__).resolve().parents[2]
+OUTPUT_DIR = ROOT / "output"
+TLC_CACHE_DIR = ROOT / ".cache" / "tlc"
+
+# Daily lifecycle rates (average events per day, Poisson)
+RATES = {
+    "corporate_hires": 0.08,
+    "corporate_terminations": 0.06,
+    "driver_hires": 0.45,
+    "driver_terminations": 0.35,
+    "driver_suspensions": 0.04,
+    "rider_signups": 6.0,
+    "rider_closures": 0.5,
+    "rider_profile_updates": 2.0,
+    "extra_cards": 0.8,
+    "card_removals": 0.4,
+    "new_campaigns": 0.08,
+}
+
+# Share of card-paid trips booked through the ECT app (the rest are street hails with no rider).
+APP_BOOKED_SHARE = 0.7
+SURVEY_SHARE = 0.06
+
+# Planted data-quality defects: probability per new record. Carried over from Project 1,
+# so the existing data-quality rules still apply. Every planted defect is written to the
+# answer key table gov_planted_defects.
+DEFECT_RATES = {
+    "driver_ssn_no_dashes": 0.04,
+    "driver_tlc_license_missing": 0.03,
+    "driver_payout_account_short": 0.03,
+    "driver_background_status_case": 0.15,
+    "rider_email_missing": 0.03,
+    "rider_email_invalid": 0.02,
+    "rider_email_duplicate": 0.015,
+    "card_number_truncated": 0.03,
+    "survey_orphan_trip": 0.02,
+    "survey_rating_out_of_range": 0.02,
+    "survey_comment_contains_pii": 0.03,
+    "employee_ssn_dots": 0.03,
+    "employee_salary_negative": 0.02,
+    "employee_email_duplicate": 0.02,
+    "ledger_account_missing": 0.02,
+    "campaign_end_before_start": 0.05,
+}

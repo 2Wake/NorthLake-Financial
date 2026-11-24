@@ -32,6 +32,7 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 ## Architecture (decided)
 
 - **Flow:** Faker generator (Python) → GitHub Actions (daily) → BigQuery `raw` → dbt → `staging` → `marts` → Collate (catalog) and Looker Studio.
+- **Code:** [`data-platform/`](data-platform/) (generator, loader, one-time SQL, tests; see its README). Run commands from that folder with `uv run`, and run `uv run pytest` after any change. Bump `GENERATOR_VERSION` when output changes.
 - **Datasets by layer, domain by label.** Raw tables carry a source-system prefix: `hris_`, `fleet_`, `payments_`, `app_`, `tlc_`. dbt models are `stg_*`, `dim_*`, `fct_*`.
 - **`raw` is append-only.** Lifecycle changes arrive as new rows or events, and history comes from dbt snapshots.
 - **The generator is deterministic**: the same date always produces the same output. IDs are prefixed (`DRV10042`, `EMP10001`, `RDR…`, `VEH…`).
