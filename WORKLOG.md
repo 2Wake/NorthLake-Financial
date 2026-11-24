@@ -1,0 +1,127 @@
+# Empire City Taxi GRC — Work Log
+
+Running log of all work, decisions and open items. It's the source for progress summaries and status updates. Newest entries at the top. Updated after every meaningful step (see [`CLAUDE.md`](CLAUDE.md)).
+
+---
+
+## 📋 Backlog
+
+- [ ] **Phase 0: generator framework.** Event-driven and repeatable (the same date always produces the same data). Prefixed IDs. The existing 9 tables move to daily lifecycle batches. Real TLC trips plus taxi zones. The loader appends to `raw` instead of replacing.
+- [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
+- [ ] **Labels on tables**, applied in code: the loader for `raw`, dbt `labels` config for staging and marts. Include planted label gaps, tracked in the gap register.
+- [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
+- [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
+- [ ] **GitHub Actions daily refresh** with Workload Identity Federation (keyless).
+- [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
+- [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
+- [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-23 — Governance org and council charter; repo housekeeping
+
+### Done
+- **Org structure** (`01-governance-program/governance/governance-org-structure.md`): reporting lines, fictional named role holders, owners and stewards per domain, custodian and consumer roles, and the department objectives that create governance tensions.
+- **Council charter** (`01-governance-program/governance/data-governance-council-charter.md`): purpose, authority, membership and voting, meetings and quorum, decision rules, issue lifecycle with severity targets, escalation path, a RACI for 12 decision types, standing agenda, 7 KPIs, and the initial backlog GOV-001 to GOV-006, each tied to a defect planted in the data.
+- Committed as `245c3e7` on branch `governance-council`; **merged to `main` from the CLI** at the user's request.
+- Added `CLAUDE.md` (project context and working agreements) and moved this log into the repo as `WORKLOG.md`.
+
+### Decisions
+- Council members get **fictional names**. Names appear in docs and minutes only; labels and data use role slugs.
+- **The CDO (Renée Okonkwo) is the final escalation point**, as leader of the data organization. Vetoes and deadlocks go to the CDO, and the CEO receives a quarterly governance report.
+- The **CISO and Privacy Officer keep their vetoes**. The Privacy Officer reports to General Counsel, which keeps privacy independent of the CDO.
+
+---
+
+## 2026-11-23 — Classification, labels, dataset layout
+
+### Done
+- **Label standard** (`01-governance-program/governance/labeling-standard.md`, v0.1): label keys for datasets and tables, a domain register, formatting rules, a planned automated compliance check, and deliberate label gaps.
+- **Dataset labels** applied by the user in the console (`layer`, `classification`, `data_custodian`, `environment`, `managed_by`) and confirmed with a read-only check.
+- **Datasets** `raw`, `staging` and `marts` created by the user (US location, no table expiry), with descriptions. Ownership is carried by labels, not descriptions.
+- Committed as `f403b0f` (branch `five-tier-classification`) and **merged to `main`** with the user's approval.
+
+### Decisions
+- **Five-tier classification: Secret → Confidential → Sensitive → Internal → Public**, replacing Restricted → Confidential → Internal → Public. The user chose "Internal" over "Restricted" for tier 4, because "Restricted" usually signals a high tier. **SSN = Secret.**
+  - **Secret:** SSN, cardholder data (card number, expiry, name), payout bank account, credentials.
+  - **Confidential:** contact PII, TLC license, background check, salary, performance rating, pickup/dropoff locations, free-text comments.
+  - **Sensitive:** names, employee work email, fares/tips/totals, ledger amounts, budgets.
+  - Column map: 6 Secret, 12 Confidential, 12 Sensitive, 38 Internal, 1 Public.
+  - Handling: Secret never goes to non-prod or `marts`. Confidential is masked or aggregated in `marts`. **`marts` is capped at Sensitive.**
+  - Applied across 15 files. The vendor-risk tool keeps its 1–4 scoring, with the option labels updated.
+  - Also fixed a glossary CSV bug: unquoted commas would have broken the catalog import.
+- **Dataset layout: by layer** (`raw` / `staging` / `marts`). The domain is carried by labels. Raw tables get a source-system prefix (`hris_`, `fleet_`, `payments_`, `app_`, `tlc_`). dbt names its tables `stg_*` in staging and `dim_*`/`fct_*` in marts. Access control is set per layer (analysts get `marts` only).
+- **Prefixed IDs** (`DRV10042`, `EMP10001`, `RDR…`, `VEH…`) replace integer IDs.
+
+### Design review of the ChatGPT notes (tables, lifecycle, org, council)
+- Adopted: department conflicts and the governance council; lifecycle data (hires, terminations, reassignments, no physical deletes); staged rollout; taxi data treated as one source system among several.
+- Adjusted:
+  - **`raw` is append-only.** History tables come from **dbt snapshots**, not UPDATEs to BigQuery.
+  - **The daily generator is deterministic code** run by GitHub Actions, not Claude-in-the-loop. Claude/MCP write access is a gated Project 4 item.
+  - **Governance records are repo files loaded as dbt seeds.**
+  - **Real TLC taxi zones** are used for locations.
+  - **Project 2's control matrix** is reused as `compliance_controls`.
+- **Rule:** every conflict scenario is backed by a defect planted in the data.
+- **Phased table plan:**
+
+  | Phase | Scope |
+  |---|---|
+  | 0 | Framework and the existing tables |
+  | 1 | `vehicles`, `vehicle_assignments`, `payment_transactions`, `driver_payouts`, org seeds |
+  | 2 | `rider_consent`, `support_tickets`, `privacy_requests`, `data_access_logs` |
+  | 3 | Council scenarios |
+  | 4 | Clickstream (nested `app_events`) |
+
+---
+
+## 2026-11-23 — Tools, sign-ins, Google Cloud guardrails
+
+### Done
+- Installed:
+  - Homebrew (by the user)
+  - gh 2.105.0
+  - uv 0.13.9 and Python 3.12
+  - Google Cloud CLI 594.0.1
+  - dbt-core 1.12.7 with dbt-bigquery 1.12.4
+- Signed in to GitHub CLI (`2Wake`), gcloud, and application-default credentials.
+- Fixed `command not found: gh`: added Homebrew's setup line to `~/.zshrc`.
+- Cloned the repo to `~/empire-city-taxi-grc`. The repo's git identity uses the GitHub noreply email, so no personal email appears in commits.
+- Google Cloud project **`empire-city-taxi`** (billing enabled) set as the default.
+- **Cost guardrails:**
+  - Budget **"ECT free-tier guardrail"**: $5/month, alerts at 5¢, $1, $2.50 and $5 actual, plus a forecast alert. Created by Claude through the CLI, before the UI-only agreement.
+  - **BigQuery "Query usage per day" quota set to 0.03 TiB (~30 GB)** by the user in the console. This hard cap keeps a month of queries under the 1 TB free tier.
+  - `maximum_bytes_billed` per query (in dbt) and date-partitioned tables are still to come.
+
+### Working agreements established
+- The user makes all cloud and account configuration changes **in the web UI**. Claude provides the steps and changes no settings without explicit approval.
+- Commits go on a branch. **Claude always asks before merging anything.**
+- Every step is logged here.
+
+---
+
+## 2026-11-23 — Migrated from Claude Chat to Claude Code; stack decided
+
+### Done
+- Brought the Claude Chat build log (Projects 1 and 2 complete, Projects 3 and 4 planned) into Claude Code.
+- Connected the GitHub MCP. It's read-only, so writes go through `gh`.
+- Checked the laptop: 8 GB RAM, which rules out running OpenMetadata, Airflow and Metabase locally.
+
+### Decisions
+
+| Area | Decision | Rationale |
+|---|---|---|
+| Warehouse | **BigQuery with billing on** (not the sandbox) | Removes the sandbox's 60-day table expiry. About 2–3 GB/yr expected, against 10 GB of free storage. |
+| Cost control | Daily query quota, per-query byte limit, budget alerts, partitioning | The quota and per-query limits block spending; alerts only warn. |
+| Catalog / governance | **Collate free tier** (hosted OpenMetadata) | Uses no laptop RAM. |
+| Orchestration | **GitHub Actions** daily, keyless login through Workload Identity Federation | Free, runs off the laptop. Cloud Composer costs hundreds of dollars a month. Each run's committed record doubles as control evidence. |
+| Transform / DQ | **dbt Core**; the full DQ rule set runs daily in dbt | Free within the BigQuery free tier. Collate's free tier allows only 10 tests. |
+| PII detection | Google Sensitive Data Protection (sampled one-off jobs) plus manual tags checked against the answer key | Collate's PII auto-classification is paid only. SDP's first 1 GB/month is free. |
+| Reporting | Looker Studio | Free, in the cloud. |
+| Avoid | Cloud Composer, Cloud SQL, scheduled Dataplex DQ scans | Cost. Dataplex DQ isn't in the free tier or covered by the BigQuery quota. |
+
+### Risks / watch items
+- **Collate's free tier is reclaimed after 4 weeks without a login.** Log in every couple of weeks, and keep the governance artifacts in the repo as the backup.
+- Collate free-tier limits: 5 users, 500 assets, weekly refresh and tests, 10 test cases, 5 alerts.
+- Collate's AI behavior is undocumented (on by default? auto-applied? which LLM?). Evaluate it after sign-up; possible Project 4 material.
+- GitHub pauses scheduled workflows in public repos after 60 days without activity. The daily run-record commit keeps the repo active.
+- Collate reads BigQuery through a read-only service-account key. Record it in the vendor-risk tool.

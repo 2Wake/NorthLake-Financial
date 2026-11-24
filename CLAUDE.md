@@ -1,0 +1,60 @@
+# CLAUDE.md
+
+Context and working agreements for Claude Code sessions in this repository.
+
+## Project
+
+A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi operator. See [`README.md`](README.md) and [`00-company/`](00-company/).
+- Projects 1 (data governance) and 2 (SOC 2 / ISO audit) are built.
+- Projects 3 (GRC automation) and 4 (AI in GRC) are planned.
+- The current work is a **living data platform**: synthetic company data generated daily, governed end to end.
+
+**Read [`WORKLOG.md`](WORKLOG.md) first.** It holds the decisions, their rationale, the backlog, and what's next.
+
+## Working agreements (always follow)
+
+1. **The owner is not an engineer.** Explain every step in plain language, give exact click paths and values, and warn about easy mistakes, such as unit dropdowns.
+2. **Cloud and account changes are made by the owner in the web UI.** This covers Google Cloud, GitHub settings and Collate. Give step-by-step instructions instead of running CLI or API changes. **Never change a setting without explicit approval.** Read-only checks are fine; say what each one does.
+3. **Git:** commit on a feature branch and push the branch. **Always ask before merging anything to `main`.** Offer three options: the owner merges through a PR in GitHub, Claude opens a PR, or Claude merges directly.
+4. **Log every meaningful step in `WORKLOG.md`** (newest first): done, decisions with rationale, risks, next steps. Keep the backlog at the top current.
+5. **Integrity:** synthetic data only, apart from the public NYC TLC trips. All people are fictional. Never commit keys, credentials, billing account IDs or personal emails.
+
+## Environment
+
+| Item | Value |
+|---|---|
+| GCP project | `empire-city-taxi` (billing on; a ~30 GB/day query quota and a $5 budget alert are set) |
+| BigQuery datasets | `raw`, `staging`, `marts` (US; no table expiry; labeled) |
+| Tools | `gh`, `gcloud`, `bq`, `uv` in `/opt/homebrew/bin`. `dbt` (1.12 + BigQuery adapter) in `~/.local/bin`. `bq` also needs `/opt/homebrew/share/google-cloud-sdk/bin` on `PATH`. |
+| Python | Use 3.12 through `uv`. The system Python is 3.9; don't use it for project code. |
+| Laptop | 8 GB RAM. Don't plan heavy local services (OpenMetadata, Airflow, Metabase). |
+
+## Architecture (decided)
+
+- **Flow:** Faker generator (Python) → GitHub Actions (daily) → BigQuery `raw` → dbt → `staging` → `marts` → Collate (catalog) and Looker Studio.
+- **Datasets by layer, domain by label.** Raw tables carry a source-system prefix: `hris_`, `fleet_`, `payments_`, `app_`, `tlc_`. dbt models are `stg_*`, `dim_*`, `fct_*`.
+- **`raw` is append-only.** Lifecycle changes arrive as new rows or events, and history comes from dbt snapshots.
+- **The generator is deterministic**: the same date always produces the same output. IDs are prefixed (`DRV10042`, `EMP10001`, `RDR…`, `VEH…`).
+- **Governance records** (issues `GOV-###`, decisions `GOV-D-###`, org, ownership) live as repo files and load as dbt seeds.
+- **Every governance conflict scenario is backed by a defect planted in the data.** Planted defects and documentation and label gaps are tracked in answer-key or gap-register files.
+
+## Cost rules
+
+Stay in the BigQuery free tier (1 TB of queries and 10 GB of storage per month):
+- Always set `maximum_bytes_billed` on queries.
+- Partition tables by date.
+- Never `SELECT *` on the public taxi tables.
+- No Cloud Composer, Cloud SQL, or scheduled Dataplex DQ scans.
+
+## Governance standards (source of truth)
+
+All in `01-governance-program/governance/`:
+
+| File | Defines |
+|---|---|
+| `data-classification-standard.md` | Five tiers: **Secret → Confidential → Sensitive → Internal → Public**. `marts` is capped at Sensitive. |
+| `labeling-standard.md` | Required labels, the domain register, formatting rules |
+| `column-classification-map.csv` | Column-level classification answer key |
+| `data-ownership-model.md`, `governance-org-structure.md`, `data-governance-council-charter.md` | Roles, named people, council, RACI |
+
+Labels and data reference **role slugs**, never people's names.
