@@ -26,6 +26,25 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Audit findings F1 to F7 recorded (GOV-82)
+
+### Done
+- **GOV-82** (Story, label `audit-finding`): "Audit findings: policy drafting, Nov 24, 2026". Sub-tasks, each labelled `audit-finding`, with the requirement broken, severity and the reason for it:
+  - GOV-83 F1 (Medium): changes merged to `main` without a PR or second reviewer
+  - GOV-84 F2 (High): SOC 2 matrix marks IR-01/IR-02 "Implemented" with no plan
+  - GOV-85 F3 (High): evidence tracker PBC-002 "Collected" with no risk register
+  - GOV-86 F4 (High): no risk register; card-data risk (score 15) neither accepted nor treated
+  - GOV-87 F5 (Medium): console changes recorded only in the worklog
+  - GOV-88 F6 (High): no incident response plan or playbooks; no communications lead
+  - GOV-89 F7 (Low): no break-glass admin account
+- **PR #5** was created with the blank template; Claude added the full description afterwards at the owner's request, with a note at the top. Claude's review records it as a POL-07 5.3 deviation (second after PR #3).
+
+### Decisions
+- **Severity scale** (owner agreed the ratings and asked for the reasons): **High** = a record states something untrue about a control or its evidence, or a required control is missing where card data or a High risk is exposed; **Medium** = control defined but not operating as written, partly offset by another record; **Low** = good practice missing, little effect on data or audit conclusions. Each ticket says why it isn't one level higher or lower.
+- Findings stay unfixed (owner decision); each names its planned fix. F8 became council issue GV-007, not a finding.
+
+---
+
 ## 2026-11-24 — Story GOV-81 for the follow-ups; council issue GV-007 added
 
 ### Done
