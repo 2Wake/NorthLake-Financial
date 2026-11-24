@@ -33,6 +33,7 @@ A portfolio GRC program for **Empire City Taxi Co. (ECT)**, a fictional NYC taxi
 
 - **Flow:** Faker generator (Python) → GitHub Actions (daily) → BigQuery `raw` → dbt → `staging` → `marts` → Collate (catalog) and Looker Studio.
 - **Code:** [`data-platform/`](data-platform/) (generator, loader, one-time SQL, tests; see its README). Run commands from that folder with `uv run`, and run `uv run pytest` after any change. Bump `GENERATOR_VERSION` when output changes.
+- **Daily run:** `.github/workflows/daily-refresh.yml` → `ect-daily` (catch up missing days) → `dbt build` → `ect-record` (run record in `data-platform/run-records/`). Setup: `data-platform/docs/github-actions-setup.md`.
 - **dbt:** [`data-platform/dbt/`](data-platform/dbt/). Run `dbt build` from that folder. Staging views keep defects as they are. History is derived from the raw change logs (not snapshots). Data-quality rules (`dq_*`) are warnings; structural tests are errors.
 - **Datasets by layer, domain by label.** Raw tables carry a source-system prefix: `hris_`, `fleet_`, `payments_`, `app_`, `tlc_`. dbt models are `stg_*`, `dim_*`, `fct_*`.
 - **`raw` is append-only.** Lifecycle changes arrive as new full-record versions, and history is derived from them in dbt (`stg_*_history`).
@@ -47,6 +48,10 @@ Stay in the BigQuery free tier (1 TB of queries and 10 GB of storage per month):
 - Partition tables by date.
 - Never `SELECT *` on the public taxi tables.
 - No Cloud Composer, Cloud SQL, or scheduled Dataplex DQ scans.
+
+## Governance model
+
+The user leans toward a **federated (hub-and-spoke)** model. The hub (Data Governance Manager) owns standards, tooling, the scorecard and reporting. Domain owners and stewards own their rules, definitions and fixes. **DQ rules are authored by stewards and approved by owners**; hub-drafted rules are proposals until signed off.
 
 ## Governance standards (source of truth)
 

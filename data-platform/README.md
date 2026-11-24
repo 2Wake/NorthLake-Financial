@@ -49,6 +49,8 @@ Run from this folder (`data-platform/`).
 | Task | Command |
 |---|---|
 | Run the tests | `uv run pytest` |
+| **Daily run:** catch up every missing day through yesterday (generate + load) | `uv run ect-daily` (add `--dry-run` to preview) |
+| Write a run record (after `ect-daily` and `dbt build`) | `uv run ect-record` |
 | Generate yesterday | `uv run ect-generate` |
 | Generate one day / a range / everything | `uv run ect-generate --date 2026-11-23` · `--start … --end …` · `--backfill` |
 | Generate without trips (offline) | add `--no-trips` |
@@ -64,4 +66,8 @@ Run from this folder (`data-platform/`).
 
 ## Not yet done
 
-Column descriptions and the description gap register; planted label gaps; Phase 1–4 tables; council scenario defects (Phase 3); the dbt project; the GitHub Actions schedule.
+Column descriptions and the description gap register; planted label gaps; Phase 1–4 tables; council scenario defects (Phase 3).
+
+## Daily schedule
+
+GitHub Actions runs `ect-daily`, then `dbt build`, then `ect-record` every morning, and commits the run record to `run-records/`. One-time setup: [docs/github-actions-setup.md](docs/github-actions-setup.md).
