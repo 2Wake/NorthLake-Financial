@@ -8,17 +8,47 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
 - [ ] **Reference-data issue:** raise REF-01 to REF-03 as a governance issue (reference domain owner: Data Governance Manager) in the issue register.
-- [ ] **Column classification map:** add the new raw table names and columns (e.g. `fleet_drivers.employee_id`, `driver_status`, `hris_employees.pay_type`), then drive the marts classification-cap test from the map instead of its column-name list.
+- [ ] **Remediate the classification scenarios** (S01–S12) through the council process, starting with GOV-003 (S01). Watch KPI #2 rise from 72.5%.
+- [ ] **Push classifications out:** Collate column tags from the register; optionally BigQuery policy tags on Secret columns (UI, user).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GOV-###`) and decision log (`GOV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
-- [ ] **GitHub Actions daily refresh:** workflow built. **Remaining:** the user does the console setup (`data-platform/docs/github-actions-setup.md`), then a test run. Until then, run by hand: `uv run ect-daily`, then `dbt build`.
+- [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
 - [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-24 — Column classification register (single source of truth)
+
+### Done
+- First fully green scheduled-style run confirmed earlier today; this work follows the user's question: *where is column classification held?*
+- **Found:** column-level classification lived only in the stale Project 1 CSV (old table names, 27 of 96 raw columns missing, not loaded or used). Table labels were set in three places, and the marts cap test used a hard-coded column list.
+- **Built** (approach approved by the user, who also asked for more wrongly-mapped scenarios):
+  - **Register** `seeds/governance/column_classification_register.csv`: 500 rows covering every column in `raw`, `staging` and `marts`, with classification, category, treatment, owner, steward, status, proposed/approved by, and date.
+  - **Answer key** `seeds/governance/column_classification_answer_key.csv`: 508 rows (18 Secret, 33 Confidential, 58 Sensitive, 361 Internal, 38 Public). Built from the Project 1 map, decisions for the new columns, and lineage (staging inherits from raw; marts follow masking, generalization and aggregation). It agrees with every table label and the marts cap.
+  - **Checks** `marts.fct_classification_findings`: CLS-01 to CLS-08 (coverage, orphans, approval, table-label consistency, lineage drift, marts cap, steward mismatch, invalid tier), each a dbt warning test.
+  - **Scorecard** `marts.fct_classification_scorecard`: register vs. answer key per column, plus which check flagged it.
+  - **Process doc** `01-governance-program/governance/classification-register.md`.
+- **12 planted scenarios (S01–S12), 36 register rows:** location (GOV-003), free-text PII, partial cardholder data, regulated ID, consistent HR under-classification, lineage drift, over-classification, masked value, unclassified new columns, approval backlog, wrong steward, retired tier name.
+- **First scorecard:** 27 of 508 columns wrong or missing; **24 flagged by checks**; the 3 unflagged are S05, a deliberate blind spot. **KPI #2 (high-risk columns correct): 72.5%** (37 of 51).
+- Full dbt build: 126 nodes, 96 pass, 30 warn, 0 errors.
+
+### Decisions
+- **The register is the single source of truth**, kept in the repo and changed by pull request: steward proposes, owner approves, CISO or Privacy review Secret and Confidential changes. That is the federated model, and PR history is the audit trail. Collate and BigQuery tags will be fed from it later.
+- **Operational register vs. answer key:** the register can be wrong, like real life; the answer key is used only to score it.
+- **Register rows are per layer**, because classification can legitimately change between layers (masked, generalized, aggregated in marts).
+- **CLS-05 flags both sides** of a raw/staging disagreement, since either could be the mistake.
+- **The marts cap test stays on its fixed column list** as an independent safety net, because the register itself may contain mistakes.
+- The Project 1 `column-classification-map.csv` is superseded but kept as a Project 1 artifact.
+- The one-off bootstrap script was not committed; the CSVs are now maintained by hand through PRs.
+
+### Next steps
+- Remediation through the council (GOV-003 first), council roles (federated), and DQ rule ownership columns.
 
 ---
 
@@ -48,8 +78,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 - **First run failed (403 `iam.serviceAccounts.getAccessToken`).** Cause: in the provider's attribute mapping, the OIDC side read `attribute.repository` instead of `assertion.repository` (same for `repository_owner`), so the step E impersonation grant never matched. Found with read-only `gcloud` checks; **the user fixed it in the console.**
 - **Re-run:** sign-in, catch-up, load and `dbt build` all **succeeded**. Only the run-record push failed, because `main` had moved ahead (the first run had committed its own failure record). **Fixed:** the workflow now rebases before pushing, and records are named `<date>_<time>.md` so same-day runs never clash.
 
+- Merged `run-record-fix` to `main` from the CLI at the user's request (`1ff4423`).
+- **First fully green run** (run 45425307173, manual, 1m35s): 9 generator tests passed; catch-up found 2026-11-23 loaded (0 days due); dbt 91 pass, 23 warn, 0 errors; run record `run-records/2026-11-24_1026.md` committed by the bot (`93216de`).
+
 ### Next steps
-1. Merge the fix and run the workflow again to confirm a fully green run.
+1. Check tomorrow's scheduled run (05:30 New York), the first to load a new day (2026-11-24).
 
 ---
 

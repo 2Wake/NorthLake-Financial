@@ -199,3 +199,43 @@ models:
       - expression_is_true:
           name: scorecard_every_planted_defect_caught
           arguments: {expression: "planted_missed = 0"}
+
+  - name: fct_classification_findings
+    description: "Problems found in the column classification register (rules CLS-01 to CLS-08). Uses the register and BigQuery metadata only; never the answer key."
+    config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    data_tests:
+      - rule_has_no_findings:
+          name: cls_01_column_not_classified
+          arguments: {rule_id: CLS-01}
+          config: {severity: warn, meta: {rule_id: CLS-01, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_02_register_entry_without_column
+          arguments: {rule_id: CLS-02}
+          config: {severity: warn, meta: {rule_id: CLS-02, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_03_classification_not_approved
+          arguments: {rule_id: CLS-03}
+          config: {severity: warn, meta: {rule_id: CLS-03, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_04_table_label_inconsistent
+          arguments: {rule_id: CLS-04}
+          config: {severity: warn, meta: {rule_id: CLS-04, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_05_lineage_drift
+          arguments: {rule_id: CLS-05}
+          config: {severity: warn, meta: {rule_id: CLS-05, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_06_above_marts_cap
+          arguments: {rule_id: CLS-06}
+          config: {severity: warn, meta: {rule_id: CLS-06, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_07_steward_mismatch
+          arguments: {rule_id: CLS-07}
+          config: {severity: warn, meta: {rule_id: CLS-07, dimension: Metadata}}
+      - rule_has_no_findings:
+          name: cls_08_invalid_classification_value
+          arguments: {rule_id: CLS-08}
+          config: {severity: warn, meta: {rule_id: CLS-08, dimension: Metadata}}
+  - name: fct_classification_scorecard
+    description: "Register vs. answer key for every column: correct, under-classified, over-classified, missing or invalid, and which check (if any) flagged it. The only model that reads the classification answer key."
+    config: {labels: {domain: governance, layer: marts, data_owner: data-governance-manager, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
