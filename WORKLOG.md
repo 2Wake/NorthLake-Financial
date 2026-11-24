@@ -26,6 +26,39 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — GOV-22 drafted; schedule compressed; dependencies linked
+
+### Done
+- **GOV-22 (policy management standard + template): drafted in Confluence.** New folder **Policy Management** in `ECTG`, with:
+  - **STD-01 Policy Management Standard** (draft v0.1, page 327917). Covers document types, roles, numbering, versioning, lifecycle, who approves what, the 12-month review cycle, exceptions and where documents are published.
+  - **Policy Template** (page 65668): document control table, 8 standard sections and a change history.
+  - Both pages linked on GOV-22. GOV-22 → **In Review**; GOV-1 and GOV-3 → **In Progress**.
+- **Schedule compressed (user: "everything will wrap quickly").** Working days are Tue Nov 24, Wed Nov 25 and Tue Dec 1 (off Thu/Fri for the holiday). All 69 tickets re-dated, verified by JQL:
+  - **Nov 24:** GOV-3 (register & standard), GOV-2 (PCI scope).
+  - **Nov 25:** GOV-4 Info Security, GOV-5 Access Control, GOV-6 Classification, GOV-7 Cardholder Data, GOV-8 Acceptable Use, GOV-9 Risk, GOV-10 Change, GOV-11 Incident Response.
+  - **Dec 1:** GOV-12 Logging, GOV-13 Vulnerability, GOV-14 Encryption, GOV-15 Vendor, GOV-16 Retention, GOV-17 HR Security, GOV-18 BC/DR.
+  - Epic GOV-1: Nov 24 – Dec 1.
+- **22 "Blocks" links added** (show as dependency lines on the Timeline):
+  - GOV-3 blocks every policy story (GOV-4 … GOV-18).
+  - GOV-2 (PCI scope) blocks GOV-7, GOV-14, GOV-15.
+  - GOV-7 (Cardholder Data) blocks GOV-14 (Encryption).
+  - GOV-5 (Access Control) and GOV-8 (Acceptable Use) block GOV-17 (HR Security).
+  - GOV-9 (Risk) blocks GOV-13 (Vulnerability; exceptions use risk ratings).
+
+### Decisions
+- **Document numbering set in STD-01:** POL-xx policies, STD-xx standards, PRC-xx procedures, DOC-xx supporting documents. Planned IDs: POL-01 Information Security, POL-02 Access Control, POL-03 Data Classification & Handling, POL-04 Cardholder Data Protection, POL-05 Acceptable Use, POL-06 Risk Management, POL-07 Change Management, POL-08 Incident Response, POL-09 Logging & Monitoring, POL-10 Vulnerability & Patch, POL-11 Encryption & Key Management, POL-12 Vendor & Third-Party Risk, POL-13 Data Retention & Disposal, POL-14 HR Security, POL-15 BC/DR; DOC-01 PCI DSS Scope & Cardholder Data Flow.
+- **Approval evidence in three places** (document control table, approver comment on the page, register) so an auditor can cross-check.
+- Exceptions are raised in Jira GOV, max 12 months, and can't waive PCI DSS requirements.
+- Classic Confluence **pages** (not live docs) for policies, for version history and approvals.
+
+### Risks
+- A Jira automation moved GOV-23/24 to In Progress when GOV-3 moved; reset to To Do.
+
+### Next steps
+- User reviews STD-01 and the template. Then GOV-23 (Policy Register page + `policy_register` seed), GOV-24 (approval), and GOV-2 (PCI scope), all today.
+
+---
+
 ## 2026-11-24 — Jira timeline: start and due dates on all 69 tickets
 
 ### Done
