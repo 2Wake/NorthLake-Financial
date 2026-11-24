@@ -58,7 +58,9 @@ def enforcement_check(bigquery, source_credentials, account: str, dataset: str) 
         client.query(sql, job_config=bigquery.QueryJobConfig(dry_run=True, use_query_cache=False)).result()
         return "allow", "dry-run query accepted"
     except (exceptions.Forbidden, exceptions.NotFound) as e:
-        return "deny", (e.message or str(e))[:300]
+        # keep BigQuery's reason only, e.g. "Access Denied: Table ...: User does not have permission ..."
+        reason = (e.errors[0].get("message") if e.errors else None) or str(e).split("\n")[0]
+        return "deny", reason[:300]
     except Exception as e:  # noqa: BLE001
         return "error", f"{type(e).__name__}: {str(e)[:250]}"
 
