@@ -26,6 +26,61 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — POL-09 to POL-15 drafted and reviewed to v0.9 (parallel)
+
+### Done
+- 7 parallel agents each drafted one policy from the approved template (Policies folder), ran its *[Simulated]* review (≥1 point accepted, ≥1 rejected with reason) and closed its draft and review sub-tasks with closing comments. Stories → In Progress. **Approval sub-tasks GOV-63 to GOV-69 untouched**, waiting for the owner.
+
+  | ID | Page | Story | Statements | Owner decisions (PROPOSED) |
+  |---|---|---|---|---|
+  | POL-09 Logging & Monitoring | 557400 | GOV-12 | 22 | where 12-month audit logs live |
+  | POL-10 Vulnerability & Patch | 458990 | GOV-13 | 18 | ASV scans / pen tests for simulated card systems |
+  | POL-11 Encryption & Key Mgmt | 557358 | GOV-14 | 22 | card-number method, key type, SSN/bank deadline |
+  | POL-12 Vendor & Third-Party Risk | 426423 | GOV-15 | 26 | inventory location, review frequency |
+  | POL-13 Data Retention & Disposal | 491690 | GOV-16 | 18 | disposal when `raw` is append-only; GC confirms 4 periods |
+  | POL-14 HR Security | 426362 | GOV-17 | 21 | screening scope, overdue training, training platform |
+  | POL-15 BC/DR | 557298 | GOV-18 | 16 | RTO/RPO per service; build or drop the DR region |
+- An 8th read-only agent listed what the approved policies (POL-01 to POL-08, STD-01, DOC-02) need to run that isn't ticketed.
+- Register page v14 and `policy_register.csv`: POL-09 to POL-15 `in_review`, 0.9, page IDs.
+- Read-only checks by the agents (no settings changed): Dependabot alerts off; `_Default` log bucket 30 days, unlocked; no alert policies; Cloud KMS not enabled (the `gcloud` prompt to enable it defaulted to No); datasets US multi-region, no expiry, no CMEK; 0 user-managed service-account keys. A local dependency scan was blocked by the permission check and not retried.
+
+### Open
+- **Ticket drafts for owner approval** (merged and de-duplicated across the 8 agents): 11 draft follow-ups under the policy stories (owner decisions block each approval sub-task) + 2 alignment items under GOV-81; 27 audit findings F9–F35 under a new findings story (9 High, 13 Medium, 5 Low); 13 operation sub-tasks under GOV-90 for the approved policies. Operation items for POL-09 to POL-15 held until each is approved.
+- **Conflict to resolve:** STD-01 s11 requires announcing approved policies; the earlier owner decision was no announcement post (draft 3.1).
+
+---
+
+## 2026-11-24 — Correction: why PRs #5 and #7 missed commits
+
+### Done
+- **Root cause found (corrects earlier entries that blamed GitHub lag).** In both cases Claude pushed commits *after* the owner had merged the PR. A merged PR never picks up new commits, so they never reached `main`:
+  - PR #5 merged 22:38:02 UTC; `e06e7d6` committed 22:38:57 (55 s later).
+  - PR #7 merged 02:31:52 UTC; `236ba03` (02:34:31) and `13c0e5f` (02:39:51) came after.
+  Claude's check counted commits but never looked at whether the PR was still open. The owner merged correctly both times.
+- `236ba03` and `13c0e5f` carried to branch `policies-09-15` as `f7b8d79` and `63b2393`.
+- `CLAUDE.md` #3 and memory: check the PR is still open before every push; no new commits to a PR once it's called ready; merge on the owner's go-ahead with `gh pr merge --match-head-commit`, which refuses if the PR doesn't hold that exact commit.
+
+### Decisions
+- **No local `pre-push` hook** (owner): a hook refusing pushes to a merged PR's branch was proposed and declined. The written rule (check the PR is open before every push) is the control; a missed commit stays on its branch and can be carried into the next PR.
+
+---
+
+## 2026-11-24 — Incident reports move to the Security Incidents (SI) Jira space
+
+### Done
+- Owner created Jira space **Security Incidents (SI)** (work types Task, Sub-task) for submitted incident reports, and renamed the GOV space **GRC Program** (shown in Jira as "GRC Program").
+- *Report a Security Incident* (Confluence 426241) v2: Route A now says to create a Task in the SI space, no label needed, and not to use GOV; Route B says Security opens the SI ticket; change-history row added.
+- Space home page v5: names GRC Program (GOV) and Security Incidents (SI).
+- `CLAUDE.md`: both Jira spaces listed.
+
+- **POL-01 v1.1** (CEO, comment 458963) and **POL-08 v1.1** (CISO, comment 458966), owner approved: statement 7 / the channel definition and statement 1 now point to the *Report a Security Incident* page instead of naming a Jira route, so future route changes only touch the how-to. Minor versions: staff acknowledgments of v1.0 still count (the model matches on major version). Register page v12 and CSV updated.
+- *Report a Security Incident* moved into the **How-To's** folder (owner request); v3 change history notes the policy revisions.
+
+### Decisions
+- **SI space access isn't configured** (owner): ECT staff are fictional, so there's nobody to grant or restrict. Recorded as a simulation note on the how-to page; in a real company only the Security team would see reports.
+
+---
+
 ## 2026-11-24 — All eight policies approved; DOC-02 tools list; all-staff acknowledgments; Claude creates PRs (POL-07 v1.1)
 
 ### Done
