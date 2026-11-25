@@ -9,7 +9,7 @@ models:
   # ---------------------------------------------------------------- people
   - name: stg_hris_employees
     description: Current version of each employee record in the HR system (drivers included).
-    config: {labels: &people {domain: people, layer: staging, data_owner: vp-people, data_steward: hr-data-steward, classification: secret, source_system: hris, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    config: {labels: &people {domain: people, layer: staging, data_owner: vp-people, data_steward: hr-data-steward, classification: confidential, source_system: hris, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
     columns:
       - name: employee_id
         data_tests: [unique, not_null]
@@ -21,7 +21,7 @@ models:
   # ---------------------------------------------------------------- driver
   - name: stg_fleet_drivers
     description: Current version of each driver record in the fleet system.
-    config: {labels: &driver {domain: driver, layer: staging, data_owner: vp-driver-operations, data_steward: driver-data-steward, classification: secret, source_system: fleet, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
+    config: {labels: &driver {domain: driver, layer: staging, data_owner: vp-driver-operations, data_steward: driver-data-steward, classification: confidential, source_system: fleet, data_origin: synthetic, contains_pii: "true", pci_scope: "false", retention: 7y}}
     columns:
       - name: driver_id
         data_tests: [unique, not_null]
