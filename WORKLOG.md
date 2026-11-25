@@ -26,6 +26,82 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-25 — Realism review applied; all 15 policies approved; Jira consolidated into three stories; combined announcement
+
+Owner gave blanket approval for steps 1–5 ("Let's do 1-5. You have my blanket approval."). Not included: step 6 (J4 monitoring code and O6) and git tags (still need the owner's OK). All approvals, reviews and acknowledgments are *[Simulated]* and dated today.
+
+### Done
+- **Step 1: approved documents revised to match the real setup** (card numbers are no longer stored; no Cloud KMS, Secret Manager or CMEK). Each revision has an approver comment.
+  - **Major versions:** new approval date 2026-11-25, next review 2027-11-25, staff re-acknowledge.
+    - DOC-01 v2.0: card numbers are entered only into the providers' components and terminals; ECT keeps a token and the last 4 digits.
+    - DOC-02 v2.0: data tiers per tool lowered.
+    - POL-02 v2.0, POL-03 v2.0 (Secret data not allowed in the platform; removed promptly), POL-04 v2.0 (now about card entry: the in-app card form and terminal checks).
+  - **Minor versions:** dates unchanged, earlier acknowledgments still count. POL-01 v1.2, POL-05 v1.1, POL-08 v1.2.
+  - STD-01, POL-06 and POL-07 were checked and need no change.
+  - **Repo:** `00-company/company-profile.md` no longer claims a working DR region (the real platform runs in BigQuery `US` and recovers by rebuilding). It also says cards are entered only into the providers' components. `system-description.md` changes 99.9% to 99.5% uptime and corrects the data line.
+- **Steps 2 and 5: POL-09 to POL-15 revised and approved at v1.0.** Each page got one write carrying both the realism changes and the approval, plus an approver comment:
+
+  | Policy | Approver (comment) | Decisions | High gap and exception |
+  |---|---|---|---|
+  | POL-09 | CISO (557467) | `_Default` bucket, 365 days | R-003 (GOV-150): alerting and daily review, to 2027-01-31 |
+  | POL-10 | CISO (557469) | (c): ASV scans and pen tests not applicable | none |
+  | POL-11 | CISO (491857) | A1, B1, C1 | none |
+  | POL-12 | CISO (557471) | A1 (DOC-03), B1; Google and GitHub are no longer PCI service providers | R-004 (GOV-151): vendor programme, to 2027-02-28 |
+  | POL-13 | General Counsel (491872) | Option 1: logged deletes, disposal log, rebuild filter; legal minimums confirmed | none |
+  | POL-14 | VP People (557473) | 1(a), 2(b), 3(c) | R-005 (GOV-152): training, to 2027-01-31 |
+  | POL-15 | VP Operations (426584) | Real vs simulated targets; no DR region; rebuild test in `scratch` | R-006 (GOV-153): untested recovery, to 2027-02-28 |
+
+  - **Policy Register** (page 65685, v16) shows all 15 policies APPROVED, with a change-log row.
+  - **`policy_register.csv` seed** updated to match, for all rows changed today.
+- **Risk register:** R-002 to R-006 created as GOV-149 to GOV-153 and linked to their findings. R-001 (GOV-93) closed as treated, by removal: residual time-travel and fail-safe copies end about 2026-12-09.
+- **Step 3: tickets.**
+  - **Closed, each with a closing comment:**
+    - Approval subtasks GOV-63 to GOV-69.
+    - Decisions GOV-96, 97, 98, 100, 101, 102, 104; alignment items GOV-105 and 106.
+    - GOV-71, GOV-124 (F12, Dependabot on), GOV-129 (F17), GOV-131 (F19).
+  - **GOV-94** (log lock): in progress, decision due 2026-12-31.
+  - **GOV-127** (F15): re-rated from High to Medium, with summary and description rewritten.
+  - **Update comments:** GOV-72, 73, 74, 110, 116, 121, 122, 123, 128, 139, 141, 142.
+  - **New subtasks under GOV-90:**
+    - GOV-154 DOC-03 Vendor Inventory
+    - GOV-155 cryptography inventory
+    - GOV-156 terminal list, inspections and payment-page script inventory
+    - GOV-157 generator tags (held for owner OK)
+    - GOV-158 quarterly Jira and Confluence export (owner)
+    - GOV-159 `ect-config-check`
+    - GOV-160 build-tools manifest
+    - GOV-161 driver check and training seed
+    - GOV-162 disposal log and rebuild filter
+    - GOV-163 rebuild runbook and first restore test
+    - GOV-164 legal-hold and deletion-request logs, BIA, BC/DR plan, tabletop
+- **Step 4: three stories.** The API could change subtask parents, so no Jira Move in the UI was needed.
+  - **GOV-81 Draft Follow-ups:** GOV-75 to 80 and GOV-94 to 106.
+  - **GOV-82 Audit Findings:** F1 to F7, GOV-71 to 74, and F9 to F35. GOV-148 related.
+  - **GOV-90 Policies into Operation.**
+  - The three stories were renamed and their descriptions rewritten.
+  - **Closed with closing comments:** GOV-70, GOV-120, and the policy stories GOV-12 to 18 (no open subtasks left).
+- **Step 5: combined announcement**, [blog 459089](https://empire-city-taxi.atlassian.net/wiki/spaces/ECTG/blog/2026/11/25/459089), an email from Victor Hale.
+  - Covers the card-number change, the seven new policies, and which updates need re-acknowledgment: POL-02, 03 and 04.
+  - **One deadline, 2026-12-09:** one comment covers POL-01 to POL-15 and replaces the first post's Dec 8 date. A footer comment on 491767 says so.
+  - GOV-107 summary and comment updated.
+
+### Decisions
+- **One acknowledgment deadline (2026-12-09) instead of two.** It is 10 business days from today, counted the same way as the first post. Rationale: the owner asked for a single deadline, and the first deadline was only a day earlier.
+- **Policy stories GOV-12 to 18 closed.** After consolidation, all remaining work is in the three stories, so these had nothing left.
+- **F9 (GOV-121) stays High and is not excepted:** retention is now met, but the lock decision is due 2026-12-31.
+
+### Open / next
+- **Owner:** merge this PR. Then the O7 lock decision by 2026-12-31 (GOV-94), and the first export (GOV-158) by 2026-12-31.
+- **Later:** step 6 (J4 monitoring and O6, the treatment for R-003, due before 2027-01-31); git tags (GOV-157, needs OK); simulated acknowledgments after the announcement; GOV-148.
+- **Exception expiries:** R-003 and R-005 on 2027-01-31; R-004 and R-006 on 2027-02-28.
+- **Known mismatch, to settle in GOV-107:** `fct_policy_acknowledgments` sets `due_on` as 10 business days from each approval date.
+  - POL-02 to 04 and POL-09 to 15 are due 2026-12-09.
+  - POL-01, 05, 06, 07 and 08 are still due 2026-12-08, one day before the announced single deadline.
+  - Either add an announced-deadline override to the model, or treat 12-09 acknowledgments as on time in the follow-up.
+  - Checked after `dbt build --select policy_register+`: PASS 17, ERROR 0.
+
+---
+
 ## 2026-11-25 — Raw rebuilt with generator 0.4.0; full card numbers, SSNs and bank numbers gone; scheduled run missed
 
 ### Done

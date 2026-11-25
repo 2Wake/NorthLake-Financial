@@ -11,7 +11,7 @@ Empire City Taxi Co. operates a NYC taxi and for-hire mobility platform: the *EC
 ECT commits to riders, drivers, and partners through its terms, privacy policy, and published documentation that it will:
 
 - Protect rider, driver, and cardholder data through encryption in transit and at rest and least-privilege access.
-- Maintain availability consistent with a 99.9% monthly uptime commitment for the rider and driver apps.
+- Maintain availability consistent with a 99.5% monthly uptime commitment for the rider and driver apps.
 - Notify affected parties of confirmed security incidents within 72 hours.
 - Handle cardholder data in accordance with PCI DSS.
 - Restrict access to personal and cardholder data to authorized personnel with a business need.
@@ -26,7 +26,7 @@ These commitments drive the system requirements implemented as controls (see the
 
 **People.** Engineering, Platform/SRE, Security & GRC, IT, Driver Operations, Support, Finance, People Ops, and corporate functions. Access governed by role.
 
-**Data.** Rider PII, cardholder data, driver PII, employee data, trip/operational data, and financials. Classified per the Data Classification Standard.
+**Data.** Rider PII, payment tokens and card last 4 digits (card numbers stay with the payments processor; DOC-01 v2.0), driver PII, employee data, trip/operational data, and financials. Classified per the Data Classification Standard.
 
 **Processes.** Change management, access management, incident response, vulnerability management, vendor risk management, and the control-monitoring process operated by the GRC function.
 

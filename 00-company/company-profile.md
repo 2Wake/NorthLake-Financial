@@ -10,7 +10,7 @@
 | **Services** | Licensed yellow/green cab fleet, a rider app (*ECT Rider*), and a driver app (*ECT Driver*) |
 | **Stage / size** | Private, ≈150 corporate employees, ≈1,200 affiliated drivers · founded 2019 |
 | **Headquarters** | Long Island City, Queens, NY (remote-friendly) |
-| **Hosting** | Google Cloud (primary region `us-east4`, DR in `us-central1`) |
+| **Hosting** | Google Cloud. The fictional design names a primary region (`us-east4`) and a DR region (`us-central1`); the real portfolio platform runs in one location (BigQuery `US`) and recovers by rebuilding from code and the generator (POL-15). |
 | **Compliance posture** | SOC 2 Type II (annual) · ISO 27001:2022 (in progress) · **PCI DSS** (card payments) · GDPR/CCPA · NYC TLC regulatory requirements |
 
 ## What Empire City Taxi does
@@ -23,14 +23,14 @@ ECT operates a licensed NYC taxi fleet and a technology platform that dispatches
 4. **Payments** — rider card processing and driver payouts.
 5. **Console** — internal operations and administration (fleet, drivers, support, reporting).
 
-Because ECT accepts card payments and employs/contracts drivers, it holds a broad range of sensitive data — rider PII, cardholder data, and driver PII — which puts it in scope for PCI DSS and privacy law in addition to SOC 2 / ISO 27001.
+Because ECT accepts card payments and employs/contracts drivers, it holds a broad range of sensitive data — rider PII, cardholder data, and driver PII — which puts it in scope for PCI DSS and privacy law in addition to SOC 2 / ISO 27001. Card numbers are entered only into the payment providers' card-entry component and in-cab terminals; ECT keeps a provider token and the last 4 digits (DOC-01 v2.0).
 
 ## Data Empire City Taxi handles
 
 | Data type | Examples | Classification |
 |---|---|---|
 | Rider PII | Name, email, phone, home address | Confidential (name: Sensitive) |
-| Cardholder data | Card number, expiry, cardholder name (PCI) | Secret |
+| Cardholder data | Card number, expiry, cardholder name (PCI). Held by the payment providers, not ECT; ECT keeps a token and last 4 (Sensitive). Expiry and name are still stored pending GOV-148. | Secret |
 | Driver PII | Name, **TLC license**, SSN, address, payout bank account, background-check status | Secret (SSN, bank account) / Confidential |
 | Employee data | HR records, compensation, SSN | Secret (SSN) / Confidential |
 | Financial data | Revenue, driver earnings, ledgers | Sensitive (payout bank accounts: Secret) |
