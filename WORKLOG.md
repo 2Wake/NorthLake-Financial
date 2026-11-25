@@ -26,6 +26,27 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-25 — O6 done; PR #13 merged; first security review ran and was triaged (GOV-165)
+
+### Done
+- **O6 (owner, in the UI):** created `ect-monitor` (Private Logs Viewer only, no key); allowed keyless sign-in from this repo only (pool `github`); added the GitHub variable `GCP_MONITOR_SERVICE_ACCOUNT` and the secret `ECT_MAINTAINER_PRINCIPAL`. Claude checked parts 1 to 3 read-only; GitHub only shows a secret's name.
+- **PR #13 merged** (`f2d8137`).
+- **First run** (manual, 45677583945): every step passed except the final check, which failed as designed. Record `data-platform/run-records/2026-11-25_1342.md`.
+  - **Correction:** the previous entry said this run would review 2026-11-25 (4 alerts). It reviewed **2026-11-24** (the UTC day before) and raised **7** "IAM policy changed" alerts. The 2026-11-25 alerts come in the 2026-11-26 review.
+  - No access check (ACC) alerts: all nine known findings were unchanged, so the "new or increased only" rule worked.
+- **Triage, GOV-165** (subtask of GOV-90, linked to GOV-150, GOV-122 and GOV-123; closed with a closing comment):
+  - Dataset setup, the `ect-pipeline` grants and the role account grants were expected.
+  - The `raw` read grants to `ect-role-analyst` and `ect-role-steward` (SEV2 under Appendix A) were **confirmed by the owner as deliberate planted audit material**, tracked as ACC-08, and not remediated.
+- **Evidence comments** on GOV-150 (R-003 treatment status), GOV-122 (F10) and GOV-123 (F11). The findings and the exception stay open until the controls have run on a regular basis.
+
+### Open / next
+- **2026-11-26:**
+  - The review covers 2026-11-25 (`scratch` sharing, Data Access settings, `_Default` retention, the O6 changes). Triage them in a new ticket.
+  - The first scheduled watchdog check runs at 12:05 New York.
+- **Possible improvement:** show the granted account and role in the run record, so triage doesn't need a log lookup.
+
+---
+
 ## 2026-11-25 — Step 6: daily security review and watchdog built (J4); log reader setup steps written (O6)
 
 Owner: "Let's do the monitoring code and hold off on setting up Cloud Storage."
