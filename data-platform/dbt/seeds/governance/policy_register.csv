@@ -10,10 +10,10 @@ POL-05,Acceptable Use Policy,policy,vp-people,vp-people;ciso,approved,1.0,2026-1
 POL-06,Risk Management Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-9,557136
 POL-07,Change Management Policy,policy,vp-engineering,vp-engineering,approved,1.1,2026-11-24,2027-11-24,GOV-10,557087
 POL-08,Incident Response Policy,policy,ciso,ciso,approved,1.1,2026-11-24,2027-11-24,GOV-11,458805
-POL-09,Logging & Monitoring Policy,policy,ciso,ciso,draft,,,,GOV-12,
-POL-10,Vulnerability & Patch Management Policy,policy,ciso,ciso,draft,,,,GOV-13,
-POL-11,Encryption & Key Management Policy,policy,ciso,ciso,draft,,,,GOV-14,
-POL-12,Vendor & Third-Party Risk Management Policy,policy,ciso,ciso,draft,,,,GOV-15,
-POL-13,Data Retention & Disposal Policy,policy,general-counsel,general-counsel,draft,,,,GOV-16,
-POL-14,Human Resources Security Policy,policy,vp-people,vp-people,draft,,,,GOV-17,
-POL-15,Business Continuity & Disaster Recovery Policy,policy,vp-operations,vp-operations,draft,,,,GOV-18,
+POL-09,Logging & Monitoring Policy,policy,ciso,ciso,in_review,0.9,,,GOV-12,557400
+POL-10,Vulnerability & Patch Management Policy,policy,ciso,ciso,in_review,0.9,,,GOV-13,458990
+POL-11,Encryption & Key Management Policy,policy,ciso,ciso,in_review,0.9,,,GOV-14,557358
+POL-12,Vendor & Third-Party Risk Management Policy,policy,ciso,ciso,in_review,0.9,,,GOV-15,426423
+POL-13,Data Retention & Disposal Policy,policy,general-counsel,general-counsel,in_review,0.9,,,GOV-16,491690
+POL-14,Human Resources Security Policy,policy,vp-people,vp-people,in_review,0.9,,,GOV-17,426362
+POL-15,Business Continuity & Disaster Recovery Policy,policy,vp-operations,vp-operations,in_review,0.9,,,GOV-18,557298

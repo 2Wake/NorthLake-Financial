@@ -26,6 +26,30 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — POL-09 to POL-15 drafted and reviewed to v0.9 (parallel)
+
+### Done
+- 7 parallel agents each drafted one policy from the approved template (Policies folder), ran its *[Simulated]* review (≥1 point accepted, ≥1 rejected with reason) and closed its draft and review sub-tasks with closing comments. Stories → In Progress. **Approval sub-tasks GOV-63 to GOV-69 untouched**, waiting for the owner.
+
+  | ID | Page | Story | Statements | Owner decisions (PROPOSED) |
+  |---|---|---|---|---|
+  | POL-09 Logging & Monitoring | 557400 | GOV-12 | 22 | where 12-month audit logs live |
+  | POL-10 Vulnerability & Patch | 458990 | GOV-13 | 18 | ASV scans / pen tests for simulated card systems |
+  | POL-11 Encryption & Key Mgmt | 557358 | GOV-14 | 22 | card-number method, key type, SSN/bank deadline |
+  | POL-12 Vendor & Third-Party Risk | 426423 | GOV-15 | 26 | inventory location, review frequency |
+  | POL-13 Data Retention & Disposal | 491690 | GOV-16 | 18 | disposal when `raw` is append-only; GC confirms 4 periods |
+  | POL-14 HR Security | 426362 | GOV-17 | 21 | screening scope, overdue training, training platform |
+  | POL-15 BC/DR | 557298 | GOV-18 | 16 | RTO/RPO per service; build or drop the DR region |
+- An 8th read-only agent listed what the approved policies (POL-01 to POL-08, STD-01, DOC-02) need to run that isn't ticketed.
+- Register page v14 and `policy_register.csv`: POL-09 to POL-15 `in_review`, 0.9, page IDs.
+- Read-only checks by the agents (no settings changed): Dependabot alerts off; `_Default` log bucket 30 days, unlocked; no alert policies; Cloud KMS not enabled (the `gcloud` prompt to enable it defaulted to No); datasets US multi-region, no expiry, no CMEK; 0 user-managed service-account keys. A local dependency scan was blocked by the permission check and not retried.
+
+### Open
+- **Ticket drafts for owner approval** (merged and de-duplicated across the 8 agents): 11 draft follow-ups under the policy stories (owner decisions block each approval sub-task) + 2 alignment items under GOV-81; 27 audit findings F9–F35 under a new findings story (9 High, 13 Medium, 5 Low); 13 operation sub-tasks under GOV-90 for the approved policies. Operation items for POL-09 to POL-15 held until each is approved.
+- **Conflict to resolve:** STD-01 s11 requires announcing approved policies; the earlier owner decision was no announcement post (draft 3.1).
+
+---
+
 ## 2026-11-24 — Correction: why PRs #5 and #7 missed commits
 
 ### Done
