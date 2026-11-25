@@ -26,6 +26,21 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Correction: why PRs #5 and #7 missed commits
+
+### Done
+- **Root cause found (corrects earlier entries that blamed GitHub lag).** In both cases Claude pushed commits *after* the owner had merged the PR. A merged PR never picks up new commits, so they never reached `main`:
+  - PR #5 merged 22:38:02 UTC; `e06e7d6` committed 22:38:57 (55 s later).
+  - PR #7 merged 02:31:52 UTC; `236ba03` (02:34:31) and `13c0e5f` (02:39:51) came after.
+  Claude's check counted commits but never looked at whether the PR was still open. The owner merged correctly both times.
+- `236ba03` and `13c0e5f` carried to branch `policies-09-15` as `f7b8d79` and `63b2393`.
+- `CLAUDE.md` #3 and memory: check the PR is still open before every push; no new commits to a PR once it's called ready; merge on the owner's go-ahead with `gh pr merge --match-head-commit`, which refuses if the PR doesn't hold that exact commit.
+
+### Open
+- A local `pre-push` git hook that refuses pushes to a merged PR's branch was proposed; it needs the owner's OK to install.
+
+---
+
 ## 2026-11-24 — Incident reports move to the Security Incidents (SI) Jira space
 
 ### Done
