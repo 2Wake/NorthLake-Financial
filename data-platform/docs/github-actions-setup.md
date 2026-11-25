@@ -91,3 +91,68 @@ GitHub repo → **Actions** → **Daily data refresh** → **Run workflow** → 
 
 A green check means it worked: a new file appears in `data-platform/run-records/`. If a step is
 red, open it and share the error.
+
+---
+
+## H. The log reader account for the daily security review (POL-09)
+
+The daily run also reviews yesterday's Google Cloud audit logs (`ect-security-review`). It reads them as
+a **separate account, `ect-monitor`**, that can only read logs, so the pipeline never reads the audit
+trail about itself (POL-09 statement 8). Same keyless sign-in as `ect-pipeline`: no key.
+
+### H1. Create the account
+
+**IAM & Admin → Service Accounts → + Create service account**
+1. Name: `ect-monitor`. Description: `Daily security review: reads audit logs (POL-09)`. Click **Create and continue**.
+2. **Grant this service account access to project** → Role: type `Private Logs Viewer` and pick
+   **Private Logs Viewer** (under Logging). Click **Continue**, then **Done**.
+
+> ⚠️ Pick **Private** Logs Viewer, not plain **Logs Viewer**: plain Logs Viewer can't see Data Access
+> logs (who read which table), which most of the checks need. Neither role can delete logs.
+> ⚠️ Don't create a key for it.
+
+### H2. Let the workflow use it
+
+**IAM & Admin → Workload Identity Federation** → pool **`github`** → **Grant access** →
+**Grant access using service account impersonation**
+- Service account: `ect-monitor`
+- Select principals: attribute name **repository**, attribute value `2Wake/empire-city-taxi-grc`
+- Click **Save**. If a "Configure your application" box appears, **Dismiss** it.
+
+### H3. Tell GitHub the account name (a variable)
+
+GitHub repo → **Settings → Secrets and variables → Actions → Variables** tab → **New repository variable**
+
+| Name | Value |
+|---|---|
+| `GCP_MONITOR_SERVICE_ACCOUNT` | `ect-monitor@empire-city-taxi.iam.gserviceaccount.com` |
+
+### H4. Tell GitHub who the maintainer is (a secret)
+
+Same page → **Secrets** tab (not Variables) → **New repository secret**
+
+| Name | Value |
+|---|---|
+| `ECT_MAINTAINER_PRINCIPAL` | the Google account email you sign in to the console with |
+
+The logs name you by your email. The review uses this secret to show you as `maintainer` in the
+public run record instead of an unknown identity. It's a **secret** so it's hidden in workflow logs
+and never stored in a file.
+
+### H5. Test it
+
+**Actions → Daily data refresh → Run workflow.** In the run record, look for the **Security review
+(POL-09)** section with `Status: ok`.
+
+Expect the **first** run to fail at its last step, "Fail the run if the security review raised
+alerts": it reviews the previous day, and that day contains your own setting changes (IAM and logging
+changes), which are exactly what it's meant to catch. Each alert is triaged in Jira (POL-09
+statement 15). The setup changes in H1 and H2 will show up in the next day's review the same way.
+
+If the section says `Status: not_run`, the sign-in in H2 or the variable in H3 is missing.
+
+## I. The watchdog
+
+Nothing to set up. `.github/workflows/watchdog.yml` runs at 12:05 New York time and fails (GitHub
+emails you) if there's no run record for today. To test it by hand: **Actions → Watchdog (daily run)
+→ Run workflow**. Before noon it just says "Skipped".

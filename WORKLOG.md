@@ -26,6 +26,58 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-25 — Step 6: daily security review and watchdog built (J4); log reader setup steps written (O6)
+
+Owner: "Let's do the monitoring code and hold off on setting up Cloud Storage."
+
+### Done
+- **Earlier question, export storage (GOV-158):** Cloud Storage, not a BigQuery dataset. Restoring needs the original zip, and the attachments are binary files. Setting it up is **on hold** (owner).
+- **`ect-security-review`** (`src/ect_platform/security_review.py`, POL-09 statement 15 and Appendix A).
+  - **What it reads:** every UTC day since the last review (normally yesterday; it catches up to 7 days after missed runs). It uses the Cloud Logging API, not BigQuery, so there's no query cost. It runs four filtered reads per day.
+  - **The alerts it raises:**
+    - IAM policy changes on the project or a dataset;
+    - service account keys created;
+    - logging changes (bucket, sinks, exclusions, Data Access settings);
+    - `raw` read by an identity whose role has no `raw` row in `access_policy.csv`;
+    - 5 or more denials for one identity within a sliding hour;
+    - token exchanges not from this repo's workflow on `main`, and anyone but that workflow impersonating `ect-pipeline` or `ect-monitor`;
+    - access check (ACC) findings that are new or higher than in the previous run record.
+  - **Not covered yet:** the break-glass alert waits for GOV-89.
+  - **Output:** writes `output/security_review.json`. `ect-record` adds a "Security review (POL-09)" section to the run record, which is the review record (statement 19). The last workflow step (`--check`) fails the run after the record is committed, so the evidence is kept and GitHub emails the maintainer.
+- **Watchdog** (`src/ect_platform/watchdog.py`, `.github/workflows/watchdog.yml`, statement 18).
+  - Runs at 12:05 New York. Two crons (16:05 and 17:05 UTC) cover summer and winter time; the script ignores the one that doesn't apply.
+  - Fails if today's run record is missing: SEV4, or SEV3 if yesterday's is missing too.
+  - Standard library only, with no Google sign-in.
+- **Daily workflow:**
+  - A second keyless sign-in as **`ect-monitor`**. Its credentials go only to the review step (`export_environment_variables: false`).
+  - The review step, then the final check step.
+  - If the variable `GCP_MONITOR_SERVICE_ACCOUNT` isn't set, the review records `not_run` and the run fails at the last step, so a critical control that isn't running is never silent.
+- **Privacy:** the repo is public. Identities show as `maintainer` (through the secret `ECT_MAINTAINER_PRINCIPAL`), our service account names, `github-workflow (main)`, `google-system-account` or `unknown-identity-<sha256 prefix>`. No emails or IP addresses ever appear.
+- **Tests:** `tests/test_monitoring.py`, 12 new tests (every alert type, the sliding window, catch-up, record parsing, privacy, the watchdog in both seasons). `uv run pytest`: **28 passed**.
+- **Run against real logs** (read-only, as the owner, locally, with `--day`):
+  - **2026-11-24:** 7 alerts, all IAM and dataset-sharing changes by the maintainer during role-account setup.
+  - **2026-11-25:** 4 alerts: `scratch` dataset sharing, Data Access settings and the `_Default` bucket retention change.
+  - There were no false alerts on 434 + 153 `raw` reads (the pipeline and the maintainer are both approved), denials stayed under the threshold, and all sign-ins came from the workflow.
+  - The result file contains no `@`.
+- **Docs:** `docs/github-actions-setup.md` parts H (O6 owner steps) and I (watchdog); README commands and monitoring limits.
+- **Correction:** the 2026-11-25 approvals entry said the `_Default` bucket keeps 365 days. It's **400** (the owner's setting; POL-09 statement 12). Fixed above and in the Jira comments on GOV-94 and GOV-121.
+
+### Decisions (owner, 2026-11-25)
+- **A separate log reader account (`ect-monitor`, Private Logs Viewer only)**, not the pipeline account, so the monitored identity can't read its own audit trail (POL-09 statement 8).
+- **ACC findings alert only when new or increased** compared with the previous run record. Known findings are still listed in each record. This avoids a failed run and an email every day for the planted findings.
+- **Google-side backup alert:** decided later, after checking Cloud Monitoring's alerting price. Meanwhile the watchdog shares the GitHub scheduler with the daily run (the 2026-11-25 schedule never fired), so a scheduler outage silences both. This is recorded on GOV-123.
+
+### Known limits
+- `UpdateDataset` entries can't show whether permissions changed (the log shows the whole dataset), so every dataset update counts as a possible permission change (SEV3). Console sharing produces both a `SetIamPolicy` and an `UpdateDataset` alert.
+- Only Google Cloud logs are reviewed automatically. GitHub and Atlassian logs need the monthly manual review (statement 17, GOV-95).
+
+### Open / next
+- **Owner, O6 (before merging the PR):** setup steps H1 to H4 (create `ect-monitor` with Private Logs Viewer, grant the workflow impersonation, add the variable `GCP_MONITOR_SERVICE_ACCOUNT` and the secret `ECT_MAINTAINER_PRINCIPAL`). Then merge, then run H5.
+- **The first run after setup will fail on purpose:** it reviews 2026-11-25, which has the 4 alerts above. These become the first triage records in Jira (POL-09 statement 15). The O6 changes then show in the next day's review.
+- Then update GOV-122 (F10) and GOV-123 (F11) with evidence, and R-003 (GOV-150) with the treatment status. The findings stay open until the controls have run (findings rule).
+
+---
+
 ## 2026-11-25 — Realism review applied; all 15 policies approved; Jira consolidated into three stories; combined announcement
 
 Owner gave blanket approval for steps 1–5 ("Let's do 1-5. You have my blanket approval."). Not included: step 6 (J4 monitoring code and O6) and git tags (still need the owner's OK). All approvals, reviews and acknowledgments are *[Simulated]* and dated today.
@@ -43,7 +95,7 @@ Owner gave blanket approval for steps 1–5 ("Let's do 1-5. You have my blanket 
 
   | Policy | Approver (comment) | Decisions | High gap and exception |
   |---|---|---|---|
-  | POL-09 | CISO (557467) | `_Default` bucket, 365 days | R-003 (GOV-150): alerting and daily review, to 2027-01-31 |
+  | POL-09 | CISO (557467) | `_Default` bucket, 400 days (corrected from "365" on 2026-11-25) | R-003 (GOV-150): alerting and daily review, to 2027-01-31 |
   | POL-10 | CISO (557469) | (c): ASV scans and pen tests not applicable | none |
   | POL-11 | CISO (491857) | A1, B1, C1 | none |
   | POL-12 | CISO (557471) | A1 (DOC-03), B1; Google and GitHub are no longer PCI service providers | R-004 (GOV-151): vendor programme, to 2027-02-28 |
