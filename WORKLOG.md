@@ -26,6 +26,44 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-25 — Raw rebuilt with generator 0.4.0; full card numbers, SSNs and bank numbers gone; scheduled run missed
+
+### Done
+- **PR #10 merged** by the owner (022eeab).
+- **GOV-148 (Bug)** created, owner-approved: `card_expiry` and `cardholder_name` are still stored in `payments_rider_cards` and are Secret under the standard (planted S03). Labels `audit-finding`, `bug`, `data-classification`; relates to GOV-82. Fixed in the data classification mapping work, not before.
+- **Owner decisions on the follow-ups** (approved "everything else is fine"):
+  - POL-03 v2.0 gets the rule "Secret data must not be stored in ECT's data platform; it stays with the provider; if found, it's a security incident and is removed within 5 business days". This goes in the same major revision as the "don't store the full value" change.
+  - ECT does **not** receive card numbers and mask them on arrival. It would widen PCI scope, and real taxi apps and terminals send cards straight to the processor.
+  - A planted card number in a free-text field is added later with the GOV-74 scan.
+- **Test rebuild in `scratch`:**
+  - The four tables were loaded from the verified 0.4.0 batches and compared in BigQuery with `raw`: 6,984 rows.
+  - 0 unmatched rows, 0 differences in unchanged columns, 0 wrong last-4 values or defect codes.
+  - The test tables were deleted afterwards.
+- **Rebuild of `raw` (owner approval O5, "Yes")** at 2026-11-25 13:14 UTC:
+  - Tables: `hris_employees` (1,058 rows), `fleet_drivers` (693), `payments_rider_cards` (3,905), `gov_planted_defects` (1,328). Same counts as before; all rows `_generator_version` 0.4.0.
+  - Each table was deleted and recreated from the 0.4.0 batches, Jan 1 to Nov 23, with load label `component: ect-rebuild-040`.
+  - Table labels: `hris_employees` and `fleet_drivers` → confidential.
+  - **Old values:** restorable through BigQuery time travel until **2026-12-02 13:14 UTC**. After that they're in Google's fail-safe until about **2026-12-09**, then gone.
+- **`dbt build`:** PASS 134, WARN 39, ERROR 0.
+  - DQ-04, 07, 13 and 16 catch exactly the same counts as before: 20, 114, 14 and 15.
+  - CLS-03 +27: the proposed register rows.
+  - CLS-01 188: none on the new columns. 32 are the policy register and acknowledgment tables from PR #8, which the last run record predates.
+- **A miss in PR #10, fixed here:** the people and driver staging views (`stg_hris_employees`, `stg_fleet_drivers` and their history views) still carried `classification: secret`, so CLS-04 rose from 18 to 28. `_staging.yml` is now `confidential`, giving CLS-04 = 24. The live views already carry the new label, built from this branch. **Merge this PR before the next daily run**, or that run puts the old labels back (warnings only).
+- **Laptop:** `data-platform/output/` deleted (213 MB, 327 days of 0.2.0 batches, the only local copy of the full card numbers). It was git-ignored and regenerable. The owner's laptop is portfolio tooling, outside ECT scope.
+
+### Found
+- **The scheduled daily run (05:30 New York) didn't happen on 2026-11-25, and nothing alerted anyone.** The workflow is active, the cron is valid and it's on `main`. GitHub has never started a scheduled run of it: the only runs are three manual ones on 2026-11-24. `raw` therefore ended at Nov 23.
+  - Evidence for **F11 (GOV-123, no missed-run alert)**. Not fixed (findings rule); the fix is the J4 watchdog.
+  - The next run catches up Nov 24 and 25 with 0.4.0. It will also show whether the new IAM and STS audit logs capture the pipeline's sign-in.
+
+### Open / next
+- Owner: merge this PR, then trigger the daily run (Actions → Daily data refresh → Run workflow), or wait for tomorrow's schedule.
+- Simulated owner approval of the 27 proposed register rows.
+- Git tags for generator versions (owner OK pending).
+- J4 to J8 as listed below.
+
+---
+
 ## 2026-11-25 — Realism review decisions, owner settings, generator 0.4.0 (no full card, SSN or bank numbers)
 
 ### Done
