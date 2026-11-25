@@ -26,6 +26,34 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — All eight policies approved; DOC-02 tools list; all-staff acknowledgments; Claude creates PRs (POL-07 v1.1)
+
+### Done
+- **AI tools decision (owner):** all AI tools may receive **Public data only**; may be revisited if data is hashed, tokenized or encrypted first (CISO, after a POL-12 vendor check). **Scope note** (owner): the rule covers AI tools ECT would adopt or integrate (e.g. Gemini, ChatGPT); the assistant used to build and run this portfolio (Claude) is out of scope. It is portfolio tooling, and all ECT data is fictional. Recorded as a scope boundary, not an exception.
+- **DOC-02 Approved Tools List** (Confluence 458876) approved v1.0 by the CISO (comment 557268) *[Simulated]*; GOV-76 Done. Added to the register as DOC-02.
+- **POL-05 Acceptable Use Policy** approved v1.0: post-review change aligned 5.4.12/5.4.13 and the definitions with the AI decision; approved by Simone Laurent, VP People (EMP10049, 491653) and Victor Hale, CISO (557271). GOV-59 and GOV-8 Done. **All eight policies POL-01 to POL-08 are now approved.**
+- **POL-07 v1.1** (minor change): under the small-team allowance, Claude creates each PR with its full description; the owner approves by merging. Approved by Arjun Mehta, VP Engineering (491656). Comment on finding GOV-83. CLAUDE.md #3 and memory updated. Owner chose option (a) after PRs #3, #5 and #6 opened with the blank template.
+- **All-staff acknowledgments** (owner decision: all staff acknowledge every approved policy, drivers included):
+  - new model `marts.fct_policy_acknowledgments`: one row per **active** employee per approved policy, derived daily from HR data, so new hires appear and leavers drop off.
+  - due 10 business days after the later of approval and hire date (POL-01 statement 6, STD-01 section 11); weekends skipped, holidays not.
+  - matches on the **major** version: minor revisions (POL-07 1.1) keep earlier acknowledgments.
+  - the seed now records acknowledgments **received**; 10 approver rows added (their approval comments count).
+  - today: 526 staff × 8 policies = 4,208 rows; 10 acknowledged, 4,198 pending, due Dec 8, 2026.
+- **Register:** Confluence page v10 and `policy_register.csv`: POL-05 approved 1.0, POL-07 1.1, DOC-02 added.
+- **Tickets (owner approved drafts):** story **GOV-90** "Put the approved policies into operation" with **GOV-91** first tabletop (May 2027, blocked by GOV-88) and **GOV-92** first annual risk assessment (Mar 31, 2027); **GOV-93** R-001 cardholder data stored readable (High, 15), standalone `risk-register` Task linked to GOV-90, GOV-86, GOV-70.
+
+### Decisions
+- R-001 is a standalone Task, not a sub-task: POL-06's register is a list of standalone `risk-register` Tasks reviewed quarterly.
+- Acknowledgment list is derived, not hand-listed, because headcount changes daily.
+
+### Open / next
+- **POL-01 statement 6** names only POL-01 and POL-05 for acknowledgment; the owner's all-staff, all-policies decision goes further. Align at POL-01's next revision.
+- The yearly re-acknowledgment isn't modelled yet (first due Nov 2027).
+- Dec 1: record further simulated acknowledgments, leaving some overdue after Dec 8.
+- POL-09 to POL-15 drafting.
+
+---
+
 ## 2026-11-24 — Seven policies approved at v1.0; incident reporting channel; tools list drafted
 
 ### Done
