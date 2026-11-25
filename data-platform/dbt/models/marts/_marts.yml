@@ -107,7 +107,7 @@ models:
           arguments: {rule_id: DQ-03}
           config: {severity: warn, meta: {rule_id: DQ-03, dimension: Uniqueness, origin: planted}}
       - rule_has_no_findings:
-          name: dq_04_fleet_drivers_ssn
+          name: dq_04_fleet_drivers_ssn_last4
           arguments: {rule_id: DQ-04}
           config: {severity: warn, meta: {rule_id: DQ-04, dimension: Validity, origin: planted}}
       - rule_has_no_findings:
@@ -119,7 +119,7 @@ models:
           arguments: {rule_id: DQ-06}
           config: {severity: warn, meta: {rule_id: DQ-06, dimension: Consistency, origin: planted}}
       - rule_has_no_findings:
-          name: dq_07_payments_rider_cards_card_number
+          name: dq_07_payments_rider_cards_card_last4
           arguments: {rule_id: DQ-07}
           config: {severity: warn, meta: {rule_id: DQ-07, dimension: Validity, origin: planted}}
       - rule_has_no_findings:
@@ -143,7 +143,7 @@ models:
           arguments: {rule_id: DQ-12}
           config: {severity: warn, meta: {rule_id: DQ-12, dimension: Validity, origin: planted}}
       - rule_has_no_findings:
-          name: dq_13_hris_employees_ssn
+          name: dq_13_hris_employees_ssn_last4
           arguments: {rule_id: DQ-13}
           config: {severity: warn, meta: {rule_id: DQ-13, dimension: Validity, origin: planted}}
       - rule_has_no_findings:
@@ -155,7 +155,7 @@ models:
           arguments: {rule_id: DQ-15}
           config: {severity: warn, meta: {rule_id: DQ-15, dimension: Completeness, origin: planted}}
       - rule_has_no_findings:
-          name: dq_16_fleet_drivers_payout_bank_account
+          name: dq_16_fleet_drivers_payout_account_last4
           arguments: {rule_id: DQ-16}
           config: {severity: warn, meta: {rule_id: DQ-16, dimension: Validity, origin: planted}}
       - rule_has_no_findings:

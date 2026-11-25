@@ -1,8 +1,12 @@
 """Deterministic random streams and fictional identity values.
 
 All values are synthetic. Phone numbers use the 555 exchange, emails use reserved
-.example / example.com domains, and card numbers use a test-style 400000 prefix
-(Luhn-valid, so PII scanners recognise them as card numbers).
+.example / example.com domains, and card numbers use a test-style 400000 prefix.
+
+From generator 0.4.0 full card numbers, SSNs and bank account numbers are still drawn (so
+every other value keeps the same random draws) but are never output: only the last 4 digits
+and a provider token leave the generator (POL-11; owner decision 2026-11-25, see WORKLOG). Tokens come from their own random
+stream keyed by the record ID, never from the full value, so they can't be joined back to it.
 """
 import hashlib
 import math
@@ -68,6 +72,30 @@ def _luhn_check_digit(payload: list[int]) -> int:
                 digit -= 9
         total += digit
     return (10 - total % 10) % 10
+
+
+def last4(value: str) -> str:
+    """The last 4 digits of a card, SSN or account number: the only part ECT keeps."""
+    return "".join(c for c in value if c.isdigit())[-4:]
+
+
+_TOKEN_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"  # letters only: a token can never
+                                                                        # look like a card number to a scan
+
+
+def _token(prefix: str, stream: str, record_id: str, length: int) -> str:
+    r = rng(stream, record_id)
+    return prefix + "".join(r.choice(_TOKEN_CHARS) for _ in range(length))
+
+
+def card_token(card_id: str) -> str:
+    """The payment processor's token for a card (simulated). Independent of the card number."""
+    return _token("tok_", "card-token", card_id, 24)
+
+
+def payout_token(driver_id: str) -> str:
+    """The payout provider's account reference for a driver's bank account (simulated)."""
+    return _token("acct_", "payout-token", driver_id, 16)
 
 
 def card_number(r: random.Random) -> str:

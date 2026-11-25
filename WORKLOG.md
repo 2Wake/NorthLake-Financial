@@ -26,6 +26,50 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-25 — Realism review decisions, owner settings, generator 0.4.0 (no full card, SSN or bank numbers)
+
+### Done
+- **Realism review of all policies** (POL-01 to POL-15, STD-01, DOC-01, DOC-02) against the real setup, under the owner's constraint of **no Cloud KMS, Secret Manager or CMEK**. Six read-only reviews. Result: every policy stays; statements that can't apply say "not applicable" with the reason; new settings cost under $0.10/month. Nothing in Confluence or Jira edited yet.
+- **Owner settings (owner made them in the UI; Claude checked each read-only):**
+  - GitHub: Dependabot alerts and security updates on (secret scanning and push protection were already on). Failed-workflow emails: owner confirmed (can't be read from here).
+  - Cloud Logging: `_Default` bucket retention **30 → 400 days**. Not locked; Log Analytics off.
+  - Data Access audit logs (Admin Read, Data Read, Data Write) on for **Security Token Service API** and **Identity and Access Management (IAM) API**. The page has no separate "IAM Service Account Credentials API" row; the IAM row is expected to cover the pipeline's token logs. To be confirmed in the logs after the next daily run.
+  - BigQuery dataset **`scratch`** (US) created by the owner; `ect-pipeline` has write access. For the yearly rebuild test (POL-15) and the 0.4.0 rebuild test.
+- **Generator 0.4.0** (branch `realism-decisions-generator-040`):
+  - Cards: only `card_token` (processor token, letters only, from its own random stream keyed by `card_id`) and `card_last4`. SSNs: `ssn_last4`. Payout bank accounts: `payout_account_last4` plus `payout_account_token`. The full values are still drawn, so every other value keeps its random draws, but never output.
+  - The four planted defects on those columns were redefined on the last-4 values, with the same rates and the same records: `driver_ssn_last4_short`, `driver_payout_last4_masked`, `card_last4_missing`, `employee_ssn_last4_masked`. DQ-04, 07, 13 and 16 follow.
+  - HR fields for POL-14 on `hris_employees`: `screening_status`, `screening_date`, `confidentiality_agreed_on`. Corporate staff only; drivers are screened through the fleet background check. Clean values; no planted gaps yet (needs a steward-proposed DQ rule first).
+  - Table labels: `hris_employees` and `fleet_drivers` Secret → Confidential. `payments_rider_cards` stays Secret / PCI: expiry and name are still Secret, and the PCI label changes with DOC-01 v2.0.
+  - Classification register and answer key: 27 rows replaced or added, all **proposed** (owner approval pending). Planted scenario S06 carried over to `stg_fleet_drivers.ssn_last4` (Sensitive, should be Confidential); S03 and S11 untouched.
+- **Verified:** `pytest` 16 passed (3 new tests). Full history regenerated with 0.4.0 (Jan 1 to Nov 23, 380,115 rows) and compared with the existing batches: **0 problems**. Every other table is identical, the same records carry the same planted defects, and every last-4 value matches. A scan of 6.2 million text values found no SSN-shaped values and no card numbers.
+
+### Decisions (owner, 2026-11-25: "Let's go with all of your recommendations")
+- **Don't store full card numbers, SSNs or bank account numbers**: last 4 plus provider tokens (POL-11 B1, GOV-97 A1/B1/C1). This is how POL-04's "card number unreadable" is met without key products.
+- **One-time exception to "raw is append-only"**: after the owner sees the 0.4.0 rebuild test, `hris_employees`, `fleet_drivers`, `payments_rider_cards` and `gov_planted_defects` are rebuilt in `raw` from 0.4.0 batches, and the local `output/` batches with full card numbers are deleted. It's recorded here as the decision of record (there's no `GV-D` log yet). BigQuery keeps the old values for about 14 more days (7 days time travel plus 7 days fail-safe); that end date gets recorded at the rebuild.
+- **POL-09 logs:** keep 12 months in the existing `_Default` bucket (owner: "if we have the `_Default` bucket, we don't need the dataset"). No new bucket or log dataset. Locking the retention is decided after a 30-day trial, around Dec 28, and only if Google allows locking `_Default`.
+- **POL-10:** internal and external (ASV) scans and penetration tests are **not applicable, with reasons**, not simulated (GOV-96 option c). Simulated reports about systems that don't exist would be false evidence.
+- **POL-15:** real, tested recovery targets for the data platform; design targets checked by walk-throughs for the fictional services; no DR region (correct the company profile; uptime claim to 99.5%).
+- **POL-14:** overdue training is reported and escalated (option b, simulated).
+- **Revisions to approved policies now**, before the Dec 8 acknowledgment deadline, while only the approvers have acknowledged.
+- **POL-05:** add the line that the portfolio's AI assistant is out of scope.
+- **Enterprise baseline assumptions** (owner): all sign-ins use 2FA; all ECT laptops are centrally managed (auto-lock, automatic updates, disk encryption). **The owner's own laptop is portfolio tooling, not an ECT device**, like the AI assistant. It leaves DOC-01's in-scope systems; F16 and F27 become about assumed and simulated ECT devices.
+- **Who does what:** setup tasks for the owner (O1 to O8) are separate from the work done as Jordan Ellis, Data Governance Manager (J1 to J8).
+
+### Risks
+- **Merge timing:** 0.4.0 changes the columns of three raw tables. If it's merged and the daily run starts before the rebuild, that day's load fails. Merge it right after a daily run, then do the rebuild and a `dbt build` the same day.
+- `raw.payments_rider_cards` will show a new CLS-04 finding (its Secret label above its highest registered column), because S03 under-classifies expiry and name. Expected; it clears with the DOC-01 v2.0 relabel.
+
+### Found (for GOV-74, the card-number discovery scan)
+- Numeric IDs pass the Luhn check by chance: `app_trips.trip_id` (13 digits) and `app_trips.tlc_source_key` (35,934 hits). The scan must skip known ID columns or it will flood with false alarms.
+
+### Open / next
+- PR for 0.4.0; owner merges after a daily run. Then J3: test rebuild in `scratch`, owner says yes (O5), rebuild `raw`, run `dbt build`, delete `output/`, record the time-travel end date.
+- Git tags for each generator version (proposed: `generator-v0.2.0` on 603c24f, `generator-v0.3.0` on f63ac4b, `generator-v0.4.0` on the merge). They need the owner's OK, because tags are pushed to GitHub outside a PR.
+- Simulated owner approval of the 27 proposed register rows (vp-people, vp-driver-operations, cfo).
+- J4 monitoring code; J5 document revisions; J6 ticket updates and drafts; J7 Jira consolidation; J8 approvals.
+
+---
+
 ## 2026-11-24 — 53 follow-up, finding and operation tickets created; first policy announcement
 
 ### Done

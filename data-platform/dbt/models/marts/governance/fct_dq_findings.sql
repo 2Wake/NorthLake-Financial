@@ -47,13 +47,13 @@ findings as (
     select 'DQ-03', rider_id from riders where email is not null
         qualify row_number() over (partition by email order by rider_id) > 1
     union all
-    select 'DQ-04', driver_id from drivers where not regexp_contains(ssn, r'^\d{3}-\d{2}-\d{4}$')
+    select 'DQ-04', driver_id from drivers where not regexp_contains(ssn_last4, r'^\d{4}$')
     union all
     select 'DQ-05', driver_id from drivers where tlc_license is null
     union all
     select 'DQ-06', driver_id from drivers where background_check_status not in ('clear', 'pending', 'flagged')
     union all
-    select 'DQ-07', card_id from cards where not regexp_contains(card_number, r'^\d{4} \d{4} \d{4} \d{4}$')
+    select 'DQ-07', card_id from cards where card_last4 is null or not regexp_contains(card_last4, r'^\d{4}$')
     union all
     select 'DQ-08', survey_id from surveys where rating not between 1 and 5
     union all
@@ -66,14 +66,14 @@ findings as (
     union all
     select 'DQ-12', campaign_id from campaigns where end_date < start_date
     union all
-    select 'DQ-13', employee_id from employees where not regexp_contains(ssn, r'^\d{3}-\d{2}-\d{4}$')
+    select 'DQ-13', employee_id from employees where not regexp_contains(ssn_last4, r'^\d{4}$')
     union all
     select 'DQ-14', employee_id from employees where email is not null
         qualify row_number() over (partition by email order by employee_id) > 1
     union all
     select 'DQ-15', entry_id from ledger where account is null
     union all
-    select 'DQ-16', driver_id from drivers where not regexp_contains(payout_bank_account, r'^\d{9}$')
+    select 'DQ-16', driver_id from drivers where not regexp_contains(payout_account_last4, r'^\d{4}$')
     union all
     select 'ACC-01', g.grant_id from grants g left join policy p using (access_role, dataset)
         where g.grant_status = 'active' and p.access_role is null

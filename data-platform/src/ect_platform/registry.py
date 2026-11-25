@@ -33,22 +33,23 @@ TABLES = {
     "hris_employees": {
         "description": "HR system extract: one row per employee each time the record is created or changed. "
                        "Drivers are employees too (department Driver Operations).",
-        "labels": _labels("people", "secret", "hris", pii=True, retention="7y"),
+        "labels": _labels("people", "confidential", "hris", pii=True, retention="7y"),
         "columns": [
             ("employee_id", "STRING"), ("first_name", "STRING"), ("last_name", "STRING"),
-            ("email", "STRING"), ("ssn", "STRING"), ("department", "STRING"), ("title", "STRING"),
+            ("email", "STRING"), ("ssn_last4", "STRING"), ("department", "STRING"), ("title", "STRING"),
             ("pay_type", "STRING"), ("salary", "INT64"), ("performance_rating", "STRING"),
             ("manager_id", "STRING"), ("role_code", "STRING"), ("hired_at", "DATE"), ("employment_status", "STRING"), ("terminated_at", "DATE"),
-            ("record_updated_at", "TIMESTAMP"),
+            ("record_updated_at", "TIMESTAMP"), ("screening_status", "STRING"), ("screening_date", "DATE"),
+            ("confidentiality_agreed_on", "DATE"),
         ],
     },
     "fleet_drivers": {
         "description": "Fleet system extract: one row per driver each time the record is created or changed.",
-        "labels": _labels("driver", "secret", "fleet", pii=True, retention="7y"),
+        "labels": _labels("driver", "confidential", "fleet", pii=True, retention="7y"),
         "columns": [
             ("driver_id", "STRING"), ("employee_id", "STRING"), ("first_name", "STRING"),
-            ("last_name", "STRING"), ("tlc_license", "STRING"), ("ssn", "STRING"), ("phone", "STRING"),
-            ("home_address", "STRING"), ("payout_bank_account", "STRING"),
+            ("last_name", "STRING"), ("tlc_license", "STRING"), ("ssn_last4", "STRING"), ("phone", "STRING"),
+            ("home_address", "STRING"), ("payout_account_last4", "STRING"), ("payout_account_token", "STRING"),
             ("background_check_status", "STRING"), ("driver_status", "STRING"), ("hired_at", "DATE"),
             ("status_changed_at", "TIMESTAMP"), ("record_updated_at", "TIMESTAMP"),
         ],
@@ -63,10 +64,12 @@ TABLES = {
         ],
     },
     "payments_rider_cards": {
-        "description": "Payments system extract: rider payment cards, one row each time a card is added or changed.",
+        "description": "Payments system extract: rider payment cards, one row each time a card is added or changed. "
+                       "Holds the processor's token and the last 4 digits only; the card number stays with "
+                       "the payment processor (from generator 0.4.0).",
         "labels": _labels("finance", "secret", "payments", pii=True, pci=True, retention="3y"),
         "columns": [
-            ("card_id", "STRING"), ("rider_id", "STRING"), ("card_number", "STRING"),
+            ("card_id", "STRING"), ("rider_id", "STRING"), ("card_token", "STRING"), ("card_last4", "STRING"),
             ("card_expiry", "STRING"), ("cardholder_name", "STRING"), ("card_status", "STRING"),
             ("added_at", "TIMESTAMP"), ("record_updated_at", "TIMESTAMP"),
         ],

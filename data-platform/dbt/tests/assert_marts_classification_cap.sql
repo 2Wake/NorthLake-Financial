@@ -25,7 +25,8 @@ labels as (
 -- Secret and Confidential columns from the column classification map, as named in raw
 restricted_columns as (
     select column_name from unnest([
-        'ssn', 'payout_bank_account', 'card_number', 'card_expiry', 'cardholder_name',
+        'ssn_last4', 'payout_account_last4', 'payout_account_token', 'card_token', 'card_expiry', 'cardholder_name',
+        'screening_status', 'screening_date',
         'phone', 'home_address', 'tlc_license', 'background_check_status', 'salary',
         'performance_rating', 'comment', 'email', 'pickup_location_id', 'dropoff_location_id'
     ]) as column_name
