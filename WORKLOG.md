@@ -26,6 +26,28 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — 53 follow-up, finding and operation tickets created; first policy announcement
+
+### Done
+- **Owner approved all drafts** ("we'll revisit what needs to be updated and what can actually be actioned at another time"). Created in GOV, all To Do:
+  - **Draft follow-ups GOV-94 to GOV-106:** 11 under the policy stories GOV-12 to GOV-18, 2 alignment items under GOV-81 (GOV-105 POL-01 st. 6 / POL-05 5.11; GOV-106 POL-03 vs POL-11). Owner-decision tickets block the approval sub-tasks: GOV-94→63, GOV-96→64, GOV-97→65, GOV-98→66, GOV-100 and GOV-101→67, GOV-102→68, GOV-104→69.
+  - **Audit findings:** story **GOV-120** (label `audit-finding`, relates to GOV-82) with **F9 to F35 = GOV-121 to GOV-147**: 9 High, 13 Medium, 5 Low. Not fixed (owner rule).
+  - **Operation tasks GOV-107 to GOV-119** under GOV-90 for the approved policies. GOV sub-tasks have no due-date field, so first due dates are in the summaries.
+  - Comments: GOV-66 (cross-references to update when POL-12 is published), GOV-15 (confirm the in-cab payment path).
+- **Quarterly checks follow the calendar quarter** (owner): first access review, risk register review, change sample and card-data checks due **Mar 31, 2027** (GOV-113 to GOV-116).
+- **First policy announcement**, a Confluence blog post written as an email to staff (blog 491767, *[Simulated]*): POL-01 to POL-08 plus STD-01, DOC-01, DOC-02; read and acknowledge by Dec 8 by commenting on the post. Linked on GOV-107.
+
+### Decisions
+- **Announcements** (owner, replacing the earlier "no announcement post", which the owner called short-sighted): every policy approval or change gets a blog post written as an email, within 10 business days (STD-01 s11 already requires announcing and doesn't say how, so STD-01 is unchanged). Recorded in `CLAUDE.md` #5 and memory.
+- Blogs were off in ECTG; the owner switched them on in the space settings.
+
+### Open / next
+- Owner decisions on the 7 new policies (GOV-94, 96, 97, 98, 100/101, 102, 104), then approvals GOV-63 to GOV-69, each with its own announcement post.
+- Operation items for POL-09 to POL-15 are held until each is approved (list in the ticket drafts, carried into each approval sub-task then).
+- Staff acknowledgments now come as comments on the announcement post; the Dec 1 simulated batch should use those comments as evidence.
+
+---
+
 ## 2026-11-24 — POL-09 to POL-15 drafted and reviewed to v0.9 (parallel)
 
 ### Done
