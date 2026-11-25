@@ -26,6 +26,20 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Incident reports move to the Security Incidents (SI) Jira space
+
+### Done
+- Owner created Jira space **Security Incidents (SI)** (work types Task, Sub-task) for submitted incident reports, and renamed the GOV space **GRC Program** (shown in Jira as "GRC Program").
+- *Report a Security Incident* (Confluence 426241) v2: Route A now says to create a Task in the SI space, no label needed, and not to use GOV; Route B says Security opens the SI ticket; change-history row added.
+- Space home page v5: names GRC Program (GOV) and Security Incidents (SI).
+- `CLAUDE.md`: both Jira spaces listed.
+
+### Open
+- **POL-01** (statement 7 and the definition of "security reporting channel") and **POL-08** (statement 1) still describe the old route: a GOV ticket labelled `security-incident`. They're approved v1.0 policies, so changing them is a minor revision (1.1) with approver sign-off; awaiting the owner's go-ahead.
+- SI space access (who can create and who can see reports) is an owner setting in the Jira UI.
+
+---
+
 ## 2026-11-24 — All eight policies approved; DOC-02 tools list; all-staff acknowledgments; Claude creates PRs (POL-07 v1.1)
 
 ### Done
