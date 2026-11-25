@@ -34,9 +34,11 @@ Running log of all work, decisions and open items. It's the source for progress 
 - Space home page v5: names GRC Program (GOV) and Security Incidents (SI).
 - `CLAUDE.md`: both Jira spaces listed.
 
-### Open
-- **POL-01** (statement 7 and the definition of "security reporting channel") and **POL-08** (statement 1) still describe the old route: a GOV ticket labelled `security-incident`. They're approved v1.0 policies, so changing them is a minor revision (1.1) with approver sign-off; awaiting the owner's go-ahead.
-- SI space access (who can create and who can see reports) is an owner setting in the Jira UI.
+- **POL-01 v1.1** (CEO, comment 458963) and **POL-08 v1.1** (CISO, comment 458966), owner approved: statement 7 / the channel definition and statement 1 now point to the *Report a Security Incident* page instead of naming a Jira route, so future route changes only touch the how-to. Minor versions: staff acknowledgments of v1.0 still count (the model matches on major version). Register page v12 and CSV updated.
+- *Report a Security Incident* moved into the **How-To's** folder (owner request); v3 change history notes the policy revisions.
+
+### Decisions
+- **SI space access isn't configured** (owner): ECT staff are fictional, so there's nobody to grant or restrict. Recorded as a simulation note on the how-to page; in a real company only the Security team would see reports.
 
 ---
 
