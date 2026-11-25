@@ -26,6 +26,61 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-24 — Seven policies approved at v1.0; incident reporting channel; tools list drafted
+
+### Done
+- **GOV-75 Done:** new page *Report a Security Incident* (Confluence 426241, supporting document, owner CISO): Jira GOV ticket labelled `security-incident`, or tell the CISO directly. Linked from the space home page; named in POL-01 statement 7 and POL-08 statement 1 (post-review owner changes, accepted by each approver).
+- **Approved at v1.0** *[Simulated]*, dated 2026-11-24, next review 2027-11-24. Each has an "Approved version 1.0" comment, an approved page (banner, version, dates, change history), and its approval sub-task and story closed with closing comments:
+
+  | Policy | Approver (employee ID) | Comment | Tickets closed |
+  |---|---|---|---|
+  | POL-01 | Marcus Delgado, CEO (EMP10001) | 491625 | GOV-55, GOV-4 |
+  | POL-02 | Victor Hale, CISO (EMP10013) | 557235 | GOV-56, GOV-5 |
+  | POL-03 | Renée Okonkwo, CDO (EMP10002) | 557238 | GOV-57, GOV-6 |
+  | POL-04 | Thomas Brennan, CFO (EMP10043), then CISO | 426293, 491630 | GOV-58, GOV-7 |
+  | POL-06 | Victor Hale, CISO | 557232 | GOV-60, GOV-9 |
+  | POL-07 | Arjun Mehta, VP Engineering (EMP10064) | 557245 | GOV-61, GOV-10 |
+  | POL-08 | Victor Hale, CISO | 557241 | GOV-62, GOV-11 |
+
+- **Policy Register** page v7 and `policy_register.csv` extract updated to `approved,1.0,2026-11-24,2027-11-24` for these seven.
+- **GOV-76 In Review:** *Approved Tools List* v0.1 (Confluence 458876) drafted, owner CISO. The AI-tools section is PROPOSED with three options and waits for the owner's decision. POL-05 (GOV-59) stays at v0.9 until then.
+- **PR template** now links the POL-07 page (GOV-61 step 4).
+- Work ran in two waves of parallel agents: GOV-75 + POL-01 first (POL-01 must be approved before the policies under it), then POL-02/03/04/06/07/08 at once.
+- **PR #5 gap:** it was merged before GitHub picked up its last commit (`e06e7d6`, the GOV-82 findings entry), so that entry never reached `main`. Carried into this branch as a cherry-pick.
+
+### Decisions
+- The "copy approved text to the repo" steps in the approval tickets were skipped: superseded by STD-01 v2.0 (Confluence only). Noted in each closing comment.
+- No council decision-log (`GV-D-###`) entry for policy approvals (GOV-57 step 5): an approval is the approver's decision under STD-01, not a council decision on a `GV-###` issue.
+- Approving POL-04 and POL-06 sets the rules; the environment doesn't meet them yet (GOV-70 to GOV-74, GOV-82). The approvers say so in their comments.
+- Employee IDs follow roster order (row n → EMP1000(n-1)), consistent with the existing STD-01 acknowledgment rows.
+
+### Open / next
+- Owner decisions: the AI-tools position (GOV-76 → POL-05); who must acknowledge the policies (POL-01 says all staff, which includes drivers) before acknowledgment rows are added.
+- Tickets to draft for owner approval: first tabletop (May 2027, POL-08); first risk register entry, the card-data risk (POL-06, GOV-86); first annual risk assessment (POL-06).
+- Acknowledgment rows for the seven policies: not yet added (pending the audience decision). The closing comments say so.
+- Process: before merging, check the PR's commit list matches the branch (`gh pr view N --json commits`).
+
+---
+
+## 2026-11-24 — Audit findings F1 to F7 recorded (GOV-82)
+
+### Done
+- **GOV-82** (Story, label `audit-finding`): "Audit findings: policy drafting, Nov 24, 2026". Sub-tasks, each labelled `audit-finding`, with the requirement broken, severity and the reason for it:
+  - GOV-83 F1 (Medium): changes merged to `main` without a PR or second reviewer
+  - GOV-84 F2 (High): SOC 2 matrix marks IR-01/IR-02 "Implemented" with no plan
+  - GOV-85 F3 (High): evidence tracker PBC-002 "Collected" with no risk register
+  - GOV-86 F4 (High): no risk register; card-data risk (score 15) neither accepted nor treated
+  - GOV-87 F5 (Medium): console changes recorded only in the worklog
+  - GOV-88 F6 (High): no incident response plan or playbooks; no communications lead
+  - GOV-89 F7 (Low): no break-glass admin account
+- **PR #5** was created with the blank template; Claude added the full description afterwards at the owner's request, with a note at the top. Claude's review records it as a POL-07 5.3 deviation (second after PR #3).
+
+### Decisions
+- **Severity scale** (owner agreed the ratings and asked for the reasons): **High** = a record states something untrue about a control or its evidence, or a required control is missing where card data or a High risk is exposed; **Medium** = control defined but not operating as written, partly offset by another record; **Low** = good practice missing, little effect on data or audit conclusions. Each ticket says why it isn't one level higher or lower.
+- Findings stay unfixed (owner decision); each names its planned fix. F8 became council issue GV-007, not a finding.
+
+---
+
 ## 2026-11-24 — Story GOV-81 for the follow-ups; council issue GV-007 added
 
 ### Done
