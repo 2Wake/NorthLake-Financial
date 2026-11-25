@@ -1,14 +1,14 @@
 doc_id,title,doc_type,owner_role,approver_roles,status,version,approval_date,next_review_date,jira_key,confluence_page_id
 STD-01,Policy Management Standard,standard,ciso,ciso,approved,2.0,2026-11-24,2027-11-24,GOV-3,327917
 DOC-01,PCI DSS Scope & Cardholder Data Flow,supporting_document,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-2,425996
-POL-01,Information Security Policy,policy,ciso,ceo,in_review,0.9,,,GOV-4,491531
-POL-02,Access Control Policy,policy,ciso,ciso,in_review,0.9,,,GOV-5,557061
-POL-03,Data Classification & Handling Policy,policy,cdo,cdo,in_review,0.9,,,GOV-6,426094
-POL-04,Cardholder Data Protection Policy,policy,cfo,cfo;ciso,in_review,0.9,,,GOV-7,557113
+POL-01,Information Security Policy,policy,ciso,ceo,approved,1.0,2026-11-24,2027-11-24,GOV-4,491531
+POL-02,Access Control Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-5,557061
+POL-03,Data Classification & Handling Policy,policy,cdo,cdo,approved,1.0,2026-11-24,2027-11-24,GOV-6,426094
+POL-04,Cardholder Data Protection Policy,policy,cfo,cfo;ciso,approved,1.0,2026-11-24,2027-11-24,GOV-7,557113
 POL-05,Acceptable Use Policy,policy,vp-people,vp-people;ciso,in_review,0.9,,,GOV-8,426073
-POL-06,Risk Management Policy,policy,ciso,ciso,in_review,0.9,,,GOV-9,557136
-POL-07,Change Management Policy,policy,vp-engineering,vp-engineering,in_review,0.9,,,GOV-10,557087
-POL-08,Incident Response Policy,policy,ciso,ciso,in_review,0.9,,,GOV-11,458805
+POL-06,Risk Management Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-9,557136
+POL-07,Change Management Policy,policy,vp-engineering,vp-engineering,approved,1.0,2026-11-24,2027-11-24,GOV-10,557087
+POL-08,Incident Response Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-11,458805
 POL-09,Logging & Monitoring Policy,policy,ciso,ciso,draft,,,,GOV-12,
 POL-10,Vulnerability & Patch Management Policy,policy,ciso,ciso,draft,,,,GOV-13,
 POL-11,Encryption & Key Management Policy,policy,ciso,ciso,draft,,,,GOV-14,

@@ -7,7 +7,7 @@
 ## Changes
 <!-- Files or areas changed, grouped by purpose. -->
 
-## Change type (POL-07)
+## Change type ([POL-07 Change Management Policy](https://empire-city-taxi.atlassian.net/wiki/spaces/ECTG/pages/557087))
 - [ ] Standard (on the pre-approved list)
 - [ ] Normal
 - [ ] Emergency (reviewed within 2 business days)
