@@ -205,10 +205,11 @@ raw,fleet_drivers,employee_id,Internal,Identifier (FK),source,Links driver to HR
 raw,fleet_drivers,first_name,Sensitive,PII,source,Personal identifier
 raw,fleet_drivers,last_name,Sensitive,PII,source,Personal identifier
 raw,fleet_drivers,tlc_license,Confidential,Regulated Identifier,source,Driver's TLC license; regulated identifier often treated as low-sensitivity
-raw,fleet_drivers,ssn,Secret,Sensitive PII,source,Government identifier
+raw,fleet_drivers,ssn_last4,Confidential,Sensitive PII (partial),source,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 raw,fleet_drivers,phone,Confidential,PII (contact),source,Direct contact identifier
 raw,fleet_drivers,home_address,Confidential,PII,source,Locational personal data
-raw,fleet_drivers,payout_bank_account,Secret,Financial/Secret,source,Bank account for payouts; both financial and sensitive
+raw,fleet_drivers,payout_account_last4,Confidential,Financial (partial),source,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+raw,fleet_drivers,payout_account_token,Confidential,Financial reference,source,Payout provider's account reference; not a bank account number
 raw,fleet_drivers,background_check_status,Confidential,Sensitive,source,Background-check result; adverse-action relevant; often under-classified
 raw,fleet_drivers,driver_status,Internal,Operational,source,Operational driver state
 raw,fleet_drivers,hired_at,Internal,Operational,source,Record metadata
@@ -227,7 +228,7 @@ raw,hris_employees,employee_id,Internal,Identifier,source,Surrogate key
 raw,hris_employees,first_name,Sensitive,PII,source,Personal identifier
 raw,hris_employees,last_name,Sensitive,PII,source,Personal identifier
 raw,hris_employees,email,Sensitive,Workforce PII,source,Business contact
-raw,hris_employees,ssn,Secret,Sensitive PII,source,Government identifier
+raw,hris_employees,ssn_last4,Confidential,Sensitive PII (partial),source,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 raw,hris_employees,department,Internal,Operational,source,Org attribute
 raw,hris_employees,title,Internal,Operational,source,Org attribute
 raw,hris_employees,pay_type,Internal,Operational,source,"Pay basis (salaried, commission)"
@@ -239,6 +240,9 @@ raw,hris_employees,terminated_at,Sensitive,Workforce PII,source,Termination date
 raw,hris_employees,record_updated_at,Internal,Operational,source,Record metadata
 raw,hris_employees,_batch_date,Internal,Pipeline metadata,source,Load metadata
 raw,hris_employees,_generator_version,Internal,Pipeline metadata,source,Load metadata
+raw,hris_employees,screening_status,Confidential,HR (screening),source,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+raw,hris_employees,screening_date,Confidential,HR (screening),source,Date of the pre-employment screening (POL-14)
+raw,hris_employees,confidentiality_agreed_on,Internal,HR (agreement),source,Date the confidentiality agreement was signed (POL-14)
 raw,payments_financial_ledger,entry_id,Internal,Identifier,source,Surrogate key
 raw,payments_financial_ledger,period,Internal,Operational,source,Accounting period
 raw,payments_financial_ledger,account,Internal,Reference,source,GL account
@@ -249,7 +253,8 @@ raw,payments_financial_ledger,_batch_date,Internal,Pipeline metadata,source,Load
 raw,payments_financial_ledger,_generator_version,Internal,Pipeline metadata,source,Load metadata
 raw,payments_rider_cards,card_id,Internal,Identifier,source,Surrogate key
 raw,payments_rider_cards,rider_id,Internal,Identifier (FK),source,Links to riders
-raw,payments_rider_cards,card_number,Secret,Cardholder Data (PCI),source,Primary Account Number; PCI DSS in scope
+raw,payments_rider_cards,card_token,Confidential,Payment token,source,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+raw,payments_rider_cards,card_last4,Sensitive,Cardholder Data (masked),source,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 raw,payments_rider_cards,card_expiry,Secret,Cardholder Data (PCI),source,Cardholder data; often forgotten next to the PAN
 raw,payments_rider_cards,cardholder_name,Secret,Cardholder Data / PII,source,PII and cardholder data
 raw,payments_rider_cards,card_status,Internal,Operational,source,Card state
@@ -396,10 +401,11 @@ staging,stg_fleet_drivers,employee_id,Internal,Identifier (FK),inherited,Links d
 staging,stg_fleet_drivers,first_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_fleet_drivers,last_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_fleet_drivers,tlc_license,Confidential,Regulated Identifier,inherited,Driver's TLC license; regulated identifier often treated as low-sensitivity
-staging,stg_fleet_drivers,ssn,Secret,Sensitive PII,inherited,Government identifier
+staging,stg_fleet_drivers,ssn_last4,Confidential,Sensitive PII (partial),inherited,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_fleet_drivers,phone,Confidential,PII (contact),inherited,Direct contact identifier
 staging,stg_fleet_drivers,home_address,Confidential,PII,inherited,Locational personal data
-staging,stg_fleet_drivers,payout_bank_account,Secret,Financial/Secret,inherited,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers,payout_account_last4,Confidential,Financial (partial),inherited,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+staging,stg_fleet_drivers,payout_account_token,Confidential,Financial reference,inherited,Payout provider's account reference; not a bank account number
 staging,stg_fleet_drivers,background_check_status,Confidential,Sensitive,inherited,Background-check result; adverse-action relevant; often under-classified
 staging,stg_fleet_drivers,driver_status,Internal,Operational,inherited,Operational driver state
 staging,stg_fleet_drivers,hired_at,Internal,Operational,inherited,Record metadata
@@ -412,10 +418,11 @@ staging,stg_fleet_drivers_history,employee_id,Internal,Identifier (FK),inherited
 staging,stg_fleet_drivers_history,first_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_fleet_drivers_history,last_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_fleet_drivers_history,tlc_license,Confidential,Regulated Identifier,inherited,Driver's TLC license; regulated identifier often treated as low-sensitivity
-staging,stg_fleet_drivers_history,ssn,Secret,Sensitive PII,inherited,Government identifier
+staging,stg_fleet_drivers_history,ssn_last4,Confidential,Sensitive PII (partial),inherited,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_fleet_drivers_history,phone,Confidential,PII (contact),inherited,Direct contact identifier
 staging,stg_fleet_drivers_history,home_address,Confidential,PII,inherited,Locational personal data
-staging,stg_fleet_drivers_history,payout_bank_account,Secret,Financial/Secret,inherited,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers_history,payout_account_last4,Confidential,Financial (partial),inherited,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+staging,stg_fleet_drivers_history,payout_account_token,Confidential,Financial reference,inherited,Payout provider's account reference; not a bank account number
 staging,stg_fleet_drivers_history,background_check_status,Confidential,Sensitive,inherited,Background-check result; adverse-action relevant; often under-classified
 staging,stg_fleet_drivers_history,driver_status,Internal,Operational,inherited,Operational driver state
 staging,stg_fleet_drivers_history,hired_at,Internal,Operational,inherited,Record metadata
@@ -437,7 +444,7 @@ staging,stg_hris_employees,employee_id,Internal,Identifier,inherited,Surrogate k
 staging,stg_hris_employees,first_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_hris_employees,last_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_hris_employees,email,Sensitive,Workforce PII,inherited,Business contact
-staging,stg_hris_employees,ssn,Secret,Sensitive PII,inherited,Government identifier
+staging,stg_hris_employees,ssn_last4,Confidential,Sensitive PII (partial),inherited,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_hris_employees,department,Internal,Operational,inherited,Org attribute
 staging,stg_hris_employees,title,Internal,Operational,inherited,Org attribute
 staging,stg_hris_employees,pay_type,Internal,Operational,inherited,"Pay basis (salaried, commission)"
@@ -449,11 +456,14 @@ staging,stg_hris_employees,terminated_at,Sensitive,Workforce PII,inherited,Termi
 staging,stg_hris_employees,record_updated_at,Internal,Operational,inherited,Record metadata
 staging,stg_hris_employees,_batch_date,Internal,Pipeline metadata,inherited,Load metadata
 staging,stg_hris_employees,_generator_version,Internal,Pipeline metadata,inherited,Load metadata
+staging,stg_hris_employees,screening_status,Confidential,HR (screening),inherited,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+staging,stg_hris_employees,screening_date,Confidential,HR (screening),inherited,Date of the pre-employment screening (POL-14)
+staging,stg_hris_employees,confidentiality_agreed_on,Internal,HR (agreement),inherited,Date the confidentiality agreement was signed (POL-14)
 staging,stg_hris_employees_history,employee_id,Internal,Identifier,inherited,Surrogate key
 staging,stg_hris_employees_history,first_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_hris_employees_history,last_name,Sensitive,PII,inherited,Personal identifier
 staging,stg_hris_employees_history,email,Sensitive,Workforce PII,inherited,Business contact
-staging,stg_hris_employees_history,ssn,Secret,Sensitive PII,inherited,Government identifier
+staging,stg_hris_employees_history,ssn_last4,Confidential,Sensitive PII (partial),inherited,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_hris_employees_history,department,Internal,Operational,inherited,Org attribute
 staging,stg_hris_employees_history,title,Internal,Operational,inherited,Org attribute
 staging,stg_hris_employees_history,pay_type,Internal,Operational,inherited,"Pay basis (salaried, commission)"
@@ -468,6 +478,9 @@ staging,stg_hris_employees_history,_generator_version,Internal,Pipeline metadata
 staging,stg_hris_employees_history,valid_from,Internal,Operational,derived,History metadata
 staging,stg_hris_employees_history,valid_to,Internal,Operational,derived,History metadata
 staging,stg_hris_employees_history,is_current,Internal,Operational,derived,History metadata
+staging,stg_hris_employees_history,screening_status,Confidential,HR (screening),inherited,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+staging,stg_hris_employees_history,screening_date,Confidential,HR (screening),inherited,Date of the pre-employment screening (POL-14)
+staging,stg_hris_employees_history,confidentiality_agreed_on,Internal,HR (agreement),inherited,Date the confidentiality agreement was signed (POL-14)
 staging,stg_payments_financial_ledger,entry_id,Internal,Identifier,inherited,Surrogate key
 staging,stg_payments_financial_ledger,period,Internal,Operational,inherited,Accounting period
 staging,stg_payments_financial_ledger,account,Internal,Reference,inherited,GL account
@@ -478,7 +491,8 @@ staging,stg_payments_financial_ledger,_batch_date,Internal,Pipeline metadata,inh
 staging,stg_payments_financial_ledger,_generator_version,Internal,Pipeline metadata,inherited,Load metadata
 staging,stg_payments_rider_cards,card_id,Internal,Identifier,inherited,Surrogate key
 staging,stg_payments_rider_cards,rider_id,Internal,Identifier (FK),inherited,Links to riders
-staging,stg_payments_rider_cards,card_number,Secret,Cardholder Data (PCI),inherited,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards,card_token,Confidential,Payment token,inherited,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+staging,stg_payments_rider_cards,card_last4,Sensitive,Cardholder Data (masked),inherited,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 staging,stg_payments_rider_cards,card_expiry,Secret,Cardholder Data (PCI),inherited,Cardholder data; often forgotten next to the PAN
 staging,stg_payments_rider_cards,cardholder_name,Secret,Cardholder Data / PII,inherited,PII and cardholder data
 staging,stg_payments_rider_cards,card_status,Internal,Operational,inherited,Card state
@@ -488,7 +502,8 @@ staging,stg_payments_rider_cards,_batch_date,Internal,Pipeline metadata,inherite
 staging,stg_payments_rider_cards,_generator_version,Internal,Pipeline metadata,inherited,Load metadata
 staging,stg_payments_rider_cards_history,card_id,Internal,Identifier,inherited,Surrogate key
 staging,stg_payments_rider_cards_history,rider_id,Internal,Identifier (FK),inherited,Links to riders
-staging,stg_payments_rider_cards_history,card_number,Secret,Cardholder Data (PCI),inherited,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards_history,card_token,Confidential,Payment token,inherited,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+staging,stg_payments_rider_cards_history,card_last4,Sensitive,Cardholder Data (masked),inherited,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 staging,stg_payments_rider_cards_history,card_expiry,Secret,Cardholder Data (PCI),inherited,Cardholder data; often forgotten next to the PAN
 staging,stg_payments_rider_cards_history,cardholder_name,Secret,Cardholder Data / PII,inherited,PII and cardholder data
 staging,stg_payments_rider_cards_history,card_status,Internal,Operational,inherited,Card state

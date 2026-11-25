@@ -18,8 +18,9 @@ generator (Python + Faker) ──► output/<date>/*.jsonl ──► loader ─�
 | **Incremental, append-only** | Each day's batch holds only records created or changed that day, like a nightly extract from each source system. Nothing is deleted: a termination is a new row with status `terminated`. History is never overwritten. |
 | **Safe to re-run** | Each day loads into its own partition. Loading the same day twice replaces that day rather than duplicating it. |
 | **Real trips, fake people** | Trip times, distances, fares and zones are real 2022 NYC yellow-taxi trips, replayed on the matching weekday. Drivers and riders assigned to them are fictional. Card-paid trips are partly app bookings (with a rider); the rest are street hails (no rider). |
-| **Planted defects with an answer key** | The generator plants data-quality defects (bad SSN formats, missing emails, truncated card numbers, PII in survey comments, ...) and records every one in `gov_planted_defects`, without the bad value itself. Data-quality checks are scored against it. The real TLC data brings its own unplanted defects (negative fares, impossible distances). |
-| **Fictional and safe values** | Phones use the 555 exchange, emails use `example.com` / `empirecitytaxi.example`, card numbers use a test-style `4000 00` prefix. |
+| **Planted defects with an answer key** | The generator plants data-quality defects (malformed last-4 values, missing emails, PII in survey comments, ...) and records every one in `gov_planted_defects`, without the bad value itself. Data-quality checks are scored against it. The real TLC data brings its own unplanted defects (negative fares, impossible distances). |
+| **Fictional and safe values** | Phones use the 555 exchange, emails use `example.com` / `empirecitytaxi.example`. |
+| **No full card, SSN or bank numbers** | From generator 0.4.0 ECT stores only what a real company would get back from its providers: the last 4 digits plus the payment processor's token for cards, and the last 4 digits for SSNs and payout bank accounts (POL-04, POL-11). The full numbers are said to stay with the payment, payroll and payout providers. |
 
 ## Raw tables
 

@@ -146,3 +146,46 @@ def test_roster_correction_arrives_on_its_day_and_leaves_history_unchanged():
     assert arjun(out[EPOCH])[0]["role_code"] is None                 # as originally loaded
     assert arjun(out[fix_day - timedelta(days=1)]) == []              # no change emitted before the fix
     assert arjun(out[fix_day])[0]["role_code"] == "vp-engineering"   # HR correction on fix_day
+
+
+def _luhn_ok(digits: str) -> bool:
+    total = sum(d if i % 2 == 0 else (d * 2 - 9 if d * 2 > 9 else d * 2)
+                for i, d in enumerate(int(c) for c in reversed(digits)))
+    return total % 10 == 0
+
+
+def test_no_full_card_ssn_or_bank_numbers_leave_the_generator():
+    """POL-04 / POL-11 (generator 0.4.0): only last-4 values and provider tokens are output."""
+    out = _run([EPOCH, date(2026, 3, 2), date(2026, 9, 14)], with_trips=True)
+    for batch in out.values():
+        for table, rows in batch.items():
+            for row in rows:
+                for col, value in row.items():
+                    if not isinstance(value, str):
+                        continue
+                    if col.endswith("_id"):   # numeric IDs (e.g. trip_id) can pass Luhn by chance
+                        continue
+                    for run in re.findall(r"\d[\d -]{11,22}\d", value):
+                        digits = re.sub(r"\D", "", run)
+                        assert not (13 <= len(digits) <= 19 and _luhn_ok(digits)), (table, col)
+                    assert not re.search(r"\b\d{3}-\d{2}-\d{4}\b", value), (table, col)
+                    if col.startswith(("ssn", "payout_account_last4", "card_last4")):
+                        assert len(re.sub(r"\D", "", value)) <= 4, (table, col)
+    assert not any("card_number" in columns(t) or "ssn" in dict(columns(t)) or "payout_bank_account" in dict(columns(t))
+                   for t in TABLES)
+
+
+def test_tokens_are_stable_and_not_derived_from_the_number():
+    assert fakes.card_token("CRD100001") == fakes.card_token("CRD100001")
+    assert fakes.card_token("CRD100001") != fakes.card_token("CRD100002")
+    batch = _run([EPOCH])[EPOCH]
+    cards = batch["payments_rider_cards"]
+    assert all(c["card_token"] == fakes.card_token(c["card_id"]) for c in cards)
+    assert all(re.fullmatch(r"tok_[A-Za-z]{24}", c["card_token"]) for c in cards)
+
+
+def test_corporate_staff_have_screening_and_confidentiality_records():
+    batch = _run([EPOCH])[EPOCH]
+    staff = [e for e in batch["hris_employees"] if e["department"] != "Driver Operations" or e["title"] != "Driver"]
+    assert staff and all(e["screening_status"] == "clear" and e["screening_date"] < e["hired_at"]
+                         and e["confidentiality_agreed_on"] == e["hired_at"] for e in staff)

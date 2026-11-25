@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 # Bump when a code change alters generated output, so raw rows can be traced to the code that made them.
-GENERATOR_VERSION = "0.3.0"
+GENERATOR_VERSION = "0.4.0"
 
 # Master seed. Every random choice derives from (SEED, stream name, date), so the
 # same date always produces the same data no matter when or how often it is run.
@@ -67,21 +67,23 @@ APP_BOOKED_SHARE = 0.7
 SURVEY_SHARE = 0.06
 
 # Planted data-quality defects: probability per new record. Carried over from Project 1,
-# so the existing data-quality rules still apply. Every planted defect is written to the
+# so the existing data-quality rules still apply. In 0.4.0 the four defects on full SSNs, card
+# and bank numbers were redefined on the last-4 values that replaced them (same rates and the
+# same random draws, so the same records carry them). Every planted defect is written to the
 # answer key table gov_planted_defects.
 DEFECT_RATES = {
-    "driver_ssn_no_dashes": 0.04,
+    "driver_ssn_last4_short": 0.04,
     "driver_tlc_license_missing": 0.03,
-    "driver_payout_account_short": 0.03,
+    "driver_payout_last4_masked": 0.03,
     "driver_background_status_case": 0.15,
     "rider_email_missing": 0.03,
     "rider_email_invalid": 0.02,
     "rider_email_duplicate": 0.015,
-    "card_number_truncated": 0.03,
+    "card_last4_missing": 0.03,
     "survey_orphan_trip": 0.02,
     "survey_rating_out_of_range": 0.02,
     "survey_comment_contains_pii": 0.03,
-    "employee_ssn_dots": 0.03,
+    "employee_ssn_last4_masked": 0.03,
     "employee_salary_negative": 0.02,
     "employee_email_duplicate": 0.02,
     "ledger_account_missing": 0.02,

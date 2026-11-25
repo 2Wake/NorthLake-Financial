@@ -163,11 +163,11 @@ class Simulation:
             email = r.choice(self.employee_emails)
             defects.append(("email", "employee_email_duplicate"))
         self.employee_emails.append(email)
-        clean_ssn = fakes.ssn(r)
-        ssn = clean_ssn
-        if self._plant(r, "employee_ssn_dots"):
-            ssn = clean_ssn.replace("-", ".")
-            defects.append(("ssn", "employee_ssn_dots"))
+        clean_ssn = fakes.last4(fakes.ssn(r))   # the full SSN stays with the payroll provider
+        ssn_last4 = clean_ssn
+        if self._plant(r, "employee_ssn_last4_masked"):
+            ssn_last4 = f"XXX-XX-{clean_ssn}"    # masked display value exported instead of the digits
+            defects.append(("ssn_last4", "employee_ssn_last4_masked"))
         if driver:
             department, title, pay_type, salary = "Driver Operations", "Driver", "commission", None
         else:
@@ -182,20 +182,33 @@ class Simulation:
                 salary = -salary
                 defects.append(("salary", "employee_salary_negative"))
         rec = {
-            "employee_id": eid, "first_name": first, "last_name": last, "email": email, "ssn": ssn,
+            "employee_id": eid, "first_name": first, "last_name": last, "email": email, "ssn_last4": ssn_last4,
             "department": department, "title": title, "pay_type": pay_type, "salary": salary,
             "performance_rating": "not_rated" if hired >= self.day - timedelta(days=90) else r.choice(RATINGS),
             "manager_id": (self.roster.get(named["manager_key"]) if named
                            else self.department_heads.get(department)),
             "role_code": (named["role_code"] or None) if named else None,
             "hired_at": hired.isoformat(), "employment_status": "active", "terminated_at": None,
-            "record_updated_at": self._ts(r), "_clean_ssn": clean_ssn,
+            "record_updated_at": self._ts(r), "_ssn_last4": clean_ssn,
+            **self._screening(eid, hired, driver),
         }
         self.employees[eid] = rec
         self._touch("hris_employees", eid, rec)
         for column, code in defects:
             self._log_defect("hris_employees", eid, column, code)
         return rec
+
+    @staticmethod
+    def _screening(eid: str, hired: date, driver: bool) -> dict:
+        """Pre-employment screening and confidentiality agreement (POL-14). Uses its own random
+        stream keyed by employee ID, so adding it changed no other value. Drivers are screened
+        through the fleet background check (fleet_drivers.background_check_status) instead."""
+        if driver:
+            return {"screening_status": None, "screening_date": None, "confidentiality_agreed_on": None}
+        r = rng("hr-screening", eid)
+        return {"screening_status": "clear",
+                "screening_date": (hired - timedelta(days=r.randint(5, 30))).isoformat(),
+                "confidentiality_agreed_on": hired.isoformat()}
 
     def _terminate_employee(self, r, eid: str, ts: str) -> None:
         emp = self.employees[eid]
@@ -212,18 +225,18 @@ class Simulation:
     def _hire_driver(self, r, hired: date, onboarded: bool) -> None:
         emp = self._new_employee(r, hired, driver=True)
         did = self._next_id("DRV", 10000)
-        ssn = emp["_clean_ssn"]
-        if self._plant(r, "driver_ssn_no_dashes"):
-            ssn = ssn.replace("-", "")
-            self._log_defect("fleet_drivers", did, "ssn", "driver_ssn_no_dashes")
+        ssn_last4 = emp["_ssn_last4"]
+        if self._plant(r, "driver_ssn_last4_short"):
+            ssn_last4 = ssn_last4[1:]              # leading digit lost in the export
+            self._log_defect("fleet_drivers", did, "ssn_last4", "driver_ssn_last4_short")
         tlc = f"TLC{r.randint(100000, 999999)}"
         if self._plant(r, "driver_tlc_license_missing"):
             tlc = None
             self._log_defect("fleet_drivers", did, "tlc_license", "driver_tlc_license_missing")
-        payout = str(r.randint(10**8, 10**9 - 1))
-        if self._plant(r, "driver_payout_account_short"):
-            payout = payout[:5]
-            self._log_defect("fleet_drivers", did, "payout_bank_account", "driver_payout_account_short")
+        payout = fakes.last4(str(r.randint(10**8, 10**9 - 1)))   # the full account stays with the payout provider
+        if self._plant(r, "driver_payout_last4_masked"):
+            payout = f"*****{payout}"             # masked display value exported instead of the digits
+            self._log_defect("fleet_drivers", did, "payout_account_last4", "driver_payout_last4_masked")
         ts = emp["record_updated_at"]
         if onboarded:
             background, status = self._background_status(r, did, "clear"), "active"
@@ -233,8 +246,9 @@ class Simulation:
         emp["manager_id"] = self.department_heads.get("Driver Operations")
         self.drivers[did] = {
             "driver_id": did, "employee_id": emp["employee_id"], "first_name": emp["first_name"],
-            "last_name": emp["last_name"], "tlc_license": tlc, "ssn": ssn, "phone": fakes.phone(r),
-            "home_address": fakes.nyc_address(r), "payout_bank_account": payout,
+            "last_name": emp["last_name"], "tlc_license": tlc, "ssn_last4": ssn_last4, "phone": fakes.phone(r),
+            "home_address": fakes.nyc_address(r), "payout_account_last4": payout,
+            "payout_account_token": fakes.payout_token(did),
             "background_check_status": background, "driver_status": status, "hired_at": hired.isoformat(),
             "status_changed_at": ts, "record_updated_at": ts,
         }
@@ -470,16 +484,16 @@ class Simulation:
 
     def _add_card(self, r, rid: str, added_ts: str | None = None) -> None:
         cid = self._next_id("CRD", 100000)
-        number = fakes.card_number(r)
-        if self._plant(r, "card_number_truncated"):
-            number = number[:9]
-            self._log_defect("payments_rider_cards", cid, "card_number", "card_number_truncated")
+        last4 = fakes.last4(fakes.card_number(r))  # the processor keeps the card number; ECT gets last 4 + token
+        if self._plant(r, "card_last4_missing"):
+            last4 = None                               # processor response arrived without the last 4
+            self._log_defect("payments_rider_cards", cid, "card_last4", "card_last4_missing")
         rider = self.riders[rid]
         holder = (f"{rider['first_name']} {rider['last_name']}" if r.random() < 0.9
                   else " ".join(fakes.person(r)))
         ts = added_ts or self._ts(r)
         self.cards[cid] = {
-            "card_id": cid, "rider_id": rid, "card_number": number,
+            "card_id": cid, "rider_id": rid, "card_token": fakes.card_token(cid), "card_last4": last4,
             "card_expiry": f"{r.randint(1, 12):02d}/{self.day.year % 100 + r.randint(1, 5)}",
             "cardholder_name": holder, "card_status": "active", "added_at": ts,
             "record_updated_at": self._ts(r),

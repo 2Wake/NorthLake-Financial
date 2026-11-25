@@ -202,10 +202,11 @@ raw,fleet_drivers,employee_id,Internal,Identifier (FK),source,vp-driver-operatio
 raw,fleet_drivers,first_name,Sensitive,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 raw,fleet_drivers,last_name,Sensitive,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 raw,fleet_drivers,tlc_license,Internal,Regulated Identifier,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
-raw,fleet_drivers,ssn,Secret,Sensitive PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+raw,fleet_drivers,ssn_last4,Confidential,Sensitive PII (partial),source,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 raw,fleet_drivers,phone,Confidential,PII (contact),source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
 raw,fleet_drivers,home_address,Confidential,PII,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
-raw,fleet_drivers,payout_bank_account,Secret,Financial/Secret,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+raw,fleet_drivers,payout_account_last4,Confidential,Financial (partial),source,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+raw,fleet_drivers,payout_account_token,Confidential,Financial reference,source,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Payout provider's account reference; not a bank account number
 raw,fleet_drivers,background_check_status,Confidential,Sensitive,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
 raw,fleet_drivers,hired_at,Internal,Operational,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
 raw,fleet_drivers,status_changed_at,Internal,Operational,source,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
@@ -223,7 +224,7 @@ raw,hris_employees,employee_id,Internal,Identifier,source,vp-people,hr-data-stew
 raw,hris_employees,first_name,Sensitive,PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 raw,hris_employees,last_name,Sensitive,PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 raw,hris_employees,email,Sensitive,Workforce PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
-raw,hris_employees,ssn,Secret,Sensitive PII,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+raw,hris_employees,ssn_last4,Confidential,Sensitive PII (partial),source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 raw,hris_employees,department,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 raw,hris_employees,title,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 raw,hris_employees,salary,Confidential,Sensitive HR,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Compensation
@@ -233,6 +234,9 @@ raw,hris_employees,terminated_at,Sensitive,Workforce PII,source,vp-people,hr-dat
 raw,hris_employees,record_updated_at,Internal,Operational,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
 raw,hris_employees,_batch_date,Internal,Pipeline metadata,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
 raw,hris_employees,_generator_version,Internal,Pipeline metadata,source,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+raw,hris_employees,screening_status,Confidential,HR (screening),source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+raw,hris_employees,screening_date,Confidential,HR (screening),source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date of the pre-employment screening (POL-14)
+raw,hris_employees,confidentiality_agreed_on,Internal,HR (agreement),source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date the confidentiality agreement was signed (POL-14)
 raw,payments_financial_ledger,entry_id,Internal,Identifier,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
 raw,payments_financial_ledger,period,Internal,Operational,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Accounting period
 raw,payments_financial_ledger,account,Internal,Reference,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,GL account
@@ -243,7 +247,8 @@ raw,payments_financial_ledger,_batch_date,Internal,Pipeline metadata,source,cfo,
 raw,payments_financial_ledger,_generator_version,Internal,Pipeline metadata,source,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
 raw,payments_rider_cards,card_id,Internal,Identifier,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Surrogate key
 raw,payments_rider_cards,rider_id,Internal,Identifier (FK),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Links to riders
-raw,payments_rider_cards,card_number,Secret,Cardholder Data (PCI),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+raw,payments_rider_cards,card_token,Confidential,Payment token,source,cfo,rider-data-steward,proposed,rider-data-steward,,,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+raw,payments_rider_cards,card_last4,Sensitive,Cardholder Data (masked),source,cfo,rider-data-steward,proposed,rider-data-steward,,,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 raw,payments_rider_cards,card_expiry,Confidential,Cardholder Data (PCI),source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
 raw,payments_rider_cards,cardholder_name,Sensitive,Cardholder Data / PII,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,PII and cardholder data
 raw,payments_rider_cards,card_status,Internal,Operational,source,cfo,rider-data-steward,approved,rider-data-steward,cfo,2026-11-20,Card state
@@ -389,10 +394,11 @@ staging,stg_fleet_drivers,employee_id,Internal,Identifier (FK),inherited,vp-driv
 staging,stg_fleet_drivers,first_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 staging,stg_fleet_drivers,last_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 staging,stg_fleet_drivers,tlc_license,Confidential,Regulated Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
-staging,stg_fleet_drivers,ssn,Confidential,Sensitive PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+staging,stg_fleet_drivers,ssn_last4,Sensitive,Sensitive PII (partial),inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_fleet_drivers,phone,Confidential,PII (contact),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
 staging,stg_fleet_drivers,home_address,Confidential,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
-staging,stg_fleet_drivers,payout_bank_account,Secret,Financial/Secret,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers,payout_account_last4,Confidential,Financial (partial),inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+staging,stg_fleet_drivers,payout_account_token,Confidential,Financial reference,inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Payout provider's account reference; not a bank account number
 staging,stg_fleet_drivers,background_check_status,Confidential,Sensitive,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
 staging,stg_fleet_drivers,driver_status,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Operational driver state
 staging,stg_fleet_drivers,hired_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
@@ -405,10 +411,11 @@ staging,stg_fleet_drivers_history,employee_id,Internal,Identifier (FK),inherited
 staging,stg_fleet_drivers_history,first_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 staging,stg_fleet_drivers_history,last_name,Sensitive,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Personal identifier
 staging,stg_fleet_drivers_history,tlc_license,Confidential,Regulated Identifier,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Driver's TLC license; regulated identifier often treated as low-sensitivity
-staging,stg_fleet_drivers_history,ssn,Secret,Sensitive PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Government identifier
+staging,stg_fleet_drivers_history,ssn_last4,Confidential,Sensitive PII (partial),inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_fleet_drivers_history,phone,Confidential,PII (contact),inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Direct contact identifier
 staging,stg_fleet_drivers_history,home_address,Confidential,PII,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Locational personal data
-staging,stg_fleet_drivers_history,payout_bank_account,Secret,Financial/Secret,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Bank account for payouts; both financial and sensitive
+staging,stg_fleet_drivers_history,payout_account_last4,Confidential,Financial (partial),inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Last 4 digits of the payout bank account; the full number stays with the payout provider (generator 0.4.0)
+staging,stg_fleet_drivers_history,payout_account_token,Confidential,Financial reference,inherited,vp-driver-operations,driver-data-steward,proposed,driver-data-steward,,,Payout provider's account reference; not a bank account number
 staging,stg_fleet_drivers_history,background_check_status,Confidential,Sensitive,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Background-check result; adverse-action relevant; often under-classified
 staging,stg_fleet_drivers_history,driver_status,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Operational driver state
 staging,stg_fleet_drivers_history,hired_at,Internal,Operational,inherited,vp-driver-operations,driver-data-steward,approved,driver-data-steward,vp-driver-operations,2026-11-20,Record metadata
@@ -430,7 +437,7 @@ staging,stg_hris_employees,employee_id,Internal,Identifier,inherited,vp-people,h
 staging,stg_hris_employees,first_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 staging,stg_hris_employees,last_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 staging,stg_hris_employees,email,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
-staging,stg_hris_employees,ssn,Secret,Sensitive PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+staging,stg_hris_employees,ssn_last4,Confidential,Sensitive PII (partial),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_hris_employees,department,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 staging,stg_hris_employees,title,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 staging,stg_hris_employees,salary,Confidential,Sensitive HR,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Compensation
@@ -441,11 +448,14 @@ staging,stg_hris_employees,terminated_at,Sensitive,Workforce PII,inherited,vp-pe
 staging,stg_hris_employees,record_updated_at,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Record metadata
 staging,stg_hris_employees,_batch_date,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
 staging,stg_hris_employees,_generator_version,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Load metadata
+staging,stg_hris_employees,screening_status,Confidential,HR (screening),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+staging,stg_hris_employees,screening_date,Confidential,HR (screening),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date of the pre-employment screening (POL-14)
+staging,stg_hris_employees,confidentiality_agreed_on,Internal,HR (agreement),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date the confidentiality agreement was signed (POL-14)
 staging,stg_hris_employees_history,employee_id,Internal,Identifier,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Surrogate key
 staging,stg_hris_employees_history,first_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 staging,stg_hris_employees_history,last_name,Sensitive,PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Personal identifier
 staging,stg_hris_employees_history,email,Sensitive,Workforce PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Business contact
-staging,stg_hris_employees_history,ssn,Secret,Sensitive PII,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Government identifier
+staging,stg_hris_employees_history,ssn_last4,Confidential,Sensitive PII (partial),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Last 4 digits of the SSN; the full number stays with the payroll provider (generator 0.4.0)
 staging,stg_hris_employees_history,department,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 staging,stg_hris_employees_history,title,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,Org attribute
 staging,stg_hris_employees_history,pay_type,Internal,Operational,inherited,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,"Pay basis (salaried, commission)"
@@ -460,6 +470,9 @@ staging,stg_hris_employees_history,_generator_version,Internal,Pipeline metadata
 staging,stg_hris_employees_history,valid_from,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
 staging,stg_hris_employees_history,valid_to,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
 staging,stg_hris_employees_history,is_current,Internal,Operational,derived,vp-people,hr-data-steward,approved,hr-data-steward,vp-people,2026-11-20,History metadata
+staging,stg_hris_employees_history,screening_status,Confidential,HR (screening),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Pre-employment screening result (POL-14); drivers are screened through the fleet background check
+staging,stg_hris_employees_history,screening_date,Confidential,HR (screening),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date of the pre-employment screening (POL-14)
+staging,stg_hris_employees_history,confidentiality_agreed_on,Internal,HR (agreement),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Date the confidentiality agreement was signed (POL-14)
 staging,stg_payments_financial_ledger,entry_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
 staging,stg_payments_financial_ledger,period,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Accounting period
 staging,stg_payments_financial_ledger,account,Internal,Reference,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,GL account
@@ -470,7 +483,8 @@ staging,stg_payments_financial_ledger,_batch_date,Internal,Pipeline metadata,inh
 staging,stg_payments_financial_ledger,_generator_version,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
 staging,stg_payments_rider_cards,card_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
 staging,stg_payments_rider_cards,rider_id,Internal,Identifier (FK),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Links to riders
-staging,stg_payments_rider_cards,card_number,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards,card_token,Confidential,Payment token,inherited,cfo,finance-data-steward,proposed,finance-data-steward,,,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+staging,stg_payments_rider_cards,card_last4,Sensitive,Cardholder Data (masked),inherited,cfo,finance-data-steward,proposed,finance-data-steward,,,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 staging,stg_payments_rider_cards,card_expiry,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
 staging,stg_payments_rider_cards,cardholder_name,Secret,Cardholder Data / PII,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,PII and cardholder data
 staging,stg_payments_rider_cards,card_status,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Card state
@@ -480,7 +494,8 @@ staging,stg_payments_rider_cards,_batch_date,Internal,Pipeline metadata,inherite
 staging,stg_payments_rider_cards,_generator_version,Internal,Pipeline metadata,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Load metadata
 staging,stg_payments_rider_cards_history,card_id,Internal,Identifier,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Surrogate key
 staging,stg_payments_rider_cards_history,rider_id,Internal,Identifier (FK),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Links to riders
-staging,stg_payments_rider_cards_history,card_number,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Primary Account Number; PCI DSS in scope
+staging,stg_payments_rider_cards_history,card_token,Confidential,Payment token,inherited,cfo,finance-data-steward,proposed,finance-data-steward,,,Payment processor's token; not cardholder data and can't be turned back into the card number (generator 0.4.0)
+staging,stg_payments_rider_cards_history,card_last4,Sensitive,Cardholder Data (masked),inherited,cfo,finance-data-steward,proposed,finance-data-steward,,,Last 4 digits only; PCI DSS allows truncated card numbers to be displayed
 staging,stg_payments_rider_cards_history,card_expiry,Secret,Cardholder Data (PCI),inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Cardholder data; often forgotten next to the PAN
 staging,stg_payments_rider_cards_history,cardholder_name,Secret,Cardholder Data / PII,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,PII and cardholder data
 staging,stg_payments_rider_cards_history,card_status,Internal,Operational,inherited,cfo,finance-data-steward,approved,finance-data-steward,cfo,2026-11-20,Card state

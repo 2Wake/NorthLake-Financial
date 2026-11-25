@@ -65,7 +65,7 @@ can be demonstrated. Each one reflects how classification goes wrong in practice
 | S03 | **Cardholder data partly classified** | `payments_rider_cards` card_expiry: Confidential, cardholder_name: Sensitive (both should be Secret) | Only the card number is treated as PCI; expiry and name are forgotten | CLS-05 |
 | S04 | **Regulated identifier under-classified** | `fleet_drivers.tlc_license`: Internal (should be Confidential) in raw only | Licence numbers seem public | CLS-05 |
 | S05 | **HR performance data under-classified everywhere** | `performance_rating`: Internal in raw and both staging views (should be Confidential) | Consistent mistake by one steward | **None — a blind spot.** Needs a steward review or content-based scan |
-| S06 | **Lineage drift** | `stg_fleet_drivers.ssn`: Confidential; `stg_hris_employees_history.salary`: Sensitive | Classification retyped in a new layer instead of inherited | CLS-05 |
+| S06 | **Lineage drift** | `stg_fleet_drivers.ssn_last4`: Sensitive (should be Confidential; was `ssn` before generator 0.4.0); `stg_hris_employees_history.salary`: Sensitive | Classification retyped in a new layer instead of inherited | CLS-05 |
 | S07 | **Over-classification blocking analytics** | `fct_daily_zone_trips` zone ID and name: Confidential (should be Internal) | Security applies the raw rule to aggregated data | CLS-04, CLS-06 |
 | S08 | **Masked value over-classified** | `dim_rider_cards.card_last4`: Secret (should be Sensitive) | Masking not recognized | CLS-04, CLS-06 |
 | S09 | **New columns never classified** | 8 columns added by the HR, fleet and dispatch systems, with no register entry | Schema changes ship without a classification review | CLS-01 |

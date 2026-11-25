@@ -2,19 +2,19 @@ rule_id,dimension,table_name,column_name,severity,expectation,origin,defect_code
 DQ-01,Completeness,app_riders,email,High,Present,planted,rider_email_missing
 DQ-02,Validity,app_riders,email,Medium,Valid email format,planted,rider_email_invalid
 DQ-03,Uniqueness,app_riders,email,High,Unique (later copies flagged),planted,rider_email_duplicate
-DQ-04,Validity,fleet_drivers,ssn,High,Matches NNN-NN-NNNN,planted,driver_ssn_no_dashes
+DQ-04,Validity,fleet_drivers,ssn_last4,High,Exactly 4 digits,planted,driver_ssn_last4_short
 DQ-05,Completeness,fleet_drivers,tlc_license,High,Present (required to drive),planted,driver_tlc_license_missing
 DQ-06,Consistency,fleet_drivers,background_check_status,Medium,"One of clear, pending, flagged",planted,driver_background_status_case
-DQ-07,Validity,payments_rider_cards,card_number,High,16 digits,planted,card_number_truncated
+DQ-07,Validity,payments_rider_cards,card_last4,High,Present and exactly 4 digits,planted,card_last4_missing
 DQ-08,Validity,app_trip_surveys,rating,Medium,1 to 5,planted,survey_rating_out_of_range
 DQ-09,Integrity,app_trip_surveys,trip_id,High,Trip exists,planted,survey_orphan_trip
 DQ-10,Privacy,app_trip_surveys,comment,High,No phone numbers or emails in free text,planted,survey_comment_contains_pii
 DQ-11,Validity,hris_employees,salary,Medium,Positive when salaried,planted,employee_salary_negative
 DQ-12,Validity,app_marketing_campaigns,end_date,Low,On or after start_date,planted,campaign_end_before_start
-DQ-13,Validity,hris_employees,ssn,High,Matches NNN-NN-NNNN,planted,employee_ssn_dots
+DQ-13,Validity,hris_employees,ssn_last4,High,Exactly 4 digits,planted,employee_ssn_last4_masked
 DQ-14,Uniqueness,hris_employees,email,Medium,Unique (later copies flagged),planted,employee_email_duplicate
 DQ-15,Completeness,payments_financial_ledger,account,High,Present (every posting needs a GL account),planted,ledger_account_missing
-DQ-16,Validity,fleet_drivers,payout_bank_account,High,9 digits,planted,driver_payout_account_short
+DQ-16,Validity,fleet_drivers,payout_account_last4,High,Exactly 4 digits,planted,driver_payout_last4_masked
 T1,Validity,app_trips,fare_amount,Medium,Greater than 0,real,
 T2,Validity,app_trips,passenger_count,Low,Present and 1 to 6,real,
 T3,Validity,app_trips,trip_distance,Medium,Greater than 0 and at most 100 miles,real,
