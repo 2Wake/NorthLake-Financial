@@ -53,6 +53,26 @@ jobs:
         working-directory: data-platform/dbt
         run: uvx --from dbt-core==1.12.7 --with dbt-bigquery==1.12.4 dbt build
 
+      - name: Sign in as the log reader (keyless)
+        # A separate account (ect-monitor, Private Logs Viewer only), so the pipeline never reads its own
+        # audit trail. Its credentials go only to the review step. Setup: docs/github-actions-setup.md, part H.
+        id: monitor-auth
+        if: ${{ always() && vars.GCP_MONITOR_SERVICE_ACCOUNT != '' }}
+        continue-on-error: true
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_MONITOR_SERVICE_ACCOUNT }}
+          export_environment_variables: false
+
+      - name: Security review (POL-09)
+        # Reviews yesterday's audit logs for the POL-09 Appendix A alerts. Never fails here: the last step does.
+        if: always()
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.monitor-auth.outputs.credentials_file_path }}
+          ECT_MAINTAINER_PRINCIPAL: ${{ secrets.ECT_MAINTAINER_PRINCIPAL }}
+        run: uv run ect-security-review
+
       - name: Write run record
         if: always()
         run: uv run ect-record
@@ -67,3 +87,8 @@ jobs:
           # main may have moved since checkout (e.g. a re-run, or an earlier record): rebase, then push
           git pull --rebase origin main
           git push origin HEAD:main
+
+      - name: Fail the run if the security review raised alerts
+        # After the record is committed, so the evidence is kept. A failed run emails the maintainer.
+        if: always()
+        run: uv run ect-security-review --check

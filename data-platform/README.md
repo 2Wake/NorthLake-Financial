@@ -52,6 +52,8 @@ Run from this folder (`data-platform/`).
 | Run the tests | `uv run pytest` |
 | **Daily run:** catch up every missing day through yesterday (generate + load) | `uv run ect-daily` (add `--dry-run` to preview) |
 | Write a run record (after `ect-daily` and `dbt build`) | `uv run ect-record` |
+| **Security review** (POL-09): check yesterday's audit logs for the Appendix A alerts | `uv run ect-security-review` (`--day 2026-11-24` for one day; `--check` exits 1 on alerts) |
+| **Watchdog** (POL-09): alert if today's run record is missing after 12:00 New York | `uv run ect-watchdog` |
 | Generate yesterday | `uv run ect-generate` |
 | Generate one day / a range / everything | `uv run ect-generate --date 2026-11-23` · `--start … --end …` · `--backfill` |
 | Generate without trips (offline) | add `--no-trips` |
@@ -71,4 +73,6 @@ Column descriptions and the description gap register; planted label gaps; Phase 
 
 ## Daily schedule
 
-GitHub Actions runs `ect-daily`, then `dbt build`, then `ect-record` every morning, and commits the run record to `run-records/`. One-time setup: [docs/github-actions-setup.md](docs/github-actions-setup.md).
+GitHub Actions runs `ect-daily`, then `dbt build`, then `ect-security-review`, then `ect-record` every morning, and commits the run record to `run-records/`. If the security review raised an alert or couldn't run, the last step fails the run after the record is committed, so GitHub emails the maintainer. A separate **watchdog** workflow (`.github/workflows/watchdog.yml`) checks at 12:05 New York that today's run record exists. One-time setup: [docs/github-actions-setup.md](docs/github-actions-setup.md) (part H for the log reader account).
+
+**Monitoring limits:** the review reads Google Cloud audit logs only (GitHub and Atlassian logs are reviewed monthly by hand, POL-09 statement 17). The watchdog runs on the same GitHub scheduler as the daily run, so a scheduler outage would silence both; a Google-side backup alert is to be decided (GOV-123). Run records show role names or `unknown-identity-<hash>`, never personal emails or IP addresses, because the repository is public.
