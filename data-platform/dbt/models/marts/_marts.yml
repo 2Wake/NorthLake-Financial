@@ -214,6 +214,48 @@ models:
           name: acc_07_iam_access_grants_wrong_approver
           arguments: {rule_id: ACC-07}
           config: {severity: warn, meta: {rule_id: ACC-07, dimension: Access, origin: planted}}
+  - name: fct_policy_acknowledgments
+    description: >
+      SIMULATED acknowledgments. One row per active employee (drivers included) per approved policy
+      version: when it was assigned, when it is due (10 business days after the later of approval
+      and hire; POL-01 statement 6, STD-01 section 11), whether and when it was acknowledged, and
+      the evidence. Derived daily from the Policy Register and HR, so new hires and leavers flow in
+      automatically. Acknowledgments received come from the policy_acknowledgments seed.
+    config: {labels: {domain: governance, layer: marts, data_owner: ciso, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
+    columns:
+      - name: ack_key
+        description: "employee_id|doc_id|doc_version: one row per employee per policy version."
+        data_tests: [unique, not_null]
+      - name: employee_id
+        description: Employee ID (no names).
+        data_tests: [not_null]
+      - name: department
+        description: Employee's department, for reporting by team.
+      - name: doc_id
+        description: Policy ID from the Policy Register.
+        data_tests: [not_null]
+      - name: doc_version
+        description: Approved version that must be acknowledged.
+        data_tests: [not_null]
+      - name: assigned_on
+        description: Later of the policy's approval date and the employee's hire date.
+        data_tests: [not_null]
+      - name: due_on
+        description: 10 business days (Mon-Fri) after assigned_on. Public holidays are not skipped.
+        data_tests: [not_null]
+      - name: acknowledged_on
+        description: Date acknowledged, from the policy_acknowledgments seed. Blank if not yet.
+      - name: evidence
+        description: Where the acknowledgment is shown (e.g. a Confluence comment ID).
+      - name: ack_status
+        description: acknowledged, pending (not yet due) or overdue (past due_on, not acknowledged).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [acknowledged, pending, overdue]}
+      - name: on_time
+        description: True when acknowledged on or before due_on.
+
   - name: fct_dq_scorecard
     description: >
       One row per data-quality rule: failing records, and for planted defects how many the rule

@@ -9,7 +9,7 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 | `models/staging/` | One view per raw table (`stg_*`) giving the **current version** of each record, plus `stg_*_history` views giving **every version** with `valid_from` / `valid_to` / `is_current` |
 | `models/staging/_staging.yml` | Descriptions, labels (per the Labeling Standard) and structural tests |
 | `models/marts/core/` | What analysts use (`dim_*`, `fct_*`), **capped at Sensitive**: Secret columns removed; Confidential data removed, masked (card last 4, redacted comments) or generalized (zone → borough) |
-| `models/marts/governance/` | `fct_dq_findings` (every failing record), `fct_dq_scorecard` (caught vs. planted per rule), `dim_dq_rules` |
+| `models/marts/governance/` | `fct_dq_findings` (every failing record), `fct_dq_scorecard` (caught vs. planted per rule), `dim_dq_rules`, `fct_policy_acknowledgments` (who must acknowledge each approved policy, and whether they have) |
 | `models/marts/_marts.yml` | Marts descriptions, labels, tests, and one test per data-quality rule |
 | `seeds/` | `dq_rules.csv` (the rule catalog) and `taxi_zone_supplement.csv` (zones missing from the public zone table) |
 | `seeds/governance/` | Governance records: classification register, access policy matrix, role accounts, answer keys, `policy_register.csv` and `policy_acknowledgments.csv` (see below) |
@@ -23,7 +23,7 @@ dbt turns the raw daily extracts into clean, tested tables, and runs the data-qu
 
 **Policy documents live only in Confluence** (space ECTG), per STD-01 Policy Management Standard v2.0. The repo holds no copies of policy text. `seeds/governance/policy_register.csv` is a data *extract* of the Confluence *Policy Register* page, so approvals and review dates can be checked automatically. It's never edited on its own: when a row changes on the Confluence page, the same change is made in the CSV in the same working session. If they differ, the CSV is corrected from Confluence. Dates are `YYYY-MM-DD`; `approver_roles` uses `;` when two approvals are needed.
 
-`seeds/governance/policy_acknowledgments.csv` (simulated) records who must acknowledge each approved document version, the due date (10 business days after approval) and when they did. It is the only record of acknowledgments; a blank `acknowledged_on` means not yet acknowledged.
+`seeds/governance/policy_acknowledgments.csv` (simulated) records who must acknowledge each approved document version, the due date (10 business days after approval) and when they did. It is the only record of acknowledgments received; a blank `acknowledged_on` means not yet acknowledged. **For policies, who must acknowledge is derived, not listed:** `marts.fct_policy_acknowledgments` gives one row per active employee (drivers included) per approved policy version, due 10 business days after the later of approval and hire (POL-01 statement 6), and marks each as acknowledged, pending or overdue. New hires and leavers flow in with the daily HR load, and a policy flows in as soon as the register marks it approved. So for policies the seed only needs rows for acknowledgments actually received. STD-01's governance-group rows (assigned by hand) stay as they are.
 
 **History comes from `raw`, not dbt snapshots.** Raw already holds every version of every record, so history can be rebuilt at any time, back to 2026-01-01. A snapshot would only start recording from its first run.
 

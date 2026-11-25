@@ -69,8 +69,10 @@ seeds:
       SIMULATED. Who must acknowledge each approved governance document version, by when, and
       whether they have. One row per employee per document version, assigned on approval and due
       10 business days later (STD-01 section 11). Blank acknowledged_on means not yet acknowledged.
-      This seed is the only record of acknowledgments; evidence points to the Confluence comment
-      or page that shows it.
+      This seed is the only record of acknowledgments received; evidence points to the Confluence
+      comment or page that shows it. For policies (doc_type policy), who must acknowledge is derived
+      daily in marts.fct_policy_acknowledgments (all active staff, owner decision 2026-11-24), so
+      the seed holds only acknowledgments received; STD-01's governance-group rows stay as listed.
     config:
       column_types: {doc_version: string, assigned_on: date, due_on: date, acknowledged_on: date}
       labels: {domain: governance, layer: staging, data_owner: ciso, data_steward: data-governance-manager, classification: internal, source_system: governance, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}
