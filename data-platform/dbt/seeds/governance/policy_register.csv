@@ -8,7 +8,7 @@ POL-03,Data Classification & Handling Policy,policy,cdo,cdo,approved,1.0,2026-11
 POL-04,Cardholder Data Protection Policy,policy,cfo,cfo;ciso,approved,1.0,2026-11-24,2027-11-24,GOV-7,557113
 POL-05,Acceptable Use Policy,policy,vp-people,vp-people;ciso,approved,1.0,2026-11-24,2027-11-24,GOV-8,426073
 POL-06,Risk Management Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-9,557136
-POL-07,Change Management Policy,policy,vp-engineering,vp-engineering,approved,1.0,2026-11-24,2027-11-24,GOV-10,557087
+POL-07,Change Management Policy,policy,vp-engineering,vp-engineering,approved,1.1,2026-11-24,2027-11-24,GOV-10,557087
 POL-08,Incident Response Policy,policy,ciso,ciso,approved,1.0,2026-11-24,2027-11-24,GOV-11,458805
 POL-09,Logging & Monitoring Policy,policy,ciso,ciso,draft,,,,GOV-12,
 POL-10,Vulnerability & Patch Management Policy,policy,ciso,ciso,draft,,,,GOV-13,

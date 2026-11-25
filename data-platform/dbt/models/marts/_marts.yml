@@ -224,7 +224,7 @@ models:
     config: {labels: {domain: governance, layer: marts, data_owner: ciso, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
     columns:
       - name: ack_key
-        description: "employee_id|doc_id|doc_version: one row per employee per policy version."
+        description: "employee_id|doc_id|major_version: one row per employee per major policy version (a minor revision keeps earlier acknowledgments, POL-01 statement 6)."
         data_tests: [unique, not_null]
       - name: employee_id
         description: Employee ID (no names).
@@ -237,6 +237,8 @@ models:
       - name: doc_version
         description: Approved version that must be acknowledged.
         data_tests: [not_null]
+      - name: major_version
+        description: "Major part of the current version (e.g. 1 for 1.1). Acknowledgments match on this."
       - name: assigned_on
         description: Later of the policy's approval date and the employee's hire date.
         data_tests: [not_null]
