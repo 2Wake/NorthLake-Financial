@@ -148,7 +148,7 @@ def test_display_never_shows_personal_email():
 
 def test_record_and_check(tmp_path):
     path = tmp_path / "r.json"
-    result = {"status": "ok", "days": ["2026-11-24"], "skipped_days": 0, "entries_checked": {"admin": 3},
+    result = {"status": "ok", "days": ["2026-11-24"], "reviewed_through": "2026-11-24", "skipped_days": 0, "entries_checked": {"admin": 3},
               "notes": [], "known_findings": [],
               "alerts": [sr._alert("IAM_CHANGED", "maintainer", 1, "SetIamPolicy on project", "2026-11-24T10:00:00Z")]}
     path.write_text(json.dumps(result))
@@ -180,3 +180,10 @@ def test_watchdog(tmp_path):
     summer_noon = datetime(2027, 7, 1, 12, 5, tzinfo=wd.NY)
     assert wd.evaluate(summer_noon, "5 17 * * *", tmp_path)[0] == 0        # winter cron in summer: skip
     assert wd.evaluate(summer_noon, "5 16 * * *", tmp_path)[0] == 1
+
+
+def test_latest_looks_past_records_without_a_value():
+    records = ["# newest: reviewed no days, dbt failed", "- Reviewed through: 2026-11-23\n| `acc_01` | warn | 4 |"]
+    assert sr.latest(records, sr.reviewed_through) == date(2026, 11, 23)
+    assert sr.latest(records, sr.acc_counts_from_record) == {"acc_01": 4}
+    assert sr.latest(["nothing here"], sr.reviewed_through) is None

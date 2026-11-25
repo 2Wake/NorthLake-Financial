@@ -250,9 +250,19 @@ def acc_counts_from_results(path=RUN_RESULTS_PATH) -> dict[str, int] | None:
     return out
 
 
-def last_record(records_dir=RECORDS_DIR):
-    files = sorted(records_dir.glob("*.md")) if records_dir.exists() else []
-    return files[-1].read_text() if files else ""
+def records_newest_first(records_dir=RECORDS_DIR) -> list[str]:
+    files = sorted(records_dir.glob("*.md"), reverse=True) if records_dir.exists() else []
+    return [f.read_text() for f in files]
+
+
+def latest(records: list[str], parse):
+    """The first non-empty value of parse() over records, newest first: so a run that reviewed no
+    days, or whose dbt step failed, doesn't hide the last real value."""
+    for text in records:
+        value = parse(text)
+        if value:
+            return value
+    return None
 
 
 def acc_counts_from_record(text: str) -> dict[str, int]:
@@ -336,13 +346,14 @@ def main(argv=None):
         return check_result()
 
     today = datetime.now(timezone.utc).date()
-    previous = last_record()
+    records = records_newest_first()
+    last_reviewed = latest(records, reviewed_through)
     result = {"status": "ok", "reviewed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
               "days": [], "skipped_days": 0, "alerts": [], "known_findings": [], "entries_checked": {}, "notes": []}
     if args.day:
         days, skipped = [args.day], 0
     else:
-        days, skipped = days_to_review(reviewed_through(previous), today)
+        days, skipped = days_to_review(last_reviewed, today)
     result["days"], result["skipped_days"] = [d.isoformat() for d in days], skipped
     if skipped:
         result["notes"].append(f"{skipped} earlier day(s) were not reviewed (more than {MAX_CATCH_UP_DAYS} days behind).")
@@ -368,10 +379,13 @@ def main(argv=None):
     if current is None:
         result["notes"].append("No dbt results, so the access check findings weren't compared.")
     else:
-        acc_alerts, known = check_access_findings(current, acc_counts_from_record(previous))
+        acc_alerts, known = check_access_findings(current, latest(records, acc_counts_from_record) or {})
         result["alerts"] += acc_alerts
         result["known_findings"] = known
 
+    reviewed = days if result["status"] == "ok" and not args.day else []
+    through = reviewed[-1] if reviewed else last_reviewed
+    result["reviewed_through"] = through.isoformat() if through else None
     OUTPUT_DIR.mkdir(exist_ok=True)
     RESULT_PATH.write_text(json.dumps(result, indent=2))
     print(f"Security review: {result['status']}, {len(result['alerts'])} alert(s), days {result['days']}. "
@@ -404,8 +418,8 @@ def record_lines(path=RESULT_PATH) -> list[str]:
     lines = ["## Security review (POL-09)", "",
              f"- Status: {r['status']}",
              f"- Days reviewed (UTC): {', '.join(r['days']) or 'none'}"]
-    if r["status"] == "ok" and r["days"]:
-        lines.append(f"- Reviewed through: {r['days'][-1]}")
+    if r.get("reviewed_through"):
+        lines.append(f"- Reviewed through: {r['reviewed_through']}")
     checked = r.get("entries_checked") or {}
     if checked:
         lines.append("- Log entries checked: " + ", ".join(f"{k} {v:,}" for k, v in checked.items()))
