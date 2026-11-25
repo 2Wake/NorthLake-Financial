@@ -36,8 +36,8 @@ Running log of all work, decisions and open items. It's the source for progress 
 - `236ba03` and `13c0e5f` carried to branch `policies-09-15` as `f7b8d79` and `63b2393`.
 - `CLAUDE.md` #3 and memory: check the PR is still open before every push; no new commits to a PR once it's called ready; merge on the owner's go-ahead with `gh pr merge --match-head-commit`, which refuses if the PR doesn't hold that exact commit.
 
-### Open
-- A local `pre-push` git hook that refuses pushes to a merged PR's branch was proposed; it needs the owner's OK to install.
+### Decisions
+- **No local `pre-push` hook** (owner): a hook refusing pushes to a merged PR's branch was proposed and declined. The written rule (check the PR is open before every push) is the control; a missed commit stays on its branch and can be carried into the next PR.
 
 ---
 
