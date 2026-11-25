@@ -23,7 +23,7 @@ ECT operates a licensed NYC taxi fleet and a technology platform that dispatches
 4. **Payments** — rider card processing and driver payouts.
 5. **Console** — internal operations and administration (fleet, drivers, support, reporting).
 
-Because ECT accepts card payments and employs/contracts drivers, it holds a broad range of sensitive data — rider PII, cardholder data, and driver PII — which puts it in scope for PCI DSS and privacy law in addition to SOC 2 / ISO 27001. Card numbers are entered only into the payment providers' card-entry component and in-cab terminals; ECT keeps a provider token and the last 4 digits (DOC-01 v2.0).
+Because ECT accepts card payments and employs/contracts drivers, it holds a broad range of sensitive data — rider PII, card payment tokens, and driver PII — and takes card payments, which puts it in scope for PCI DSS and privacy law in addition to SOC 2 / ISO 27001. Card numbers are entered only into the payment providers' card-entry component and in-cab terminals; ECT keeps a provider token and the last 4 digits (DOC-01 v2.0).
 
 ## Data Empire City Taxi handles
 
