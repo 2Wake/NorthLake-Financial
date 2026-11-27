@@ -4,6 +4,9 @@
 -- acknowledge every approved policy (POL-01 statement 6 names POL-01 and POL-05 as the minimum).
 -- Rule (POL-01 statement 6; STD-01 section 11): due 10 business days after the later of the
 -- approval date and the hire date. Weekends are skipped; public holidays are not.
+-- Announced deadlines (policy_ack_deadlines seed) can only move a due date LATER, never earlier:
+-- the 2026-11-25 announcement (blog 459089) set one deadline, 2026-12-09, for POL-01 to POL-15
+-- (owner decision 2026-11-27, GOV-107). Staff hired later still get 10 business days from hire.
 -- Acknowledgment is per MAJOR version (POL-01 statement 6: each new major version). A minor
 -- revision (e.g. POL-07 1.0 -> 1.1) keeps earlier acknowledgments. Limitation: assigned_on uses
 -- the register's approval_date, which is the current version's date; if a minor revision is
@@ -39,7 +42,7 @@ received as (
     where acknowledged_on is not null
     group by 1, 2, 3
 ),
-dated as (
+rule_dated as (
     select
         r.*,
         (
@@ -51,8 +54,20 @@ dated as (
                 order by d
                 limit 10
             )
-        ) as due_on
+        ) as rule_due_on
     from required r
+),
+deadlines as (
+    select doc_id, cast(major_version as string) as major_version, ack_deadline
+    from {{ ref('policy_ack_deadlines') }}
+),
+dated as (
+    select
+        r.* except (rule_due_on),
+        greatest(r.rule_due_on, coalesce(dl.ack_deadline, r.rule_due_on)) as due_on
+    from rule_dated r
+    left join deadlines dl
+        on dl.doc_id = r.doc_id and dl.major_version = r.major_version
 )
 select
     concat(d.employee_id, '|', d.doc_id, '|', d.major_version) as ack_key,

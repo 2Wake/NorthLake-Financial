@@ -243,7 +243,7 @@ models:
         description: Later of the policy's approval date and the employee's hire date.
         data_tests: [not_null]
       - name: due_on
-        description: 10 business days (Mon-Fri) after assigned_on. Public holidays are not skipped.
+        description: The later of 10 business days (Mon-Fri) after assigned_on and any deadline announced to staff (policy_ack_deadlines seed). Public holidays are not skipped.
         data_tests: [not_null]
       - name: acknowledged_on
         description: Date acknowledged, from the policy_acknowledgments seed. Blank if not yet.
