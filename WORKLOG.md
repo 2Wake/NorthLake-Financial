@@ -12,7 +12,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Push classifications out:** Knowledge Catalog aspects (GOV-167, after the council decides STD-02 D2 and D3); optionally BigQuery policy tags on Secret columns (UI, owner).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
-- [ ] **Council operations.** Issue register (`GV-###`) and decision log (`GV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
+- [ ] **Council operations.** Issue register (`GV-###`) and decision log (`GV-D-###`) as dbt seeds. Agendas and minutes in Confluence (page 1048579), if the council adopts the charter amendment on 12-01.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
 - [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
@@ -22,11 +22,71 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.2):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
-- [ ] **Council meeting cadence:** monthly, first Tuesday, standing agenda including the catalog review (STD-02 7a). First meeting date and the charter's move to Confluence still to decide.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built (setup part J); next, the owner sets it up and tests the email. Then decide whether to move the daily run earlier.
+- [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built (setup part J); J1 (16:05 UTC) is set up and verified; next, J2 (17:05) and the J3 email test. Then decide whether to move the daily run earlier.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
-- [ ] **Register approvals:** 30 rows still `proposed`. Take them to the first council meeting.
+- [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — STD-02 added to the Policy Register; first council meeting prepared (12-01)
+
+### Done
+- **Watchdog J1 verified** (read-only, through the Data Transfer Service API and the audit log). The owner's first save was in `us-central1` at 14:05 UTC. It was deleted and recreated, and now:
+  - its location is `US`;
+  - it runs every day at 16:05 UTC;
+  - it has no destination table;
+  - the failure email is on;
+  - it runs as `ect-watchdog` (shown in the audit entry for its creation).
+- **Policy Register v17** (Confluence 65685): **STD-02 Data Catalog & Metadata Standard**, DRAFT v0.2, has been added.
+  - Owner: CDO. Approver: the Data Governance Council. Jira: GOV-166.
+  - A change-log line was added.
+  - The repo extract `policy_register.csv` matches.
+  - The new row is a draft, and `fct_policy_acknowledgments` reads only approved policies, so nothing downstream changes.
+- **Numbering clash found:** GOV-80 had planned STD-02 and STD-03 for the Classification and Labeling standards. It's on the agenda (item 4.4); the proposal is STD-03 and STD-04.
+- **Confluence:**
+  - New parent page **Data Governance Council** (1048579): how the council meets, the standing agenda, and a list of meetings.
+  - **2026-12-01 Council Meeting: Agenda and Review Pack** (1015810), covering:
+    - attendance and quorum;
+    - a 90-minute agenda;
+    - the KPIs, measured read-only;
+    - new High issues;
+    - decisions: the charter and cadence, STD-02 D1 to D4 and how terms and classifications are updated, the 30 proposed classifications, and numbering;
+    - new data sources and vendors;
+    - exceptions;
+    - any other business.
+- **Owner decisions (2026-11-27), Jira GOV-171 (In Progress):**
+  - The first meeting is Tuesday 12-01.
+  - Meetings run 90 minutes, with a standing agenda that includes the catalog review, new data sources and new vendors.
+  - The charter questions go to the council.
+
+### KPIs as measured (read-only, 2026-11-27)
+- **Owner and steward labels:** 63 of 63 tables.
+- **Secret and Confidential columns correctly classified:** 46 of 60 (77%). That leaves 13 approved under-classifications and 1 proposed.
+- **Column descriptions:** 12 of 703 (2%: raw 0, staging 0, marts 12). `persist_docs` is on, but the models have almost no column descriptions yet. This was already in the backlog.
+- **Planted DQ defects:** 100% caught.
+- **Acknowledgments:** 6 of 7,905 done; due 12-09.
+
+### Findings (left as found, for the council and the audit)
+- **Agenda notice:** charter section 4 wants the agenda 3 business days ahead. Sent on 11-27, it has 2 full business days. This is recorded on the page as a deviation. In chat I had said today would work, which is wrong on a strict reading.
+- **The charter conflicts with STD-01:**
+  - it is still DRAFT v0.1 in the repo;
+  - it puts minutes in the repo, while STD-01 says governance documents live in Confluence;
+  - it says 60 minutes.
+
+  All three are proposed as amendments, which need a two-thirds vote.
+- **The issue register and decision log don't exist yet.** GV-001 to GV-007 are listed only in the charter.
+- **`stg_fleet_drivers.ssn_last4` is proposed as Sensitive,** while it is Confidential in every other table.
+- **The charter's "DQ pass rate" KPI is undefined** for warning rules that count failing records.
+
+### Open / next
+- **Owner:** merge PR #16, then this PR. Watchdog J2 and J3.
+- **After 12-01:**
+  - minutes on page 1015810, with decisions as `GV-D-###`;
+  - STD-02 v0.3;
+  - the charter to Confluence;
+  - the classification register updates, through a PR.
 
 ---
 
