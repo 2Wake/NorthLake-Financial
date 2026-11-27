@@ -14,7 +14,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GV-###`) and decision log (`GV-D-###`) as dbt seeds. Agendas and minutes in Confluence (page 1048579), if the council adopts the charter amendment on 12-01.
 - [ ] **Phases 1–4 tables** (see the 2026-11-23 design review entry below).
-- [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:30 New York, keyless, and writes run records to `data-platform/run-records/`.
+- [x] **GitHub Actions daily refresh:** live since 2026-11-24. Runs daily at 05:17 UTC (00:17 New York; moved from 05:30 New York on 2026-11-27, GOV-123), keyless, and writes run records to `data-platform/run-records/`.
 - [ ] **Access control:** simulated access live (ACC-01–07). The 79 unclassified new columns stay as an audit finding (don't fix). Real role accounts and the daily access check built (2026-11-24); access logs come with Phase 2.
 - [x] **Atlassian (Jira + Confluence):** site, MCP and docs/tickets split all done (2026-11-24).
 - [ ] **Policy set (SOC 2 + ISO 27001 + PCI DSS) + policy register:** tracked in Jira epic GOV-1. Then a **Common Control Framework** (CCF) as dbt seeds mapping policies → controls → frameworks → automated checks.
@@ -23,10 +23,35 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is **live and tested** (GOV-170 Done, 2026-11-27): 16:05 and 17:05 UTC checks plus the Cloud Monitoring email alert. Next: decide whether to move the daily run earlier.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run moved to 05:17 UTC (GOV-123); check over the next few days that it finishes before 12:00 New York.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — Held items decided: generator tag pushed, daily run moved to 05:17 UTC; risk epic proposed
+
+Owner decisions today ("I agree with everything else"):
+
+### Done
+- **Tag `generator-v0.4.0` pushed** (owner OK; GOV-157). It's on `022eeab`, the PR #10 merge.
+  - Every `raw` batch is at 0.4.0 (checked: `hris_employees`, all 1,060 rows), since the 0.4.0 rebuild replaced older versions. So one tag covers everything a POL-15 rebuild needs.
+  - No generator code has changed since `022eeab`: only `record.py`, `security_review.py` and `watchdog.py`.
+  - **Release step added to CLAUDE.md:** after a version-bump PR merges, tag its merge commit (owner OK each time).
+- **Daily run moved from 10:30 UTC to 05:17 UTC** (00:17 New York, 01:17 in summer). This PR; GOV-123.
+  - **Why:** GitHub started the scheduled run at 20:02 UTC on 11-25 and 19:45 UTC on 11-26, about 9.5 hours late and after the 12:00 deadline (POL-09 s18). From 05:17, the same delay still finishes by about 10:00 New York. The off-the-hour minute avoids GitHub's busiest start times.
+  - **Safe for the dates:** 05:17 UTC is always after New York midnight, and GitHub only starts late, never early. The generator's "yesterday" (New York) is a complete day. The security review's "yesterday" (UTC) ended 5 hours before.
+
+### Decided (no change now)
+- **GOV-148** (card expiry and cardholder name stored) stays held. It's planted scenario S03 and goes to the January council (CFO decides).
+- **BigQuery policy tags** wait for GOV-148: the only Secret columns are those two.
+
+### Proposed, waiting for the owner's approval
+- **New epic "Risk Register (POL-06)"** for R-002 to R-006 (GOV-149 to 153). An Epic, not a Story: the risks are Tasks, and only an Epic can be a Task's parent.
+
+### Open / next
+- **Watch the first runs at the new time** (from 2026-11-28). Then the Google watchdog should stop alerting on late runs. Add the start times to GOV-123.
 
 ---
 

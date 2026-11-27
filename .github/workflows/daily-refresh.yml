@@ -6,7 +6,11 @@ name: Daily data refresh
 
 on:
   schedule:
-    - cron: "30 10 * * *"   # 10:30 UTC = 5:30 am New York (6:30 am in summer)
+    # 05:17 UTC = 00:17 New York (01:17 in summer), always after NY midnight, so "yesterday" is a complete day.
+    # Off the hour on purpose: GitHub delays busy top-of-hour schedules. It started the old 10:30 UTC schedule
+    # about 9.5 hours late (11-25, 11-26), after the 12:00 deadline; from 05:17 the same delay still finishes by
+    # about 10:00 New York (GOV-123). GitHub never starts early, so the run can't fall before NY midnight.
+    - cron: "17 5 * * *"
   workflow_dispatch:         # "Run workflow" button on the Actions tab
 
 permissions:
