@@ -23,10 +23,54 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built (setup part J); J1 (16:05 UTC) is set up and verified; next, J2 (17:05) and the J3 email test. Then decide whether to move the daily run earlier.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built: J1 and J2 verified. The email test found 2 defects (permission, email); the fix is PR watchdog-metadata-fix. Next, the owner updates the SQL in both schedules, sets up the J3 log alert, and re-runs the J4 test. Then decide whether to move the daily run earlier.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — Watchdog email test (GOV-170): two defects found; SQL fixed and a log alert added
+
+### Done
+- **J2 verified:** `ECT Watchdog - 17:05 UTC` is in US, every day at 17:05 UTC, runs as `ect-watchdog`, with no destination table and the failure email on. The owner's first copy, named "ETC Watchdog - 17:05 UTC", was deleted.
+- **Email test:** the test copy (On-demand, as `ect-watchdog`) was run at 10:11 UTC and failed. It found two defects.
+
+### Defect 1: the watchdog couldn't read what it checks
+- **Error:** "Access Denied: Table `marts.__TABLES__`".
+- **Cause:** the legacy `__TABLES__` view needs permission to read table data (`bigquery.tables.getData`), which BigQuery Metadata Viewer doesn't include. The `raw` check passed because it uses `INFORMATION_SCHEMA`.
+- **Why testing missed it:** my read-only tests ran as the maintainer's account, which has full access, so they couldn't catch a permission gap.
+- **Impact if it had gone live:** both checks would fail every day with Access Denied. That means daily false alarms, and the run never actually checked.
+- **Fix (owner approved):** `marts.INFORMATION_SCHEMA.PARTITIONS` joined to `INFORMATION_SCHEMA.TABLES` (base tables): the oldest of each table's latest change.
+  - Same result as before (2026-11-26), covering all 21 base tables.
+  - No new access: `ect-watchdog` still can't read data.
+  - Applied to both `watchdog_check.sql` and the test copy.
+  - Tested read-only: the test copy fails with "ECT WATCHDOG SEV4 … raw through 2026-11-25 (expected 2026-11-26); marts rebuilt 2026-11-26 (expected 2026-11-27)", and the real query says "Skipped" at 05:xx.
+
+### Defect 2: the failure email doesn't reach a person
+- **What happened:** no email arrived for the failed run (owner). This confirms Google's warning: the email goes to the account the query runs as.
+- **Fix:** the fallback planned in the design, a **Cloud Monitoring log alert** on `resource.type="bigquery_dts_config" severity>=ERROR`, emailing the maintainer. It's new setup part J3, made by the owner in the UI; the email address stays in Google Cloud, never in the repo.
+  - The failed run wrote an ERROR entry with the full error text (checked read-only), so the alert can match it.
+  - Any scheduled-query error alerts. The only scheduled queries are the watchdogs, so a broken watchdog alerts too, as defect 1 would have.
+  - Cost: free until at least September 2027, then about $0.35 a month.
+- **Setup guide part J rewritten:**
+  - J1: names, plus the warning that location is set from the query tab and can't be changed after saving;
+  - J2;
+  - **J3:** the log alert;
+  - **J4:** the test, plus how to update the SQL in an existing schedule;
+  - **J5:** what to do when it fires.
+- README updated.
+
+### Risks
+- **Until the owner updates the SQL** in both schedules, today's 16:05 UTC run (11:05 New York) skips and the 17:05 run (12:05 New York) fails with Access Denied. It's harmless, and with no log alert yet, nobody is emailed.
+
+### Open / next
+- **Owner:**
+  1. edit both schedules with the new SQL;
+  2. set up J3;
+  3. update the test query's SQL and run it again (J4), and confirm the alert email arrives;
+  4. delete the test query.
+- Then GOV-170, GOV-123 and R-003 get the evidence.
 
 ---
 

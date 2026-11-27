@@ -2,7 +2,8 @@
 -- ECT watchdog, Google side (POL-09 statement 18; GOV-123, R-003). BigQuery scheduled query, runs as ect-watchdog.
 -- Two schedules (16:05 and 17:05 UTC); only the run that lands at 12:xx New York checks, so it follows daylight saving.
 -- Reads metadata only (partition list, table change times), never table contents.
--- Fails on purpose (ERROR) when the daily run hasn't finished; BigQuery then emails the person who set up the schedule.
+-- Fails on purpose (ERROR) when the daily run hasn't finished. A Cloud Monitoring log alert on that error emails the
+-- maintainer (setup part J3); BigQuery's own failure email doesn't arrive when the query runs as a service account.
 DECLARE check_day DATE DEFAULT CURRENT_DATE('America/New_York');
 DECLARE ny_hour INT64 DEFAULT 12;  -- TEST COPY: time check disabled. Delete this scheduled query after the test.
 DECLARE latest_batch DATE;
@@ -17,9 +18,17 @@ SET latest_batch = (
   SELECT MAX(PARSE_DATE('%Y%m%d', partition_id))
   FROM `empire-city-taxi.raw.INFORMATION_SCHEMA.PARTITIONS`
   WHERE table_name = 'app_trips' AND REGEXP_CONTAINS(partition_id, r'^\d{8}$'));
+-- Oldest rebuild among the marts tables: each table's latest change, then the earliest of those.
+-- INFORMATION_SCHEMA, not the legacy __TABLES__ view: __TABLES__ needs permission to read table data,
+-- which ect-watchdog doesn't have (test J3, 2026-11-27, GOV-170).
 SET oldest_mart_rebuild = (
-  SELECT DATE(TIMESTAMP_MILLIS(MIN(last_modified_time)), 'America/New_York')
-  FROM `empire-city-taxi.marts.__TABLES__` WHERE type = 1);
+  SELECT DATE(MIN(table_changed), 'America/New_York')
+  FROM (
+    SELECT p.table_name, MAX(p.last_modified_time) AS table_changed
+    FROM `empire-city-taxi.marts.INFORMATION_SCHEMA.PARTITIONS` AS p
+    JOIN `empire-city-taxi.marts.INFORMATION_SCHEMA.TABLES` AS t USING (table_name)
+    WHERE t.table_type = 'BASE TABLE'
+    GROUP BY p.table_name));
 
 IF latest_batch >= DATE_SUB(check_day, INTERVAL 1 DAY) AND oldest_mart_rebuild >= check_day THEN
   SELECT FORMAT('OK: daily run complete for %t (raw through %t; marts rebuilt %t).', check_day, latest_batch, oldest_mart_rebuild) AS result;

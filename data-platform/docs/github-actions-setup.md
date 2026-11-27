@@ -163,7 +163,7 @@ The watchdog in part I runs on GitHub's scheduler, the same one as the daily run
 11-26 that scheduler started both 7 to 10 hours late, so a late run went unnoticed (GOV-123). This
 backup runs on **Google's** scheduler as a BigQuery *scheduled query*. At 12:05 New York it checks
 that yesterday's data has landed in `raw` and that every `marts` table was rebuilt today. If not,
-the query fails on purpose, and BigQuery emails you.
+the query fails on purpose, and a Cloud Monitoring alert emails you (J3).
 
 It runs as **`ect-watchdog`** (BigQuery Job User and BigQuery Metadata Viewer only, no key). It reads
 metadata (the partition list and table change times), never table contents. Cost: about 600 MB of
@@ -172,40 +172,68 @@ query a month, inside the free tier. The SQL is in [`../sql/watchdog_check.sql`]
 ### J1. Create the first schedule (16:05 UTC)
 
 1. Console → **BigQuery** → **+** (new query tab). Paste the whole of `data-platform/sql/watchdog_check.sql`.
-   Click **Run** once. It should say "Skipped: …" unless it's 12:xx in New York.
+   Set **More → Query settings → Location** to **US (multi-region)** first: the schedule takes its
+   location from the tab. Click **Run** once. It should say "Skipped: …" unless it's 12:xx in New York.
 2. Click **Schedule** (or **More → Schedule**). In the "New scheduled query" pane:
-   - **Name:** `ect-watchdog 16:05 UTC`
+   - **Name:** `ECT Watchdog - 16:05 UTC`
    - **Repeats:** **Custom**, and type `every day 16:05`. ⚠️ Custom times are **UTC**.
    - **Destination table:** leave it **unticked**. If the form insists on one, tell Claude before saving.
-   - **Location:** `US` (multi-region).
+   - **Location:** `US` (multi-region). ⚠️ It can't be changed after saving; a wrong one means delete and recreate.
    - **Advanced options → Scheduled query credential / Service account:** `ect-watchdog`.
-   - **Additional configurations / Notification options:** tick **Send email notifications**.
+   - **Notification options:** tick **Send email notifications** (harmless, but see J3: it doesn't reach you).
 3. Click **Save**.
 
 ### J2. Create the second schedule (17:05 UTC)
 
-Repeat J1 with **Name** `ect-watchdog 17:05 UTC` and **Repeats** `every day 17:05`.
+Repeat J1 with **Name** `ECT Watchdog - 17:05 UTC` and **Repeats** `every day 17:05`.
 
 Two schedules are needed because Google stores schedules in UTC, which doesn't follow daylight
 saving. 16:05 UTC is 12:05 New York in summer, and 17:05 UTC is 12:05 in winter. The query checks
 only when it's 12:xx in New York; the other run just says "Skipped".
 
-### J3. Test that the alert email reaches you
+### J3. The alert email (Cloud Monitoring log alert)
 
-Google warns that when a scheduled query runs as a service account, the failure email **might not
-reach you**. So test it once:
+**Why:** BigQuery's own failure email goes to the account the query runs as, here `ect-watchdog`,
+not to you. The email test on 2026-11-27 confirmed it: the run failed and no email arrived (GOV-170). So a
+Cloud Monitoring alert watches the scheduled-query logs and emails you on any error. The only
+scheduled queries in the project are the watchdogs, so any error means either "the daily run is
+late" or "the watchdog itself is broken", and both need you. Cost: free until at least September
+2027, then about $0.35 a month.
 
-1. Run the test copy Claude provides, which skips the 12:00 time check, as a one-off scheduled query
-   (**Repeats: On-demand**) with the same account and email settings. Click **Run now** before
-   today's daily run has finished.
-2. You should get an email saying the run failed, with "ECT WATCHDOG SEV4" in the error.
+1. **Make an email channel** (once): Console → **Monitoring → Alerting → Edit notification channels**
+   → **Email → Add new**. Email address: the one you want alerts at. Display name: `Maintainer email`.
+   **Save**. (Your address stays in Google Cloud; never put it in the repo.)
+2. Console → **Logging → Logs Explorer**. Turn on **Show query** and replace the query box with:
+   ```
+   resource.type="bigquery_dts_config"
+   severity>=ERROR
+   ```
+   Click **Run query**. You should see the failed test from 2026-11-27 10:12 UTC.
+3. Click **Actions → Create log alert** (on some screens: **Create alert**).
+   - **Alert policy name:** `ECT Watchdog failed`
+   - **Documentation:** paste "Respond within 1 business day (POL-09 statement 18): read the error;
+     if it says ECT WATCHDOG, follow setup part J5; otherwise the watchdog itself is broken: tell
+     Claude. Record it in Jira."
+   - **Choose logs to include:** already filled in from step 2. **Next**.
+   - **Time between notifications:** `5 min`. **Incident autoclose duration:** `1 day`. **Next**.
+   - **Notification channels:** tick `Maintainer email`.
+4. Click **Save**.
+
+### J4. Test that the alert email reaches you
+
+1. Use the test copy `data-platform/sql/watchdog_check_TEST.sql`, which skips the 12:00 time check, as
+   a scheduled query named `ECT Watchdog - TEST (delete me)` with **Repeats: On-demand** and the same
+   location and account as J1. Click **Run now** while today's daily run hasn't finished.
+2. Within about 5 minutes you should get a Google Cloud alert email "ECT Watchdog failed", and the
+   run's error should start "ECT WATCHDOG SEV4".
 3. Delete the test query afterwards: **BigQuery → Scheduled queries →** the test query **→ Delete**.
+   Keep the 16:05 and 17:05 ones.
 
-If no email arrives within 15 minutes, tell Claude. The fallback is a Cloud Monitoring log alert on
-the failed query, which emails you directly. It's free until at least September 2027, then about
-$0.35 a month.
+**Updating the SQL in a schedule that already exists** (for example after the 2026-11-27 fix):
+**BigQuery → Scheduled queries →** the query **→ Edit** (pencil), replace the whole query text with
+the new file, **Update** / **Save**. Name, schedule, location and account stay as they were.
 
-### J4. What to do when it fires
+### J5. What to do when it fires
 
 Treat it like the GitHub watchdog (POL-09 statement 18): check **Actions → Daily data refresh**,
 run it by hand if it hasn't run, and record the cause, the gap and the fix in Jira within 1
