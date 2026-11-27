@@ -43,6 +43,8 @@ MAX_CATCH_UP_DAYS = 7
 FIXED_IDENTITIES = {
     f"ect-pipeline{SA_DOMAIN}": ("ect-pipeline", "platform_admin"),
     f"ect-monitor{SA_DOMAIN}": ("ect-monitor", "log_reader"),
+    f"ect-watchdog{SA_DOMAIN}": ("ect-watchdog", "watchdog"),
+    f"ect-catalog{SA_DOMAIN}": ("ect-catalog", "catalog"),
 }
 # Pipeline sign-ins are accepted only from a workflow of this repository running on main
 # (the repository and owner IDs GitHub adds are optional in the pattern).

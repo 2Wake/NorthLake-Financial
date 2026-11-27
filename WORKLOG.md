@@ -23,10 +23,42 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.2):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **Council meeting cadence:** monthly, first Tuesday, standing agenda including the catalog review (STD-02 7a). First meeting date and the charter's move to Confluence still to decide.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123), so price a Google-side backup alert now.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built (setup part J); next, the owner sets it up and tests the email. Then decide whether to move the daily run earlier.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
 - [ ] **Register approvals:** 30 rows still `proposed`. Take them to the first council meeting.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — Google-side watchdog designed (R-003, GOV-123); `ect-watchdog` created
+
+### Done
+- **PR #15 merged** (owner): the review case fix and the 12-09 deadline.
+- **Backup alert, Option A (owner):** a BigQuery scheduled query on **Google's** scheduler, not GitHub's.
+  - **What it checks:** at 12:05 New York, that `raw.app_trips` has yesterday's partition and that every `marts` table was rebuilt today. Metadata only.
+  - **How it alerts:** if either check fails, the query fails on purpose with "ECT WATCHDOG SEV4", or SEV3 after 2 missed days. BigQuery then sends a failure email.
+  - **Daylight saving:** two schedules (16:05 and 17:05 UTC), each checking only at 12:xx New York.
+  - **Cost:** about $0 (roughly 600 MB of query a month, inside the free tier).
+  - **Option not chosen:** Cloud Monitoring log alert. It can't express "by 12:00", only rolling absence windows, and it will cost about $0.35 a month from September 2027.
+- **`ect-watchdog`** (owner, in the UI): BigQuery Job User plus Metadata Viewer, no key, and no sign-in grant (only Google's scheduler uses it).
+  - **Why a new account and not `ect-monitor`** (owner asked): the security review alerts when anything but the workflow acts as `ect-monitor`, so Google's scheduler acting as it would raise a false alert every day. The backup also shouldn't depend on an account GitHub can use.
+- **Tested read-only, all three paths:**
+  - OK as of 11-26 (`raw` through 11-25, `marts` rebuilt 11-26);
+  - ERROR as of 11-27 before the run;
+  - "Skipped" outside 12:xx New York.
+- **Files:**
+  - `data-platform/sql/watchdog_check.sql`, plus a test copy `watchdog_check_TEST.sql` with the time check disabled;
+  - setup guide part J (J1 to J4);
+  - README.
+  - The review now names `ect-watchdog` and `ect-catalog` instead of a generic service-account label.
+
+### Risks
+- **The alert email may not arrive.** Google warns that when a scheduled query runs as a service account, the failure email "might not" reach the person who set it up. Test J3 checks this. The fallback is a log-based alert email.
+- **It may fire often.** With GitHub starting the daily run 9 to 10 hours late, the noon check will fail on those days. That's correct under POL-09 statement 18. Moving the daily run earlier (for example 01:17 New York) is a separate decision, after a few days of data.
+- **It checks `marts`, not the GitHub run record,** because Google can't see GitHub. The record is committed minutes after dbt finishes.
+
+### Open / next
+- **Owner:** set up J1 and J2, then test J3. Then the Jira ticket (draft awaiting approval) and the GOV-123 and R-003 updates.
 
 ---
 
