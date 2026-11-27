@@ -132,20 +132,21 @@ def check_admin(entries: list[dict], ids: dict) -> list[dict]:
     for e in entries:
         p = e.get("protoPayload", {})
         method, service = p.get("methodName", ""), p.get("serviceName", "")
+        m = method.lower()  # Google's casing varies by service: SetIamPolicy (most) vs SetIAMPolicy (IAM)
         if LEGACY_METHOD.match(method) or not _ok(e):
             continue
         who, ts = display(_principal(e), ids), e.get("timestamp", "")
         resource = p.get("resourceName", "")
         mask = p.get("request", {}).get("updateMask", "")
-        if method.endswith("CreateServiceAccountKey"):
+        if m.endswith("createserviceaccountkey"):
             rows.append(("SA_KEY_CREATED", who, resource.split("/serviceAccounts/")[-1].split("/")[0], ts))
-        elif service == "logging.googleapis.com" and ("ConfigServiceV2" in method or method.endswith("DeleteLog")):
+        elif service == "logging.googleapis.com" and ("configservicev2" in m or m.endswith("deletelog")):
             rows.append(("LOGGING_CHANGED", who, method.split(".")[-1], ts))
-        elif method.endswith("SetIamPolicy") and "auditConfigs" in mask:
+        elif m.endswith("setiampolicy") and "auditConfigs" in mask:
             rows.append(("LOGGING_CHANGED", who, "Data Access audit log settings", ts))
-        elif method.endswith("SetIamPolicy"):
+        elif m.endswith("setiampolicy"):
             rows.append(("IAM_CHANGED", who, f"{method.split('.')[-1]} on {_short(resource)}", ts))
-        elif method.endswith("DatasetService.UpdateDataset"):
+        elif m.endswith("datasetservice.updatedataset"):
             rows.append(("IAM_CHANGED", who, f"dataset settings or permissions updated on {_short(resource)}", ts))
     return _group(rows)
 
@@ -195,11 +196,11 @@ def check_signins(entries: list[dict], ids: dict) -> list[dict]:
         method, ts = p.get("methodName", ""), e.get("timestamp", "")
         if not _ok(e):
             continue
-        if method.endswith("ExchangeToken"):
+        if method.lower().endswith("exchangetoken"):
             subject = p.get("authenticationInfo", {}).get("principalSubject", "")
             if not WORKFLOW_SUBJECT.match(subject):
                 rows.append(("PIPELINE_SIGNIN", f"federated-{_hash(subject.lower())}", "token exchange from an unexpected workflow or branch", ts))
-        elif method == "GenerateAccessToken":
+        elif method.lower().endswith("generateaccesstoken"):
             target = p.get("request", {}).get("name", "").split("/")[-1].lower()
             if target not in GUARDED_ACCOUNTS:
                 continue

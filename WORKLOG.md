@@ -9,7 +9,7 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] **Phase 0: generator framework.** Built, tested, and backfilled into `raw` (2026-01-01 → 2026-11-23).
 - [ ] **Reference-data issue:** raise REF-01 to REF-03 as a governance issue (reference domain owner: Data Governance Manager) in the issue register.
 - [ ] **Remediate the classification scenarios** (S01–S12) through the council process, starting with GV-003 (S01). Watch KPI #2 rise from 72.5%.
-- [ ] **Push classifications out:** Collate column tags from the register; optionally BigQuery policy tags on Secret columns (UI, user).
+- [ ] **Push classifications out:** Knowledge Catalog aspects (GOV-167, after the council decides STD-02 D2 and D3); optionally BigQuery policy tags on Secret columns (UI, owner).
 - [ ] **Table and column descriptions.** Raw-table schema files, plus dbt `.yml` with `persist_docs`. Leave about 10–15% blank on purpose, tracked in a documentation-gap register, and fill them in a later remediation sprint.
 - [ ] **Labels on tables:** applied in code on `raw`, `staging` and `marts`. **Remaining:** planted label gaps, tracked in the gap register.
 - [ ] **Council operations.** Issue register (`GV-###`) and decision log (`GV-D-###`) as dbt seeds; minutes in `governance/council/minutes/`.
@@ -20,9 +20,68 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Policy set (SOC 2 + ISO 27001 + PCI DSS) + policy register:** tracked in Jira epic GOV-1. Then a **Common Control Framework** (CCF) as dbt seeds mapping policies → controls → frameworks → automated checks.
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
-- [ ] **Collate:** sign up, connect to BigQuery read-only, evaluate its AI settings.
-- [ ] **Knowledge Catalog:** free-tier discovery and glossary only; compare it with Collate.
+- [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
+- [ ] **Knowledge Catalog (STD-02, DRAFT v0.2):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
+- [ ] **Council meeting cadence:** monthly, first Tuesday, standing agenda including the catalog review (STD-02 7a). First meeting date and the charter's move to Confluence still to decide.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123), so price a Google-side backup alert now.
+- [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
+- [ ] **Register approvals:** 30 rows still `proposed`. Take them to the first council meeting.
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — Second and third live reviews triaged (GOV-169): review bug fixed, late schedules recorded; acknowledgment deadline set to 12-09 (GOV-107)
+
+### Done
+- **Runs since the monitoring went live:**
+  - 11-25 15:05 New York, scheduled: reviewed no days (11-24 was already done), 0 alerts.
+  - 11-26 14:47 New York, scheduled: reviewed 11-25, 5 alerts, and failed at the last step as designed.
+  - Watchdog on 11-26: one run skipped (the summer schedule) and one reported OK.
+- **Triage, GOV-169** (owner approved; linked to GOV-150, GOV-122 and GOV-123). All 9 changes on 11-25 were expected setup work: the `scratch` rebuild grant, the 400-day retention, the Data Access settings, O6, and the `ect-catalog` roles and fixes. Two control issues were found.
+  1. **The review missed 4 service-account permission changes.** These were sign-in grants on `ect-monitor` and `ect-catalog`. The IAM service logs them as `SetIAMPolicy`, but the check matched `SetIamPolicy` case-sensitively.
+     - **Fixed** (owner approved): every method check is now case-insensitive, and a test was added.
+     - The miss is recorded as evidence on GOV-122.
+  2. **GitHub's scheduler ran 7 to 10 hours late.**
+     - The daily run is set for 05:30 New York. It started at 15:05 on 11-25 and 14:47 on 11-26, so both runs finished after the 12:00 deadline (POL-09 statement 18).
+     - The watchdog is set for 12:05. It ran at 19:29 and 19:59, so it didn't detect the late runs.
+     - Recorded on GOV-123 and R-003 (GOV-150). The backup-alert cost check moves forward. **Not fixed** (findings rule).
+- **Acknowledgment deadline (GOV-107), owner decision: 12-09**, the date staff were told.
+  - New seed `policy_ack_deadlines` holds the announced deadline per policy major version (blog 459089: POL-01 to POL-15, due 2026-12-09).
+  - `fct_policy_acknowledgments` uses the **later** of that deadline and the 10-business-day rule, so an announcement can extend a deadline but never shorten it. New hires still get 10 business days from their hire date.
+  - The first post's Dec 8 rows in `policy_acknowledgments` (29 rows: STD-01 and the v1.0 approver acknowledgments) moved to Dec 9, as the announcement said.
+  - **Checked read-only:** the compiled model, run with the new seed supplied inline, gives due date 2026-12-09 for all 15 policies and all 527 active staff. Not built locally, because the daily run would revert an unmerged build.
+- **Tests:** `uv run pytest` gives 30 passed. `dbt compile` succeeds.
+
+### Note
+- For POL-01, 05, 06, 07 and 08 (approved 2026-11-24), 12-09 is one business day later than POL-01's 10-business-day rule. That's a lenient deviation, made because staff were told 12-09. Raise it at the first council meeting, or note it on GOV-107.
+
+### Open / next
+- Owner merges this PR. The next daily run then builds the new seed and model, and the review uses the fix.
+- **Backup-alert price check** (R-003). The council cadence ticket is still to approve. The STD-02 Policy Register row is still to do.
+
+---
+
+## 2026-11-25 (afternoon) — Catalog: Collate dropped, Knowledge Catalog chosen; STD-02 drafted; `ect-catalog` created; lineage trial started
+
+### Done
+- **Collate dropped.** The free tier is a wait list that needs a company email, and connecting needs a service account key, which POL-02 statement 14 bans. Hosted alternatives were checked: DataHub Cloud, Secoda, Select Star and data.world have no confirmed free tier. Self-hosted OpenMetadata needs at least 6 GB of memory and 4 processors, too much for the laptop.
+- **Knowledge Catalog chosen** (owner) over OpenMetadata on a Google Cloud machine (about $5 to $6 a month at 20 hours of use; about $98 a month if left on).
+  - Free at ECT's size: search, automatic BigQuery metadata, glossary, aspects and policy tags.
+  - Paid: lineage, quality scans and profiling.
+  - The API was already enabled.
+- **STD-02 Data Catalog & Metadata Standard**, DRAFT v0.2 (Confluence 786433).
+  - Owner: the CDO. Approver: the Data Governance Council.
+  - **D1, owner's direction: Option B.** The catalog becomes the source of truth after a one-time import, and the repository and BigQuery hold daily extracts. Section 7.6 adds checks to make up for the missing approval step. Section 7a adds a **monthly catalog review** at the council meeting, with yearly re-confirmation of terms and Secret/Confidential classifications.
+  - **Open for the council:** D2 (aspect fields and values, including the planted `Restricted` rows and 29 data categories), D3 (who may edit), D4 (Looker Studio tables). The owner wants these discussed at the first council meeting.
+- **`ect-catalog`** (owner, in the UI): Dataplex Catalog Editor plus BigQuery Metadata Viewer, keyless sign-in from this repository, no key.
+  - Two mistakes were found by a read-only check and fixed by the owner: the old Data Catalog Editor role, and a repository value with a trailing period.
+  - Google's docs don't say whether writing aspects to BigQuery entries needs a BigQuery permission. Test first; don't grant Data Owner.
+- **Lineage API enabled** (owner) for a one-week cost trial. Check on or after 2026-12-02 (GOV-168).
+- **Jira:**
+  - GOV-166 (decision and baseline, In Progress).
+  - GOV-167 (import and daily extract; waits on D2 and D3).
+  - GOV-168 (lineage trial, In Progress).
+- **Council cadence ticket drafted, not created yet.** It expands the charter's monthly first-Tuesday meeting to 90 minutes with a standing agenda: the catalog review, new data, new vendors, risks and exceptions, the security summary, and policy reviews. Still open: the first meeting date (12-01 or 01-05), and whether to move the charter (still a DRAFT in the repository) to Confluence under STD-01.
 
 ---
 

@@ -187,3 +187,11 @@ def test_latest_looks_past_records_without_a_value():
     assert sr.latest(records, sr.reviewed_through) == date(2026, 11, 23)
     assert sr.latest(records, sr.acc_counts_from_record) == {"acc_01": 4}
     assert sr.latest(["nothing here"], sr.reviewed_through) is None
+
+
+def test_service_account_iam_changes_any_casing():
+    # The IAM service logs SetIAMPolicy (capital IAM); missed on 2026-11-25 (GOV-169).
+    e = entry("google.iam.admin.v1.SetIAMPolicy", OWNER, "iam.googleapis.com",
+              "projects/empire-city-taxi/serviceAccounts/104223270256367818744")
+    alerts = sr.check_admin([e], IDS)
+    assert kinds(alerts) == ["IAM_CHANGED"] and alerts[0]["identity"] == "maintainer"
