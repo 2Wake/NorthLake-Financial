@@ -23,10 +23,44 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built: J1 and J2 verified. The email test found 2 defects (permission, email); the fix is PR watchdog-metadata-fix. Next, the owner updates the SQL in both schedules, sets up the J3 log alert, and re-runs the J4 test. Then decide whether to move the daily run earlier.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is **live and tested** (GOV-170 Done, 2026-11-27): 16:05 and 17:05 UTC checks plus the Cloud Monitoring email alert. Next: decide whether to move the daily run earlier.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — Google-side watchdog live and tested end to end (GOV-170 Done); catalog baseline confirmed
+
+### Done
+- **PR #19 merged** (owner).
+- **SQL updated** in both schedules and the test query (owner). Checked read-only: each matches the repo file exactly, and the account and settings are unchanged.
+- **Log alert "ECT Watchdog Failed" created** (owner, setup J3). Google showed "Error 500" on save, but the alert was created: Monitoring's audit log shows a failed create at 10:30:11 and a successful one at 10:30:33, and only one alert exists.
+  - Settings, checked read-only: filter `resource.type="bigquery_dts_config" severity>=ERROR`; 5-minute notification limit; 1-day autoclose; email channel "Maintainer Email".
+- **J4 test:**
+  - **First run, 10:32 UTC:** failed with SEV4 as intended, but no alert. It ran 2 minutes after the alert was created, before the alert was active.
+  - **Second run, 10:50:34 UTC:** failed with SEV4. **The alert opened at 10:51:07** and the owner received the email.
+  - The TEST query was then deleted (owner). Only the 16:05 and 17:05 queries remain.
+- **Jira:**
+  - GOV-170: closing comment, moved to **Done**.
+  - Treatment evidence added to GOV-123 (finding F11) and GOV-150 (R-003). Both stay open for the audit and the exception review.
+- **Catalog baseline (GOV-166):**
+  - The owner found `stg_fleet_drivers` in Knowledge Catalog, with its description, name and type.
+  - Checked read-only: it has all 10 labels and 0 of 17 column descriptions.
+  - GOV-166 stays In Progress until Knowledge Catalog is added to DOC-02 (after the 12-01 council).
+- **12-01 council:** the owner chose a *[Simulated]* meeting:
+  - mostly positive, with 1 or 2 people apprehensive;
+  - a data-owner conflict played up;
+  - one dispute decided by vote.
+
+  The details were kept from the owner at their request. It will be recorded on 12-01, not before, since simulations are dated the day they're recorded.
+
+### Lesson
+- **Test permissions as the account that will use them.** My read-only tests ran as the maintainer, who has full access, so the `ect-watchdog` permission gap only showed up when the query ran as that account.
+
+### Open / next
+- **Today:** the real checks run at 16:05 and 17:05 UTC. If the daily run is late again, 17:05 (12:05 New York) fails and alerts. That's correct, and it gets a Jira record (POL-09 s18).
+- **Later:** decide whether to move the daily run earlier (GOV-123).
 
 ---
 
