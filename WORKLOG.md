@@ -21,12 +21,34 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
-- [ ] **Knowledge Catalog (STD-02, DRAFT v0.2):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
+- [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
 - [ ] **Monitoring gaps (R-003, to 2027-01-31):** GitHub's scheduler started runs 7 to 10 hours late (GOV-123). The Google-side watchdog is built (setup part J); J1 (16:05 UTC) is set up and verified; next, J2 (17:05) and the J3 email test. Then decide whether to move the daily run earlier.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-27 — STD-02 v0.3: dataset-level metadata added (owner request)
+
+### Done
+- **Owner request:** STD-02 section 6 ("Metadata ECT keeps") only covered the table, column and glossary levels. It now covers datasets too.
+- **STD-02 DRAFT v0.3** (Confluence 786433, page version 4):
+  - **Section 6:** new "Dataset level" part. It lists the description, the five dataset labels (`layer`, `classification`, `data_custodian`, `environment`, `managed_by`), location, retention settings and access (shown only, decided under POL-02), and who changes each. **BigQuery stays the source of truth** for these; Option B covers only column classifications and glossary terms.
+  - **Section 7a:** the monthly review pack now lists new datasets and changes to a dataset's description, labels or retention settings.
+  - **Section 8.2:** new checks for datasets missing a description or a required label.
+  - **D2:** dataset-level details added for the council.
+  - A change-history row was added.
+- **Policy Register v18:** STD-02 is at 0.3, with a change-log line. `policy_register.csv` matches.
+- **Agenda (1015810, v3):** item 4.2 has a "Dataset level" row, and the post-meeting revision is now called v0.4.
+- **Checked read-only (`bq show`):** all three datasets have a description and all five labels. Location is US, no default expiry is set, and time travel is 168 hours.
+
+### Findings (left as found)
+- **Out-of-date description:** the `marts` description still says the dataset is for "governance review (Collate)", but Collate was dropped on 2026-11-25. It's in the review pack for the council.
+- **Proposals in v0.3 for the council to confirm:**
+  - a change to the dataset `classification` label needs the CDO's and the CISO's approval;
+  - a change to retention settings needs the General Counsel's agreement (POL-13).
 
 ---
 
