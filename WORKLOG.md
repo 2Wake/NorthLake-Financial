@@ -24,9 +24,52 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
 - [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run moved to 05:17 UTC (GOV-123); check over the next few days that it finishes before 12:00 New York.
-- [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28).
+- [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28). **12-09:** policy and DOC-04 acknowledgments (blog 950312; GOV-107, GOV-108).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-28 — DOC-04 Electronic Monitoring Notice approved and issued (GOV-108); daily run missed 11-27
+
+Owner decisions on the review questions (2026-11-27): drivers get the notice (Q1); joint CISO and VP People approval to look at one person's activity (Q2); no company phones, drivers use only the app (Q3); one combined acknowledgment with the 12-09 drive (Q4). Owner: "Go ahead with all."
+
+### Done
+- **[DOC-04 Electronic Monitoring Notice](https://empire-city-taxi.atlassian.net/wiki/spaces/ECTG/pages/1015833)** (Confluence 1015833):
+  - drafted 11-27 (v0.1);
+  - reviewed by Michael Tran (comment 1015874) and Victor Hale (1114137);
+  - **approved at v1.0 by Robert Feld, General Counsel** (950309) *[Simulated]*, dated 2026-11-28, next review 2027-11-28.
+- **What the notice says:**
+  - It uses the wording of NY Civil Rights Law §52-c(2)(b) unchanged.
+  - It lists what ECT monitors, in two parts: everyone with an account, and drivers in the ECT Driver app.
+  - It says what ECT doesn't do.
+  - It sets out who receives it: new hires, a one-time catch-up for current staff, contractors and every driver.
+  - Posting is online and on paper. Notice changes come before new monitoring.
+  - Looking at one person's activity needs the joint approval of the CISO and the VP People.
+  - Penalties: up to $500, then $1,000, then $3,000 per offense.
+- **Policy Register** (Confluence 65685 v19): DOC-04 row and change log. DOC-03 stays reserved for the Vendor Inventory (GOV-154).
+- **Announcement** [blog 950312](https://empire-city-taxi.atlassian.net/wiki/spaces/ECTG/blog/2026/11/28/950312), an email from Simone Laurent:
+  - staff leave one comment by 2026-12-09, covering DOC-04 and the 11-25 policies;
+  - drivers acknowledge in the app.
+- **ECTG home page** (v6): a notice panel links to DOC-04, which is the online posting §52-c requires.
+- **This PR:**
+  - DOC-04 row in the `policy_register` seed.
+  - A `policy_ack_deadlines` row (blog 950312).
+  - `fct_policy_acknowledgments` now includes DOC-04 as well as the policies.
+  - **DOC-04's due date is 2026-12-14** under the 10-business-day rule. An announced deadline can only move a due date later, so the post's 12-09 is a request, not the formal due date.
+
+### Found
+- **No daily run on 2026-11-27**, and as of 11:24 UTC on 11-28, no 05:17 UTC run either. GitHub never started the schedule.
+  - The Google-side watchdog caught it: SEV4 at 17:06 UTC on 11-27, "the daily run has not completed by 12:00 New York".
+  - The last run was 2026-11-26 (data loaded; it failed on purpose at the security-review step, GOV-169).
+  - This is a missed POL-09 statement 18 deadline and needs a Jira record (GOV-123 evidence).
+- **`policy_ack_deadlines` isn't in BigQuery yet:** it was added in PR #15, after the last run. It loads at the next run.
+
+### Open / next
+- Owner: start the daily run by hand (GitHub → Actions → Daily data refresh → Run workflow). `ect-daily` catches up the missing days.
+- People team: put up the printed copies and photograph them (simulated evidence).
+- **GOV-108** closes after this PR merges. **GOV-143** (F31) stays open for audit validation.
+- **POL-05 next revision:** add the one-person monitoring rule (DOC-04 section 5.4).
 
 ---
 
@@ -47,8 +90,8 @@ Owner decisions today ("I agree with everything else"):
 - **GOV-148** (card expiry and cardholder name stored) stays held. It's planted scenario S03 and goes to the January council (CFO decides).
 - **BigQuery policy tags** wait for GOV-148: the only Secret columns are those two.
 
-### Proposed, waiting for the owner's approval
-- **New epic "Risk Register (POL-06)"** for R-002 to R-006 (GOV-149 to 153). An Epic, not a Story: the risks are Tasks, and only an Epic can be a Task's parent.
+### Risk register in Jira
+- **Story GOV-172 "Risk Register (POL-06)"** holds R-002 to R-006 (GOV-149 to 153) as subtasks. The owner chose a Story over the proposed Epic and converted the five Tasks to subtasks in the Jira UI (2026-11-27). New risks are created there.
 
 ### Open / next
 - **Watch the first runs at the new time** (from 2026-11-28). Then the Google watchdog should stop alerting on late runs. Add the start times to GOV-123.

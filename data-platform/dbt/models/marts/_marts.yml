@@ -217,7 +217,7 @@ models:
   - name: fct_policy_acknowledgments
     description: >
       SIMULATED acknowledgments. One row per active employee (drivers included) per approved policy
-      version: when it was assigned, when it is due (10 business days after the later of approval
+      version, plus DOC-04 Electronic Monitoring Notice: when it was assigned, when it is due (10 business days after the later of approval
       and hire; POL-01 statement 6, STD-01 section 11), whether and when it was acknowledged, and
       the evidence. Derived daily from the Policy Register and HR, so new hires and leavers flow in
       automatically. Acknowledgments received come from the policy_acknowledgments seed.
@@ -232,7 +232,7 @@ models:
       - name: department
         description: Employee's department, for reporting by team.
       - name: doc_id
-        description: Policy ID from the Policy Register.
+        description: Document ID from the Policy Register (POL-01 to POL-15, and DOC-04).
         data_tests: [not_null]
       - name: doc_version
         description: Approved version that must be acknowledged.

@@ -12,11 +12,15 @@
 -- the register's approval_date, which is the current version's date; if a minor revision is
 -- approved on a later date, due dates move with it.
 -- The yearly re-acknowledgment cycle is not modelled yet (first one falls due Nov 2027).
+-- DOC-04 (monitoring notice) is included too. Staff acknowledge it by commenting on blog 950312;
+-- drivers acknowledge it in the ECT Driver app (simulated).
 -- Acknowledgments received come from the policy_acknowledgments seed (the only record of them).
 with policies as (
     select doc_id, version as doc_version, split(version, '.')[offset(0)] as major_version, approval_date
     from {{ ref('policy_register') }}
-    where doc_type = 'policy' and status = 'approved'
+    -- Policies, plus the one supporting document everyone must acknowledge: DOC-04 Electronic
+    -- Monitoring Notice (POL-05 5.9, NY Civil Rights Law 52-c; added 2026-11-28, GOV-108).
+    where (doc_type = 'policy' or doc_id = 'DOC-04') and status = 'approved'
 ),
 staff as (
     select employee_id, department, hired_at
