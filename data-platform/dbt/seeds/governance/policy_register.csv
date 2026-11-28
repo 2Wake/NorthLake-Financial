@@ -25,8 +25,8 @@ POL-12,Vendor & Third-Party Risk Management Policy,policy,ciso,ciso,approved,1.0
 POL-13,Data Retention & Disposal Policy,policy,general-counsel,general-counsel,approved,1.0,2026-11-25,2027-11-25,GOV-16,491690
 POL-14,Human Resources Security Policy,policy,vp-people,vp-people,approved,1.0,2026-11-25,2027-11-25,GOV-17,426362
 POL-15,Business Continuity & Disaster Recovery Policy,policy,vp-operations,vp-operations,approved,1.0,2026-11-25,2027-11-25,GOV-18,557298
-PRC-01,How to run a PCI DSS scoping exercise,procedure,ciso,ciso,draft,0.9,,,,426044
-PRC-02,How to Report a Security Incident,procedure,ciso,ciso,draft,0.9,,,GOV-75,426241
+PRC-01,How to run a PCI DSS scoping exercise,procedure,ciso,ciso,approved,1.0,2026-11-28,2027-11-28,,426044
+PRC-02,How to Report a Security Incident,procedure,ciso,ceo,approved,1.0,2026-11-28,2027-11-28,GOV-75,426241
 PRC-03,Manual Dispatch Procedure,procedure,vp-operations,vp-operations,approved,1.0,2026-11-28,2027-11-28,GOV-164,1015967
 PRC-04,How to onboard and offboard a driver,procedure,vp-driver-operations,vp-people;vp-driver-operations,approved,1.0,2026-11-28,2027-11-28,GOV-103,1114182
 PRC-05,Legal Holds and Deletion Requests,procedure,general-counsel,general-counsel,approved,1.0,2026-11-28,2027-11-28,GOV-164,1114198
