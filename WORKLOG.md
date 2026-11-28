@@ -24,10 +24,16 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
 - [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run starts at 05:17 UTC with backup starts at 08:17 and 11:17 UTC, which skip if today is already refreshed (2026-11-28). GitHub dropped the 11-27 run entirely. If it keeps missing days, consider starting the run from Google's side.
-- [ ] **PRC-01 and PRC-02 unapproved** (in use since 11-24; listed DRAFT v0.9 in the register): CISO approval.
 - [ ] **Deadlines:** O7 log lock (GOV-94; lock between 12-26 and 12-31) and the first Atlassian export (GOV-158), both by 2026-12-31. Training campaign due 2027-02-24 (R-005 expires 01-31: renew or close). Vendor due diligence (R-004) and R-008 page change control by 02-28. Done 11-28: DOC-03, rebuild test, training courses. **12-09:** policy and DOC-04 acknowledgments (blog 950312; GOV-107, GOV-108).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-28 — PRC-01 and PRC-02 approved; config check confirmed
+
+- **PR #27 merged** (`622092b`). Owner re-ran the monthly check ([run 46177547252](https://github.com/2Wake/empire-city-taxi-grc/actions/runs/46177547252)): 9 ok, the 2 expected findings (CFG-07, CFG-08), CFG-09 not checked. **CFG-04 is now ok**, so the read-only token scope was the cause. The run shows red because it found something, which is by design. GOV-159 closed.
+- **Owner approved the procedures** (simulated approvals, 2026-11-28): PRC-01 v1.0 by Victor Hale, CISO; PRC-02 v1.0 by **Marcus Delgado, CEO**, because the CISO owns and wrote it (STD-01 section 8: nobody approves their own document). No content change. Evidence in the 3 places: document control, "Approved version 1.0" comments (1016144, 1114342), Policy Register v22. Seed updated (PRC-02 approver `ceo`). Announcement blog 1114344. The pre-approval use from 11-24 stays recorded in the register change log.
 
 ---
 
