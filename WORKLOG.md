@@ -30,6 +30,21 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-28 — GOV-77 done: `main` requires a pull request, no bypass
+
+- **PR #29 merged** (`3d00fd2`). The owner created the rulesets in the UI:
+  - `protect-main` (ID 28303966): PR required with 0 approvals, no deletion, no force-push, empty bypass list.
+  - `protect-records` (ID 28304000): no deletion, no force-push.
+  - Checked read-only through the API.
+- **Test:** the monthly configuration check ([run 46178972174](https://github.com/2Wake/empire-city-taxi-grc/actions/runs/46178972174)) gave 10 ok. **CFG-07 is ok.** It created `records` (8 run records + 1 check result) and pushed nothing to `main`. The only finding left is CFG-08 (F14). GOV-77 closed, with the change record in the closing comment.
+- **This PR is the first change to `main` under the new rule.**
+
+### Next
+- Tonight's daily run is the first to save to `records`. Check that it saved its record there, and that the watchdog passes at 12:05 New York time.
+- GOV-158 export (by 12-31), GOV-94 lock (12-26 to 12-31), the 12-01 council.
+
+---
+
 ## 2026-11-28 — Evidence moves to a `records` branch so `main` can be fully protected (GOV-77)
 
 - **PR #28 merged** (`1d16841`).
