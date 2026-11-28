@@ -2,8 +2,8 @@
 
 One-time setup, all done in web consoles. When it's finished, the workflow in
 [`.github/workflows/daily-refresh.yml`](../../.github/workflows/daily-refresh.yml) runs every
-morning: it generates and loads yesterday's data, rebuilds dbt, and commits a run record to
-`data-platform/run-records/`.
+morning: it generates and loads yesterday's data, rebuilds dbt, and saves a run record to
+`data-platform/run-records/` on the **`records` branch** (not `main`; see part M).
 
 **How the sign-in works (no keys):** GitHub gives each workflow run a short-lived identity token
 saying "I am a run of repository 2Wake/empire-city-taxi-grc". Google trusts that token (through a
@@ -89,7 +89,8 @@ GitHub repo → **Settings → Secrets and variables → Actions → Variables**
 
 GitHub repo → **Actions** → **Daily data refresh** → **Run workflow** → **Run workflow**.
 
-A green check means it worked: a new file appears in `data-platform/run-records/`. If a step is
+A green check means it worked: a new file appears in `data-platform/run-records/` on the `records` branch
+(Code tab → branch menu, top left → `records`). If a step is
 red, open it and share the error.
 
 ---
@@ -284,8 +285,8 @@ the comment should appear at the bottom of the blog post. A second run on the sa
 
 `.github/workflows/config-check.yml` runs `ect-config-check` on the 1st of each month as the log reader
 account `ect-monitor`. It compares IAM roles, service account keys, the Data Access audit settings,
-dataset labels and expiry, log retention, the `main` ruleset, action pinning and Dependabot alerts with the policies. Then it commits
-`data-platform/config-checks/<date>.md`. It only reads. Findings are recorded, never fixed by it.
+dataset labels and expiry, log retention, the `main` ruleset, action pinning and Dependabot alerts with the policies. Then it saves
+`data-platform/config-checks/<date>.md` to the `records` branch. It only reads. Findings are recorded, never fixed by it.
 
 ### L1. Give `ect-monitor` read access (three roles)
 
@@ -307,11 +308,45 @@ Record the change in Jira GOV-159 (POL-07 5.9).
 ### L2. Test it
 
 GitHub → **Actions → Monthly configuration check → Run workflow**. The new file in
-`data-platform/config-checks/` should show the checks as `ok` or `finding`. One check is always
+`data-platform/config-checks/` (on the `records` branch) should show the checks as `ok` or `finding`. One check is always
 `not_checked` in GitHub Actions: CFG-09 (Dependabot alerts on), because the workflow's token can't read that
 setting. It is checked when the maintainer runs `uv run ect-config-check` locally. Until GOV-77 (ruleset) is set
 up and the actions are pinned to commits (finding F14, GOV-126), the run ends red with 2 findings. That's
 expected, and it's the evidence.
 
-**Allowed direct pushes to `main`:** the daily run record and this monthly result. The GOV-77 ruleset must let
-both through (bypass for GitHub Actions).
+## M. Protect `main` and the `records` branch (GOV-77)
+
+After this, `main` only changes through a pull request, with no exceptions. GitHub can't let GitHub Actions bypass
+a ruleset on a personal repository, so the workflows save their evidence (run records, configuration-check results)
+to a separate branch, `records`, through `.github/scripts/save-records.sh`. The first save creates the branch,
+starting with the records already on `main` (records up to 2026-11-28 also stay on `main`). Workflows that read
+earlier records copy them from `records` first (`get-records.sh`). A second ruleset stops `records` being deleted or
+rewritten, but still lets the workflows add files to it.
+
+### M1. Ruleset for `main`
+
+GitHub repo → **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**.
+
+1. **Ruleset name:** `protect-main`. **Enforcement status:** **Active**.
+2. **Bypass list:** leave it empty.
+3. **Target branches:** **Add target** → **Include default branch**.
+4. **Rules:** tick **Restrict deletions**, **Block force pushes** and **Require a pull request before merging**.
+   Under the pull request rule, set **Required approvals** to **0** (GitHub doesn't let you approve your own pull
+   request; review is a PR comment under POL-07's small-team allowance). Leave every other rule unticked.
+5. Click **Create**.
+
+### M2. Ruleset for `records`
+
+**New ruleset** → **New branch ruleset** again.
+
+1. **Ruleset name:** `protect-records`. **Enforcement status:** **Active**. **Bypass list:** empty.
+2. **Target branches:** **Add target** → **Include by pattern** → type `records` → **Add inclusion pattern**.
+3. **Rules:** tick only **Restrict deletions** and **Block force pushes**.
+   Easy mistake: don't tick **Require a pull request** or **Restrict updates** here, or the workflows can't save records.
+4. Click **Create**.
+
+### M3. Test it
+
+**Actions → Monthly configuration check → Run workflow**. It creates the `records` branch (the first time) and
+saves the result there. CFG-07 should now be `ok`. The run still ends red while CFG-08 (actions not pinned, F14)
+is open. Record the change in Jira GOV-77 (POL-07 5.9).

@@ -30,6 +30,26 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-28 — Evidence moves to a `records` branch so `main` can be fully protected (GOV-77)
+
+- **PR #28 merged** (`1d16841`).
+- **Problem (owner, setting up GOV-77):** GitHub Actions isn't offered in the ruleset bypass list on a personal repository. The daily run and the monthly check pushed records straight to `main`, so an active pull-request rule would have broken them (the next daily run couldn't save its record). No ruleset had been saved yet (checked read-only).
+- **Decision (owner, 2026-11-28): evidence goes on its own branch, `records`.** Options turned down:
+  - a deploy key on the bypass list: a stored key that can push anything to `main` without a PR, likely an audit finding against POL-07;
+  - a PR for every record: about 30 PRs a month to merge.
+- **Changes:**
+  - `.github/scripts/save-records.sh` saves new run records and check results to `records`. The first run creates the branch, starting with the records on `main`, and the script retries if another workflow saved first.
+  - `get-records.sh` copies the records into each run first, so the security review trends and the watchdog still see every record.
+  - The daily, monthly and watchdog workflows use them. Docs, CLAUDE.md and setup part M (two rulesets: `protect-main`, with a PR required and no bypass; `protect-records`, which only blocks deletion and force-pushes).
+  - Tested against a local fake remote: the branch is created, records are copied back, and later saves append.
+- **Records up to 2026-11-28 stay on `main`** (no history rewritten).
+- **Risk:** if this PR isn't merged before the ruleset is active, the next daily run can't save its record (the run fails; data still loads). So: merge first, then the rulesets.
+
+### Next
+- Owner: merge, then setup part M (both rulesets), then run the Monthly configuration check. CFG-07 should be ok and the `records` branch should appear.
+
+---
+
 ## 2026-11-28 — PRC-01 and PRC-02 approved; config check confirmed
 
 - **PR #27 merged** (`622092b`). Owner re-ran the monthly check ([run 46177547252](https://github.com/2Wake/empire-city-taxi-grc/actions/runs/46177547252)): 9 ok, the 2 expected findings (CFG-07, CFG-08), CFG-09 not checked. **CFG-04 is now ok**, so the read-only token scope was the cause. The run shows red because it found something, which is by design. GOV-159 closed.

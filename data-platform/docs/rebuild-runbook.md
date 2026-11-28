@@ -36,7 +36,7 @@ FROM `empire-city-taxi.raw.hris_employees`   -- repeat for any table if unsure
 GROUP BY 1 ORDER BY 2;
 ```
 
-If `raw` is gone, use the run records (`data-platform/run-records/`, rows per day) and the tag dates in git.
+If `raw` is gone, use the run records (`data-platform/run-records/` on the `records` branch, rows per day) and the tag dates in git.
 
 ### 2. Recreate the reference tables (only if lost)
 

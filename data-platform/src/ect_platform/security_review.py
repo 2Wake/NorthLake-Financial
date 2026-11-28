@@ -485,7 +485,7 @@ def check_result(path=RESULT_PATH, records_dir=RECORDS_DIR) -> int:
         print("Security review didn't run: " + " ".join(r["notes"]))
         return 1
     newest = sorted(records_dir.glob("*.md"))[-1:] if records_dir.exists() else []
-    record = f"data-platform/run-records/{newest[0].name}" if newest else None
+    record = f"data-platform/run-records/{newest[0].name} (records branch)" if newest else None
     print("\n".join(check_lines(r, record)))
     if r["alerts"]:
         if os.environ.get("GITHUB_STEP_SUMMARY"):

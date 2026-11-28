@@ -18,7 +18,7 @@ on:
   workflow_dispatch:         # "Run workflow" button on the Actions tab: always runs in full
 
 permissions:
-  contents: write   # commit the run record
+  contents: write   # save the run record to the records branch
   id-token: write   # keyless sign-in to Google Cloud
   actions: read     # the check job reads earlier runs of this workflow
 
@@ -82,6 +82,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get earlier run records (records branch)
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/get-records.sh"
+
       - name: Sign in to Google Cloud (keyless)
         uses: google-github-actions/auth@v2
         with:
@@ -142,16 +145,10 @@ jobs:
         if: always()
         run: uv run ect-record
 
-      - name: Commit run record
+      - name: Save run record (records branch)
+        # Not main: main only changes through pull requests (GOV-77).
         if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add run-records
-          git commit -m "Run record $(date -u +%F)" || { echo "Nothing to commit"; exit 0; }
-          # main may have moved since checkout (e.g. a re-run, or an earlier record): rebase, then push
-          git pull --rebase origin main
-          git push origin HEAD:main
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/save-records.sh" "Run record $(date -u +%F)"
 
       - name: Fail the run if the security review raised alerts
         # After the record is committed, so the evidence is kept. A failed run emails the maintainer.
