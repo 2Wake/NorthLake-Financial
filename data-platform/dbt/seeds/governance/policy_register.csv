@@ -10,6 +10,7 @@ DOC-06,Obligations Register,supporting_document,general-counsel,general-counsel;
 DOC-07,Business Impact Analysis,supporting_document,vp-operations,vp-operations,approved,1.0,2026-11-28,2027-11-28,GOV-164,950369
 DOC-08,BC/DR Plan,supporting_document,vp-operations,vp-operations,approved,1.0,2026-11-28,2027-11-28,GOV-164,1015944
 DOC-09,Targeted Risk Analyses,supporting_document,ciso,ciso,approved,1.0,2026-11-28,2027-11-28,GOV-117,1114232
+DOC-10,Incident Response Plan,supporting_document,ciso,ciso,approved,1.0,2026-11-28,2027-11-28,GOV-176,950508
 POL-01,Information Security Policy,policy,ciso,ceo,approved,1.2,2026-11-24,2027-11-24,GOV-4,491531
 POL-02,Access Control Policy,policy,ciso,ciso,approved,2.0,2026-11-25,2027-11-25,GOV-5,557061
 POL-03,Data Classification & Handling Policy,policy,cdo,cdo,approved,2.0,2026-11-25,2027-11-25,GOV-6,426094
