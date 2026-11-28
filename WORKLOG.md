@@ -30,6 +30,22 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-28 — Security alerts now say when, who, what changed and how to triage
+
+### Done
+- **Owner feedback:** the failed step's message ("ALERT SEV3 ... maintainer, SetIamPolicy on project (x1)") had no date, didn't say what changed, and didn't say what to do. A non-engineer couldn't triage from it.
+- **`ect-security-review --check` now prints, for each alert:**
+  - **What:** the alert;
+  - **When:** UTC and New York time;
+  - **Who:** the identity;
+  - **Change:** for IAM changes, the roles added or removed and for whom, taken from the audit log's policy delta (for example "added bigquery.jobUser, bigquery.metadataViewer to ect-watchdog").
+  - It then gives the three triage steps (POL-09 statement 15; incidents under POL-08) and the run record file.
+- **The same table goes on the run's summary page in GitHub** (`GITHUB_STEP_SUMMARY`), so it's visible without opening the step log.
+- **Public-safe names:** Google service agents show as `google-service-agent (<service>)`, never with the project number. People still show only as a role or a hash.
+- **Tested** on the real 11-27 logs (local, read-only): both alerts now show their time and change. pytest: 32 passed (2 new).
+
+---
+
 ## 2026-11-28 — Backup start times for the daily run; GOV-169 closed; council item 4.5 (acknowledgment consequences)
 
 ### Done
