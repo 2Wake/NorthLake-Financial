@@ -21,12 +21,51 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [ ] **DQ rule ownership:** add `proposed_by` (steward), `approved_by` (owner) and `approval_status` to `dq_rules.csv`. The 23 current rules are hub-drafted proposals awaiting steward and owner sign-off.
 - [ ] **Council roles and responsibilities (federated model):** flesh out each council member's duties, decision rights and time commitment; hub vs. domain (spoke) responsibilities; steward duties including DQ rule authoring.
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
+- [ ] **ECT Data & Governance Portal (GOV-179, private):** POL-03 slice built (`uv run ect-portal`). Next: Home scorecard, lineage, DQ, ownership, compliance pages; phase 2 history and Jira.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
 - [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run starts at 05:17 UTC with backup starts at 08:17 and 11:17 UTC, which skip if today is already refreshed (2026-11-28). GitHub dropped the 11-27 run entirely. If it keeps missing days, consider starting the run from Google's side.
 - [ ] **Deadlines:** O7 log lock (GOV-94; lock between 12-26 and 12-31) and the first Atlassian export (GOV-158), both by 2026-12-31. Training campaign due 2027-02-24 (R-005 expires 01-31: renew or close). Vendor due diligence (R-004) and R-008 page change control by 02-28. Done 11-28: DOC-03, rebuild test, training courses. **12-09:** policy and DOC-04 acknowledgments (blog 950312; GOV-107, GOV-108).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-28 — Portal first slice (POL-03); DOC-10 approved; CSFaaS rejected; ticket audit
+
+- **Ticket audit (owner request):** every open GOV ticket checked and brought up to date.
+  - Six In Review tickets (GOV-79, 110, 111, 112, 156, 161) wait for the 11-29 daily run, the first to build the new marts. They close after it.
+  - F2, F3 and F18 stay as they are: their planted "Implemented" and "Collected" claims are audit material.
+- **DOC-10 Incident Response Plan approved at v1.0** (Victor Hale, CISO *[Simulated]*; Confluence 950508, comment 1114384; Policy Register v24; blog 1114395).
+  - **D1 (owner agreed):** the CEO names Derek Sullivan, VP Marketing, as communications lead, with Hannah Cho, VP Rider Experience, as deputy.
+  - GOV-176 stays open for IR role training (by 2026-12-28, POL-08 5.6.2).
+  - The seed row is added in this PR.
+  - F2 (GOV-84) and F6 (GOV-88) stay open until audit validation.
+- **CSFaaS rejected** (GOV-177 Done; assessment 1016160).
+  - **Owner's reason:** no SOC 2 or ISO 27001 audit, several gaps in the assessment, not mature enough.
+  - GOV-178 covers due diligence for the 13 vendors already in use.
+- **Decision (owner): build a home-grown "ECT Data & Governance Portal"** modelled on Collate / OpenMetadata, as one place to see data management and compliance. Scope on Confluence 1114419; Jira story GOV-179.
+  - **P1 Private:** built on the laptop into `output/portal/`, which is git-ignored, and never committed or published, because the repository and Pages site are public. The public showcase phase is dropped.
+  - **P2:** Knowledge Catalog stays the store for terms and classifications (STD-02 unchanged). The portal only reads. Its **Request an edit** link opens a prefilled GOV Task (label `catalog-edit-request`, with the four ticket sections), for the steward to propose and the owner to approve.
+  - **P3:** Jira data, in phase 2, is read with a read-only token.
+  - **P4:** the name "ECT Data & Governance Portal".
+- **First slice, POL-03 (this PR):** `uv run ect-portal`, in the new `src/ect_platform/portal.py`.
+  - **Reads:** the register CSV, the dbt manifest, BigQuery `INFORMATION_SCHEMA` and `__TABLES__` metadata, `fct_classification_findings`, and the scorecard's Secret/Confidential accuracy. Every query is capped by `MAX_BYTES_BILLED`, and nothing row-level is read.
+  - **Pages:**
+    - POL-03 compliance: all 16 statements, each with its check and result.
+    - Explore: 64 tables and 708 columns, with search and filters.
+    - Findings: by rule.
+  - **First live build:** 277 open CLS findings.
+    - 11 statements need action and 4 are checked by people. Statements 9 (review age) and 15 (checks ran today) pass.
+    - Statement 14: 5 columns recorded as Secret. Statement 16: 76.7% accuracy (46 of 60).
+    - These are existing findings, shown and not fixed.
+  - **Tests:** 6 new, 46 pass in total.
+- **Known limits:** statement 4's 5 and 10 business-day clocks can't be measured yet, because findings have no first-found date (a phase 2 history table would add one). Descriptions come from the local `dbt/target/manifest.json`, so they are as fresh as the last local `dbt` run.
+
+### Next
+- **Owner:** run `uv run ect-portal` from `data-platform` and review the page. Then the next slices: Home scorecard, lineage, data quality, ownership, and the other compliance pages.
+- GOV-179 subtasks are drafted for approval.
+- 11-29: check the first `records`-branch daily save, then close the six In Review tickets.
 
 ---
 

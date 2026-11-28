@@ -58,6 +58,7 @@ Run from this folder (`data-platform/`).
 | **Security review** (POL-09): check yesterday's audit logs for the Appendix A alerts | `uv run ect-security-review` (`--day 2026-11-24` for one day; `--check` exits 1 on alerts) |
 | **Watchdog** (POL-09): alert if today's run record is missing after 12:00 New York | `uv run ect-watchdog` |
 | **Configuration check** (POL-10 st. 4; monthly in Actions): read-only check of cloud and repository settings, writes `config-checks/<date>.md` (saved on the `records` branch) | `uv run ect-config-check` (`--check` exits 1 on findings) |
+| **Data & Governance Portal** (GOV-179; private, read-only): one page for the catalog and compliance. First slice: POL-03, each statement with its CLS check and result, plus an explorer of every table and column. "Request an edit" opens a prefilled Jira task. Output in `output/portal/` (git-ignored: never commit or publish it) | `uv run ect-portal` (`--no-open` to build only) |
 | **Build-tools manifest** (POL-10): regenerate `build-tools-manifest.md` after changing actions, dbt pins or `uv.lock` | `uv run ect-manifest` (`--check` to verify) |
 | Generate yesterday | `uv run ect-generate` |
 | Generate one day / a range / everything | `uv run ect-generate --date 2026-11-23` · `--start … --end …` · `--backfill` |
