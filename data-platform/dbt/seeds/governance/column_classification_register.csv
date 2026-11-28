@@ -514,3 +514,22 @@ staging,taxi_zone_supplement,zone_id,Public,Reference,seed,data-governance-manag
 staging,taxi_zone_supplement,zone_name,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
 staging,taxi_zone_supplement,borough,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
 staging,taxi_zone_supplement,reason,Public,Reference,seed,data-governance-manager,ops-data-steward,approved,ops-data-steward,data-governance-manager,2026-11-20,Public TLC zone lookup values
+raw,hris_policy_acknowledgments,ack_id,Internal,Identifier,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Surrogate key
+raw,hris_policy_acknowledgments,employee_id,Internal,Identifier (FK),source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Links to employees
+raw,hris_policy_acknowledgments,doc_id,Internal,Reference,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Policy Register document
+raw,hris_policy_acknowledgments,doc_version,Internal,Reference,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Document version acknowledged
+raw,hris_policy_acknowledgments,acknowledged_at,Internal,Operational,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,When the person acknowledged
+raw,hris_policy_acknowledgments,channel,Internal,Operational,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Confluence comment or driver app
+raw,hris_policy_acknowledgments,evidence,Internal,Operational,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Where the acknowledgment is recorded; no personal data
+raw,hris_policy_acknowledgments,_batch_date,Internal,Pipeline metadata,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Load metadata
+raw,hris_policy_acknowledgments,_generator_version,Internal,Pipeline metadata,source,vp-people,hr-data-steward,proposed,hr-data-steward,,,Load metadata
+staging,stg_hris_policy_acknowledgments,ack_id,Internal,Identifier,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Surrogate key
+staging,stg_hris_policy_acknowledgments,employee_id,Internal,Identifier (FK),inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Links to employees
+staging,stg_hris_policy_acknowledgments,doc_id,Internal,Reference,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Policy Register document
+staging,stg_hris_policy_acknowledgments,doc_version,Internal,Reference,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Document version acknowledged
+staging,stg_hris_policy_acknowledgments,acknowledged_at,Internal,Operational,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,When the person acknowledged
+staging,stg_hris_policy_acknowledgments,channel,Internal,Operational,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Confluence comment or driver app
+staging,stg_hris_policy_acknowledgments,evidence,Internal,Operational,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Where the acknowledgment is recorded; no personal data
+staging,stg_hris_policy_acknowledgments,_batch_date,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Load metadata
+staging,stg_hris_policy_acknowledgments,_generator_version,Internal,Pipeline metadata,inherited,vp-people,hr-data-steward,proposed,hr-data-steward,,,Load metadata
+staging,stg_hris_policy_acknowledgments,acknowledged_on,Internal,Operational,derived,vp-people,hr-data-steward,proposed,hr-data-steward,,,New York date of acknowledged_at

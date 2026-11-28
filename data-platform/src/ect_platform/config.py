@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 # Bump when a code change alters generated output, so raw rows can be traced to the code that made them.
-GENERATOR_VERSION = "0.4.0"
+GENERATOR_VERSION = "0.5.0"
 
 # Master seed. Every random choice derives from (SEED, stream name, date), so the
 # same date always produces the same data no matter when or how often it is run.
@@ -104,3 +104,32 @@ DEFECT_RATES = {
 ROSTER_CORRECTIONS = {
     "arjun.mehta": date(2026, 11, 24),   # VP Engineering was missing role_code vp-engineering
 }
+
+
+# Policy acknowledgments (from 0.5.0; POL-01 statement 6, STD-01 section 11). SIMULATED.
+# Staff were asked on 2026-11-28 (blog 950312) to acknowledge all 15 policies and DOC-04 with one
+# comment by 2026-12-09; drivers do it in the ECT Driver app. Each person acknowledges every document
+# at once, on a day drawn from the weights below. Simulated acknowledgments start on ACK_START, the first
+# day not yet loaded when this was built, so history already in `raw` stays as it was.
+# The document list is fixed here (not read from the Policy Register seed) so a later register edit
+# can't change generated history. A new major version would need a new campaign (not modelled yet).
+ACK_START = date(2026, 11, 28)
+ACK_DOCS = [("POL-01", "1.2"), ("POL-02", "2.0"), ("POL-03", "2.0"), ("POL-04", "2.0"), ("POL-05", "1.1"),
+            ("POL-06", "1.0"), ("POL-07", "1.1"), ("POL-08", "1.2"), ("POL-09", "1.0"), ("POL-10", "1.0"),
+            ("POL-11", "1.0"), ("POL-12", "1.0"), ("POL-13", "1.0"), ("POL-14", "1.0"), ("POL-15", "1.0"),
+            ("DOC-04", "1.0")]
+# Weight of acknowledging on day k after the request, for the 2026-12-09 deadline:
+#   staff: BUSINESS day k, counted from the first business day on or after the request (2026-11-28 is a
+#          Saturday, so k = 0 is Monday 11-30 and k = 7 is the deadline). k = 8 to 16 is late: k = 12 is
+#          5 business days overdue, when council item 4.5 option B escalates to the VP People.
+#   drivers: CALENDAR day k (the app asks when they go online, any day): k = 11 is the deadline,
+#          12 to 25 is late.
+# The rest (ACK_NEVER, 2%) never acknowledge, which feeds the last escalation step. Staff hired later
+# count from their hire date (due 10 business days later, so the same weights are on time).
+ACK_WEIGHTS = {
+    "staff":   [22, 14, 10, 7, 6, 7, 10, 12,
+                3, 1.5, 1, 0.8, 0.7, 1, 0.8, 0.6, 0.6],
+    "drivers": [12, 14, 16, 10, 7, 6, 5, 5, 4, 3, 3, 3,
+                2, 1.5, 1, 1, 0.8, 0.7, 0.6, 0.5, 0.5, 0.4, 0.3, 0.3, 0.2, 0.2],
+}
+ACK_NEVER = 2

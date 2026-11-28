@@ -220,7 +220,8 @@ models:
       version, plus DOC-04 Electronic Monitoring Notice: when it was assigned, when it is due (10 business days after the later of approval
       and hire; POL-01 statement 6, STD-01 section 11), whether and when it was acknowledged, and
       the evidence. Derived daily from the Policy Register and HR, so new hires and leavers flow in
-      automatically. Acknowledgments received come from the policy_acknowledgments seed.
+      automatically. Acknowledgments received come from the policy_acknowledgments seed and, from
+      2026-11-28, HR's acknowledgment feed (stg_hris_policy_acknowledgments, simulated); the earliest counts.
     config: {labels: {domain: governance, layer: marts, data_owner: ciso, data_steward: data-governance-manager, classification: internal, source_system: derived, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: indefinite}}
     columns:
       - name: ack_key

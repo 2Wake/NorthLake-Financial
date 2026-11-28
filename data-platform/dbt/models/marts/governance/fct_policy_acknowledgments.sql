@@ -14,7 +14,9 @@
 -- The yearly re-acknowledgment cycle is not modelled yet (first one falls due Nov 2027).
 -- DOC-04 (monitoring notice) is included too. Staff acknowledge it by commenting on blog 950312;
 -- drivers acknowledge it in the ECT Driver app (simulated).
--- Acknowledgments received come from the policy_acknowledgments seed (the only record of them).
+-- Acknowledgments received: the policy_acknowledgments seed (recorded by hand: approvers and reviewers
+-- who acknowledged in their Confluence comments) plus, from 2026-11-28, HR's acknowledgment feed in raw
+-- (stg_hris_policy_acknowledgments; simulated by generator 0.5.0). The earliest one counts.
 with policies as (
     select doc_id, version as doc_version, split(version, '.')[offset(0)] as major_version, approval_date
     from {{ ref('policy_register') }}
@@ -42,7 +44,14 @@ received as (
     select employee_id, doc_id, split(doc_version, '.')[offset(0)] as major_version,
            min(acknowledged_on) as acknowledged_on,
            string_agg(evidence, '; ' order by acknowledged_on) as evidence
-    from {{ ref('policy_acknowledgments') }}
+    from (
+        select employee_id, doc_id, doc_version, acknowledged_on, evidence
+        from {{ ref('policy_acknowledgments') }}
+        union all
+        select employee_id, doc_id, doc_version, acknowledged_on,
+               concat(evidence, ' [Simulated]') as evidence
+        from {{ ref('stg_hris_policy_acknowledgments') }}
+    )
     where acknowledged_on is not null
     group by 1, 2, 3
 ),

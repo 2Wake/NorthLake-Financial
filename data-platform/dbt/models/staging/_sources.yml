@@ -39,6 +39,10 @@ sources:
         description: Observed daily access checks of the role service accounts (written by ect-access-check).
         config:
           freshness: null
+      - name: hris_policy_acknowledgments
+        description: SIMULATED policy acknowledgments collected by HR (generator 0.5.0 onward).
+        config:
+          freshness: null   # only on days someone acknowledges
       - name: gov_planted_defects
         config:
           freshness: null   # only on days with a planted defect

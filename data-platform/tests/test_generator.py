@@ -189,3 +189,21 @@ def test_corporate_staff_have_screening_and_confidentiality_records():
     staff = [e for e in batch["hris_employees"] if e["department"] != "Driver Operations" or e["title"] != "Driver"]
     assert staff and all(e["screening_status"] == "clear" and e["screening_date"] < e["hired_at"]
                          and e["confidentiality_agreed_on"] == e["hired_at"] for e in staff)
+
+
+# ---- policy acknowledgments (0.5.0) ----
+
+def test_acknowledgments_start_on_ack_start_and_cover_every_document():
+    from ect_platform.config import ACK_DOCS, ACK_START
+    days = [ACK_START - timedelta(days=1), ACK_START, ACK_START + timedelta(days=2)]
+    out = _run(days)
+    assert not out[days[0]].get("hris_policy_acknowledgments")   # history before ACK_START unchanged
+    rows = out[days[1]]["hris_policy_acknowledgments"] + out[days[2]]["hris_policy_acknowledgments"]
+    assert rows
+    by_person = {}
+    for r in rows:
+        by_person.setdefault(r["employee_id"], set()).add(r["doc_id"])
+    assert all(docs == {d for d, _ in ACK_DOCS} for docs in by_person.values())   # one action covers all
+    # 2026-11-28 is a Saturday: only drivers (app) acknowledge; staff start Monday
+    assert {r["channel"] for r in out[days[1]]["hris_policy_acknowledgments"]} == {"driver_app"}
+    assert _run([ACK_START])[ACK_START]["hris_policy_acknowledgments"] == out[days[1]]["hris_policy_acknowledgments"]
