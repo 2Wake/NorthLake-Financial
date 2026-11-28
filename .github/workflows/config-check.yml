@@ -1,7 +1,8 @@
 name: Monthly configuration check
 
 # Read-only check of the cloud project and repository settings against the policies (GOV-159).
-# Writes data-platform/config-checks/<date>.md and commits it as evidence. Findings are recorded, not fixed;
+# Writes data-platform/config-checks/<date>.md and saves it as evidence on the records branch (not main:
+# main only changes through pull requests, GOV-77). Findings are recorded, not fixed;
 # the run fails when there is a finding, so GitHub emails the maintainer. Setup: docs/github-actions-setup.md, part L.
 on:
   schedule:
@@ -21,6 +22,8 @@ jobs:
         working-directory: data-platform
     steps:
       - uses: actions/checkout@v4
+      - name: Get earlier results (records branch)
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/get-records.sh"
       - name: Sign in as the log reader (keyless)
         uses: google-github-actions/auth@v2
         with:
@@ -34,13 +37,7 @@ jobs:
         env:
           ECT_MAINTAINER_PRINCIPAL: ${{ secrets.ECT_MAINTAINER_PRINCIPAL }}
         run: uv run ect-config-check
-      - name: Commit the result
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add config-checks/
-          git commit -m "Configuration check $(date -u +%F)" || exit 0
-          git pull --rebase origin main
-          git push
+      - name: Save the result (records branch)
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/save-records.sh" "Configuration check $(date -u +%F)"
       - name: Fail the run if there are findings
         run: uv run ect-config-check --check > /dev/null

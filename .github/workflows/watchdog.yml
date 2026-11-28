@@ -1,5 +1,5 @@
 # Watchdog: alert if the daily run hasn't completed by 12:00 New York time (POL-09 statement 18).
-# Checks for today's run record; a failed watchdog run emails the maintainer. No Google sign-in needed.
+# Checks for today's run record (on the records branch); a failed watchdog run emails the maintainer. No Google sign-in needed.
 # Limit: it runs on the same GitHub scheduler as the daily run, so a scheduler outage silences both
 # (see GOV-123; a Google-side backup alert is to be decided after checking its cost).
 
@@ -20,6 +20,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Get the run records (records branch)
+        run: bash .github/scripts/get-records.sh
       - name: Check today's run record
         env:
           SCHEDULE: ${{ github.event.schedule }}
