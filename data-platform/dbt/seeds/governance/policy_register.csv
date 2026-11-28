@@ -3,6 +3,7 @@ STD-01,Policy Management Standard,standard,ciso,ciso,approved,2.0,2026-11-24,202
 STD-02,Data Catalog & Metadata Standard,standard,cdo,data-governance-council,draft,0.3,,,GOV-166,786433
 DOC-01,PCI DSS Scope & Cardholder Data Flow,supporting_document,ciso,ciso,approved,2.0,2026-11-25,2027-11-25,GOV-2,425996
 DOC-02,Approved Tools List,supporting_document,ciso,ciso,approved,2.0,2026-11-25,2027-11-25,GOV-76,458876
+DOC-04,Electronic Monitoring Notice,supporting_document,vp-people,general-counsel,approved,1.0,2026-11-28,2027-11-28,GOV-108,1015833
 POL-01,Information Security Policy,policy,ciso,ceo,approved,1.2,2026-11-24,2027-11-24,GOV-4,491531
 POL-02,Access Control Policy,policy,ciso,ciso,approved,2.0,2026-11-25,2027-11-25,GOV-5,557061
 POL-03,Data Classification & Handling Policy,policy,cdo,cdo,approved,2.0,2026-11-25,2027-11-25,GOV-6,426094
