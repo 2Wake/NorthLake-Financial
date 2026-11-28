@@ -238,3 +238,44 @@ the new file, **Update** / **Save**. Name, schedule, location and account stay a
 Treat it like the GitHub watchdog (POL-09 statement 18): check **Actions → Daily data refresh**,
 run it by hand if it hasn't run, and record the cause, the gap and the fix in Jira within 1
 business day.
+
+## K. The daily acknowledgment comment (Confluence)
+
+After dbt, the daily run counts how many people have acknowledged the policies and DOC-04 and how
+many are left (`ect-ack-summary`). It posts **one comment a day** on the announcement, Confluence
+blog 950312, and a final count on the first run after each deadline. The counts always go in the run
+record. The comment needs a Confluence API token. Until parts K1 and K2 are done, the run record
+says "Not posted", and nothing fails.
+
+The comments appear under your Atlassian name, signed "Jordan Ellis, Data Governance Manager" and
+marked *[Simulated]*.
+
+### K1. Create an API token
+
+1. Go to **id.atlassian.com/manage-profile/security/api-tokens** (signed in to the Atlassian account
+   that owns the `empire-city-taxi` site).
+2. Click **Create API token** (not "Create API token with scopes").
+3. **Name:** `ect-daily-run-ack-comment`. **Expires on:** pick the longest date offered (1 year).
+   Write the expiry date in Jira GOV-107; an expired token stops the comments, and the run record
+   will then say "Posting failed".
+4. Click **Create**, then **Copy**. You can't see the token again after closing the box.
+
+### K2. Give it to GitHub (two secrets)
+
+GitHub repo → **Settings → Secrets and variables → Actions** → **Secrets** tab (not Variables) →
+**New repository secret**, twice:
+
+| Name | Value |
+|---|---|
+| `CONFLUENCE_USER` | the email you sign in to Atlassian with |
+| `CONFLUENCE_API_TOKEN` | the token from K1 |
+
+Secrets are hidden in workflow logs and never stored in a file. Easy mistake: pasting a space or a
+line break at the end of the token. If posting fails with `HTTPError`, re-create the secret.
+
+### K3. Test it
+
+**Actions → Daily data refresh → Run workflow.** In the run record, the section "Policy
+acknowledgments (simulated)" should end with `Comment: Posted: comment <number> on blog 950312`, and
+the comment should appear at the bottom of the blog post. A second run on the same day says
+"Already posted today" and doesn't post again.

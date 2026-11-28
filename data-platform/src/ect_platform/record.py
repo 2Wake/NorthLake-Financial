@@ -3,13 +3,14 @@
     uv run ect-record
 
 Reads output/last_run.json (from ect-daily) and dbt/target/run_results.json (from dbt build),
-and output/security_review.json (from ect-security-review),
+output/ack_summary.json (from ect-ack-summary) and output/security_review.json (from ect-security-review),
 and writes run-records/<date>_<time>.md (one file per run, so same-day runs never clash): days loaded, row counts, and every test result.
 Contains counts and test names only, never data values.
 """
 import json
 from datetime import datetime
 
+from .acknowledgments import record_lines as acknowledgment_lines
 from .config import OUTPUT_DIR, ROOT
 from .security_review import record_lines as security_review_lines
 from .sim import NY
@@ -63,6 +64,7 @@ def main(argv=None):
             lines.append(f"| `{name}` | {r['status']} | {r.get('failures') if r.get('failures') is not None else '—'} |")
         lines.append("")
 
+    lines += acknowledgment_lines()
     lines += security_review_lines()
 
     RECORDS_DIR.mkdir(exist_ok=True)

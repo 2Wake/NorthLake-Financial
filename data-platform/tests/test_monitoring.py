@@ -225,3 +225,24 @@ def test_check_writes_github_summary(tmp_path, monkeypatch):
     monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
     assert sr.check_result(path, tmp_path) == 1
     assert "| 1 | SEV3" in summary.read_text() and "2026-11-27 09:23 UTC (04:23 New York)" in summary.read_text()
+
+
+# ---- policy acknowledgment summary ----
+
+def test_ack_summary_lines_and_final_count(tmp_path, monkeypatch):
+    from ect_platform import acknowledgments as ack
+    counts = {"people": 527, "done": 472, "overdue": 55, "done_on_day": 25, "acks_required": 8432,
+              "acks_done": 7600, "next_due": date(2026, 12, 14),
+              "deadlines_today": [{"due_on": date(2026, 12, 9), "people": 524, "met": 470}]}
+    s = ack.summarize(counts, date(2026, 12, 9))
+    assert s["lines"][0] == "472 of 527 people have acknowledged everything (90%). 55 still to go."
+    assert s["final_lines"] == ["Deadline Wednesday, December 9, 2026 has passed: 470 of 524 people due that day met it (90%); 54 did not."]
+    html = ack.comment_html(s)
+    assert "[Simulated]" in html and "Acknowledgment update for Wednesday, December 9, 2026" in html
+    monkeypatch.delenv("CONFLUENCE_USER", raising=False)
+    assert ack.post(s).startswith("Not posted")
+    path = tmp_path / "a.json"
+    path.write_text(json.dumps({**s, "posted": "Not posted"}, default=str))
+    text = "\n".join(ack.record_lines(path))
+    assert "- People: 472 of 527 done, 55 left, 55 overdue" in text and "- Final: Deadline" in text
+    assert "Not counted" in "\n".join(ack.record_lines(tmp_path / "missing.json"))

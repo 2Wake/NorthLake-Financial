@@ -18,6 +18,27 @@ models:
     description: Every version of every employee record, with valid_from / valid_to / is_current.
     config: {labels: *people}
 
+  - name: stg_hris_policy_acknowledgments
+    description: >
+      SIMULATED. Policy acknowledgments collected by HR, from generator 0.5.0 (2026-11-28 onward): one row
+      per employee per document. Staff acknowledge by commenting on Confluence blog 950312, drivers in the
+      ECT Driver app; one action covers all 15 policies and DOC-04. acknowledged_on is the New York date.
+    config: {labels: {domain: people, layer: staging, data_owner: vp-people, data_steward: hr-data-steward, classification: internal, source_system: hris, data_origin: synthetic, contains_pii: "false", pci_scope: "false", retention: 7y}}
+    columns:
+      - name: ack_id
+        data_tests: [unique, not_null]
+      - name: employee_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('stg_hris_employees'), field: employee_id}}
+      - name: doc_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('policy_register'), field: doc_id}}
+      - name: channel
+        data_tests:
+          - accepted_values: {arguments: {values: ['confluence_comment', 'driver_app']}}
+
   # ---------------------------------------------------------------- driver
   - name: stg_fleet_drivers
     description: Current version of each driver record in the fleet system.

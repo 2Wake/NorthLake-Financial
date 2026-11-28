@@ -134,6 +134,16 @@ TABLES = {
             ("revoke_reason", "STRING"), ("grant_status", "STRING"), ("record_updated_at", "TIMESTAMP"),
         ],
     },
+    "hris_policy_acknowledgments": {
+        "description": "SIMULATED. Policy acknowledgments collected by HR (from generator 0.5.0): one row per employee "
+                       "per document acknowledged. Staff acknowledge by commenting on the announcement in "
+                       "Confluence, drivers in the ECT Driver app; one action covers every document.",
+        "labels": _labels("people", "internal", "hris", pii=False, retention="7y"),
+        "columns": [
+            ("ack_id", "STRING"), ("employee_id", "STRING"), ("doc_id", "STRING"), ("doc_version", "STRING"),
+            ("acknowledged_at", "TIMESTAMP"), ("channel", "STRING"), ("evidence", "STRING"),
+        ],
+    },
     "gov_planted_defects": {
         "description": "ANSWER KEY. Every data-quality defect the generator planted on purpose. Used to score "
                        "how many planted defects the data-quality checks catch; checks must not read it.",

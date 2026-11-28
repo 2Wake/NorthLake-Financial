@@ -30,6 +30,42 @@ Running log of all work, decisions and open items. It's the source for progress 
 
 ---
 
+## 2026-11-28 — Simulated policy acknowledgments and the daily summary comment (generator 0.5.0)
+
+### Decisions
+- **Owner, 2026-11-28:** don't post one comment per acknowledgment (8,432 would be too many). Post **one comment a day** with how many people have acknowledged and how many are left, and a **final count** once each deadline passes. "Build the acknowledgment simulation."
+
+### Done (this PR)
+- **Generator 0.5.0:** new raw table `hris_policy_acknowledgments` (People domain, Internal, owner `vp-people`, steward `hr-data-steward`).
+  - From `ACK_START` = 2026-11-28, each active employee acknowledges all 16 documents (POL-01 to POL-15 plus DOC-04) in one action, on a day drawn from `ACK_WEIGHTS`:
+    - **staff** comment on blog 950312 on business days, with the deadline at day 7;
+    - **drivers** use the ECT Driver app any day, with the deadline at day 11.
+  - About 88% are on time and 10% late (up to 10 business days, so the council item 4.5 escalation steps have cases). 2% never acknowledge.
+  - New hires count from their hire date.
+  - Days before 11-28 are unchanged, because 11-27 and earlier are already loaded.
+  - The document list is fixed in `config.py` so a later register edit can't change history.
+- **Offline dry run from 11-27 to 12-31:** 45 drivers on Saturday 11-28 and 89 people on Monday 11-30. 462 people are done by 12-09 and 8 never acknowledge.
+- **dbt:**
+  - `stg_hris_policy_acknowledgments` (adds the New York date) with tests;
+  - `fct_policy_acknowledgments` now takes the earliest acknowledgment from the seed (approvers' and reviewers' comments) or HR's feed, and the feed's evidence is marked [Simulated];
+  - 19 classification rows were added as **proposed** (`hr-data-steward`): raw 9 plus staging 10, all Internal. They show as CLS-03 findings until VP People approves them, which goes to the next monthly catalog review. The answer key has the same rows.
+- **`ect-ack-summary`** (new step after dbt):
+  - It counts **people**: done (every required document acknowledged), left, and overdue. It also counts documents.
+  - On the first run after a group deadline (12-09; 12-14 for DOC-04), it adds "N of M people due that day met it".
+  - It writes `output/ack_summary.json`, and `ect-record` adds a "Policy acknowledgments (simulated)" section with the comment text.
+  - With `--post` it posts the comment on blog 950312, **once per day** (it checks for today's title first).
+  - It never fails the run.
+  - Query checked on the live mart: 10 MB billed (the minimum), with `maximum_bytes_billed` set.
+- **Setup part K (owner):** an Atlassian API token plus GitHub secrets `CONFLUENCE_USER` and `CONFLUENCE_API_TOKEN`. Until then, the run record says "Not posted".
+- pytest: 34 passed (2 new). `dbt parse` and compile pass. The mart SQL dry-run passed with a stand-in for the new table, which the first run creates.
+
+### Next
+- **After merge:** tag `generator-v0.5.0` (owner OK, GOV-157 process).
+- The first run with 0.5.0 loads 11-28: 45 driver acknowledgments.
+- Then the owner does part K, or Claude posts the summary from the run record by hand until then.
+
+---
+
 ## 2026-11-28 — Security alerts now say when, who, what changed and how to triage
 
 ### Done

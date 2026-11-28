@@ -108,6 +108,16 @@ jobs:
         working-directory: data-platform/dbt
         run: uvx --from dbt-core==1.12.7 --with dbt-bigquery==1.12.4 dbt build
 
+      - name: Policy acknowledgment summary (daily comment)
+        # Counts how many people have acknowledged everything and how many are left, and posts one
+        # comment a day on the announcement (blog 950312). Posting needs the Confluence secrets (setup
+        # part K); without them the counts still go in the run record. Never fails the run.
+        continue-on-error: true
+        env:
+          CONFLUENCE_USER: ${{ secrets.CONFLUENCE_USER }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+        run: uv run ect-ack-summary --post
+
       - name: Sign in as the log reader (keyless)
         # A separate account (ect-monitor, Private Logs Viewer only), so the pipeline never reads its own
         # audit trail. Its credentials go only to the review step. Setup: docs/github-actions-setup.md, part H.

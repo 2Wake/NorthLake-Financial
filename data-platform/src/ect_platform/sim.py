@@ -15,7 +15,8 @@ from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from . import fakes
-from .config import (ACCESS_POLICY_PATH, APP_BOOKED_SHARE, DEFECT_RATES as DR, EPOCH, RATES,
+from .config import (ACCESS_POLICY_PATH, ACK_DOCS, ACK_NEVER, ACK_START, ACK_WEIGHTS, APP_BOOKED_SHARE,
+                     DEFECT_RATES as DR, EPOCH, RATES,
                      ROSTER_CORRECTIONS, ROSTER_PATH, SURVEY_SHARE, tlc_date_for)
 from .fakes import poisson, rng
 
@@ -95,6 +96,7 @@ class Simulation:
         self.agenda = defaultdict(list)       # date -> [(action, id)] scheduled follow-ups
         self.rider_emails: list[str] = []
         self.employee_emails: list[str] = []
+        self.ack_plan: dict[str, date | None] = {}   # employee_id -> day they acknowledge (None: never)
         self.day: date | None = None
         self._out = None
         self._defects = None
@@ -141,6 +143,8 @@ class Simulation:
             self._riders(rng("riders", day))
             self._marketing(rng("marketing", day))
             self._finance(rng("finance", day))
+            if day >= ACK_START:
+                self._acknowledgments()
         if not emit:
             return None
         if tlc_rows is not None:
@@ -150,6 +154,46 @@ class Simulation:
         batch["gov_planted_defects"] = [
             {"defect_id": f"DEF{stamp}{i:04d}", **d} for i, d in enumerate(self._defects, 1)]
         return batch
+
+    # ------------------------------------------------------------------ policy acknowledgments
+    def _ack_day(self, eid: str, start: date, driver: bool) -> date | None:
+        """The day this person acknowledges, counted from `start` (fixed per person; see ACK_WEIGHTS)."""
+        r = rng("acks", eid)
+        weights = ACK_WEIGHTS["drivers" if driver else "staff"]
+        k = r.choices(range(len(weights) + 1), weights=[*weights, ACK_NEVER])[0]
+        if k == len(weights):
+            return None
+        if driver:
+            return start + timedelta(days=k)
+        day = start
+        while day.weekday() >= 5:      # a request on a weekend counts from the next business day
+            day += timedelta(days=1)
+        while k:
+            day += timedelta(days=1)
+            if day.weekday() < 5:
+                k -= 1
+        return day
+
+    def _acknowledgments(self) -> None:
+        """Each active employee acknowledges every document in ACK_DOCS at once: staff by commenting on
+        the announcement (blog 950312), drivers in the ECT Driver app. Staff hired later count from hire."""
+        for eid, emp in self.employees.items():
+            if emp["employment_status"] != "active":
+                continue
+            driver = emp["department"] == "Driver Operations"
+            if eid not in self.ack_plan:
+                self.ack_plan[eid] = self._ack_day(eid, max(ACK_START, date.fromisoformat(emp["hired_at"])), driver)
+            if self.ack_plan[eid] != self.day:
+                continue
+            r = rng("acks", eid, self.day)
+            at = self._ts(r, lo=5, hi=23) if driver else self._ts(r, lo=8, hi=19)
+            channel, evidence = (("driver_app", "ECT Driver app acknowledgment screen") if driver
+                                 else ("confluence_comment", "Comment on Confluence blog 950312"))
+            for doc_id, version in ACK_DOCS:
+                major = version.split(".")[0]
+                self._touch("hris_policy_acknowledgments", f"{eid}|{doc_id}", {
+                    "ack_id": f"ACK-{eid}-{doc_id}-{major}", "employee_id": eid, "doc_id": doc_id,
+                    "doc_version": version, "acknowledged_at": at, "channel": channel, "evidence": evidence})
 
     # ------------------------------------------------------------------ people (HR + fleet)
     def _new_employee(self, r, hired: date, driver: bool, named: dict | None = None) -> dict:
