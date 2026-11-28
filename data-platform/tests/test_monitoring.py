@@ -195,3 +195,33 @@ def test_service_account_iam_changes_any_casing():
               "projects/empire-city-taxi/serviceAccounts/104223270256367818744")
     alerts = sr.check_admin([e], IDS)
     assert kinds(alerts) == ["IAM_CHANGED"] and alerts[0]["identity"] == "maintainer"
+
+
+def test_iam_alert_says_what_changed():
+    # 2026-11-27: two alerts said only "SetIamPolicy on project", with no date or change (owner feedback).
+    deltas = {"bindingDeltas": [
+        {"action": "ADD", "role": "roles/bigquery.jobUser", "member": "serviceAccount:ect-watchdog@empire-city-taxi.iam.gserviceaccount.com"},
+        {"action": "ADD", "role": "roles/bigquery.metadataViewer", "member": "serviceAccount:ect-watchdog@empire-city-taxi.iam.gserviceaccount.com"},
+        {"action": "REMOVE", "role": "roles/viewer", "member": "user:" + OWNER},
+        {"action": "ADD", "role": "roles/bigquerydatatransfer.serviceAgent",
+         "member": "serviceAccount:service-722503408036@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"}]}
+    e = entry("SetIamPolicy", OWNER, "cloudresourcemanager.googleapis.com", "projects/empire-city-taxi",
+              ts="2026-11-27T09:23:10.289847Z", serviceData={"policyDelta": deltas})
+    [a] = sr.check_admin([e], IDS)
+    assert a["detail"] == ("SetIamPolicy on project: added bigquery.jobUser, bigquery.metadataViewer to ect-watchdog; "
+                           "added bigquerydatatransfer.serviceAgent to google-service-agent (bigquerydatatransfer); "
+                           "removed viewer from maintainer")
+    assert "@" not in a["detail"] and "722503408036" not in a["detail"]
+    text = "\n".join(sr.check_lines({"days": ["2026-11-26", "2026-11-27"], "alerts": [a]}, "data-platform/run-records/x.md"))
+    assert "Security review of 2026-11-26 to 2026-11-27 (UTC): 1 alert to triage." in text
+    assert "When:   2026-11-27 09:23 UTC (04:23 New York)" in text
+    assert "Who:    maintainer" in text and "How to triage" in text and "x.md" in text
+
+
+def test_check_writes_github_summary(tmp_path, monkeypatch):
+    path, summary = tmp_path / "r.json", tmp_path / "summary.md"
+    path.write_text(json.dumps({"status": "ok", "days": ["2026-11-27"], "notes": [], "alerts": [
+        sr._alert("IAM_CHANGED", "maintainer", 2, "SetIamPolicy on project", "2026-11-27T09:23:10Z")]}))
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    assert sr.check_result(path, tmp_path) == 1
+    assert "| 1 | SEV3" in summary.read_text() and "2026-11-27 09:23 UTC (04:23 New York)" in summary.read_text()

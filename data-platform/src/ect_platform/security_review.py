@@ -25,6 +25,7 @@ import re
 import sys
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from .config import ACCESS_POLICY_PATH, GCP_PROJECT, OUTPUT_DIR, ROOT
 
@@ -36,6 +37,7 @@ LOGGING_URL = "https://logging.googleapis.com/v2/entries:list"
 LOG = f"projects/{GCP_PROJECT}/logs/cloudaudit.googleapis.com%2F"
 SA_DOMAIN = f"@{GCP_PROJECT}.iam.gserviceaccount.com"
 MAX_CATCH_UP_DAYS = 7
+NY = ZoneInfo("America/New_York")
 
 # Our own service accounts and the access role each holds in the access matrix (POL-02 Appendix A).
 # Role accounts come from role_service_accounts.csv. The maintainer's personal account is supplied at
@@ -94,6 +96,8 @@ def display(principal: str, ids: dict) -> str:
         return "github-workflow (main)" if WORKFLOW_SUBJECT.match(subject) else f"federated-{_hash(p)}"
     if p.endswith(SA_DOMAIN):
         return p.split("@")[0]
+    if "@gcp-sa-" in p:  # Google service agents: service-<project number>@gcp-sa-<service>.iam...
+        return f"google-service-agent ({p.split('@gcp-sa-')[1].split('.')[0]})"
     if p.endswith(".gserviceaccount.com"):
         return "google-system-account"
     return f"unknown-identity-{_hash(p)}"
@@ -110,6 +114,28 @@ def _principal(entry: dict) -> str:
 
 def _ok(entry: dict) -> bool:
     return not entry.get("protoPayload", {}).get("status", {}).get("code")
+
+
+def _member(member: str, ids: dict) -> str:
+    """An IAM binding member (user:..., serviceAccount:..., group:...) as a public-safe name."""
+    kind, _, who = member.partition(":")
+    if not who:
+        return member  # allUsers, allAuthenticatedUsers
+    if kind == "serviceAccount" or kind == "user":
+        return display(who, ids)
+    return f"{kind}-{_hash(who.lower())}"
+
+
+def _binding_changes(p: dict, ids: dict) -> str:
+    """'added roles/x to a; removed roles/y from b' from the audit entry's policy delta."""
+    deltas = (p.get("serviceData", {}).get("policyDelta", {}).get("bindingDeltas")
+              or p.get("metadata", {}).get("datasetChange", {}).get("bindingDeltas") or [])
+    grouped = defaultdict(list)
+    for d in deltas:
+        action = "added" if d.get("action") == "ADD" else "removed"
+        grouped[(action, _member(d.get("member", ""), ids))].append(d.get("role", "").removeprefix("roles/"))
+    return "; ".join(f"{a} {', '.join(sorted(roles))} {'to' if a == 'added' else 'from'} {m}"
+                     for (a, m), roles in sorted(grouped.items()))
 
 
 def _alert(kind: str, identity: str, count: int, detail: str, first: str) -> dict:
@@ -147,7 +173,9 @@ def check_admin(entries: list[dict], ids: dict) -> list[dict]:
         elif m.endswith("setiampolicy") and "auditConfigs" in mask:
             rows.append(("LOGGING_CHANGED", who, "Data Access audit log settings", ts))
         elif m.endswith("setiampolicy"):
-            rows.append(("IAM_CHANGED", who, f"{method.split('.')[-1]} on {_short(resource)}", ts))
+            changes = _binding_changes(p, ids)
+            rows.append(("IAM_CHANGED", who, f"{method.split('.')[-1]} on {_short(resource)}"
+                         + (f": {changes}" if changes else ""), ts))
         elif m.endswith("datasetservice.updatedataset"):
             rows.append(("IAM_CHANGED", who, f"dataset settings or permissions updated on {_short(resource)}", ts))
     return _group(rows)
@@ -396,7 +424,59 @@ def main(argv=None):
     return 0
 
 
-def check_result(path=RESULT_PATH) -> int:
+def _when(first_seen: str) -> str:
+    """'2026-11-27 09:23 UTC (04:23 New York)' from an ISO timestamp."""
+    if not first_seen:
+        return "this run (from today's dbt results)"
+    t = _ts(first_seen)
+    return f"{t:%Y-%m-%d %H:%M} UTC ({t.astimezone(NY):%H:%M} New York)"
+
+
+TRIAGE_STEPS = [
+    "How to triage (POL-09 statement 15: within 1 business day of this run):",
+    "  1. For each alert, ask: was this change expected? Expected means planned work with a",
+    "     Jira ticket, a setup step, or Google changing its own accounts automatically.",
+    "  2. Expected: record each alert and why in a Jira triage ticket (GOV), then close it.",
+    "  3. Not expected, or you can't tell: treat it as a possible incident and open a",
+    "     Security Incidents (SI) ticket (POL-08).",
+]
+
+
+def check_lines(r: dict, record: str | None = None) -> list[str]:
+    """The step log text: each alert with when, who and what changed, then how to triage it."""
+    days = r.get("days") or []
+    span = (days[0] if len(days) == 1 else f"{days[0]} to {days[-1]}") if days else "no days"
+    n = len(r["alerts"])
+    if not n:
+        return [f"Security review of {span} (UTC): no alerts."]
+    lines = [f"Security review of {span} (UTC): {n} alert{'s' if n > 1 else ''} to triage.", ""]
+    for i, a in enumerate(r["alerts"], 1):
+        times = f"; {a['count']} times" if a["count"] > 1 else ""
+        lines += [f"ALERT {i} of {n}: {a['severity']}",
+                  f"  What:   {a['title']}",
+                  f"  When:   {_when(a['first_seen'])}{' (first)' if times else ''}{times}",
+                  f"  Who:    {a['identity']}",
+                  f"  Change: {a['detail']}", ""]
+    lines += TRIAGE_STEPS
+    if record:
+        lines.append(f"Full details: {record}, section 'Security review (POL-09)'.")
+    return lines
+
+
+def _summary_markdown(r: dict, record: str | None) -> str:
+    """The same, as a table for the run's summary page on GitHub."""
+    out = ["## Security review: alerts to triage", "",
+           "| # | Severity | What | When (first) | Who | Change | Count |", "|---|---|---|---|---|---|---|"]
+    for i, a in enumerate(r["alerts"], 1):
+        out.append(f"| {i} | {a['severity']} | {a['title']} | {_when(a['first_seen'])} | {a['identity']} | "
+                   f"{a['detail']} | {a['count']} |")
+    out += ["", *[s.strip() for s in TRIAGE_STEPS]]
+    if record:
+        out.append(f"\nFull details: `{record}`.")
+    return "\n".join(out) + "\n"
+
+
+def check_result(path=RESULT_PATH, records_dir=RECORDS_DIR) -> int:
     if not path.exists():
         print("Security review didn't run: no result file.")
         return 1
@@ -404,12 +484,14 @@ def check_result(path=RESULT_PATH) -> int:
     if r["status"] != "ok":
         print("Security review didn't run: " + " ".join(r["notes"]))
         return 1
-    for a in r["alerts"]:
-        print(f"ALERT {a['severity']}: {a['title']}. {a['identity']}, {a['detail']} (x{a['count']})")
+    newest = sorted(records_dir.glob("*.md"))[-1:] if records_dir.exists() else []
+    record = f"data-platform/run-records/{newest[0].name}" if newest else None
+    print("\n".join(check_lines(r, record)))
     if r["alerts"]:
-        print("Triage each alert within 1 business day (POL-09 statement 15); see the run record.")
+        if os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+                f.write(_summary_markdown(r, record))
         return 1
-    print("Security review: no alerts.")
     return 0
 
 
