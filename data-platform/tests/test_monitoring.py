@@ -273,3 +273,16 @@ def test_config_check_rules():
     assert [x["status"] for x in r] == ["ok", "finding", "not_checked"]
     assert cc.check_github(None, {}, True)[0]["status"] == "not_checked"
     assert [x["status"] for x in cc.check_github([], {}, True)][1:] == ["ok", "ok"]
+
+
+def test_config_check_read_failures_show_the_http_status():
+    from ect_platform.config_check import _why
+
+    class Resp:
+        status_code = 403
+
+    class HTTPError(Exception):
+        response = Resp()
+
+    assert _why(HTTPError()) == "couldn't read: HTTPError 403"
+    assert _why(ValueError()) == "couldn't read: ValueError"
