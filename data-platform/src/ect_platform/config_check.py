@@ -46,7 +46,10 @@ LOG_RETENTION_DAYS = 400   # POL-09 statement 12 (owner setting 2026-11-25; fina
 def _session():
     import google.auth
     from google.auth.transport.requests import AuthorizedSession
-    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform.read-only"])
+    # The full cloud-platform scope. With the read-only scope, the first Actions run (2026-11-28) couldn't read
+    # service accounts (CFG-04) although Security Reviewer allows it; the IAM API is the likely cause. The check
+    # still only reads: what it can do is limited by the account's read-only roles.
+    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     return AuthorizedSession(creds)
 
 
@@ -54,6 +57,12 @@ def _github(path: str):
     req = urllib.request.Request(f"https://api.github.com/{path}", headers={"Accept": "application/vnd.github+json"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read())
+
+
+def _why(e: Exception) -> str:
+    """Short reason for a failed read, with the HTTP status when there is one (never the response body)."""
+    code = getattr(getattr(e, "response", None), "status_code", None)
+    return f"couldn't read: {type(e).__name__}" + (f" {code}" if code else "")
 
 
 def result(check: str, policy: str, ok: bool | None, detail: str) -> dict:
@@ -167,7 +176,7 @@ def run() -> list[dict]:
         pol.raise_for_status()
         results += check_iam(pol.json(), ids)
     except Exception as e:  # noqa: BLE001
-        results.append(result("CFG-01 to 03 Project IAM and audit settings", "POL-02, POL-09", None, f"couldn't read: {type(e).__name__}"))
+        results.append(result("CFG-01 to 03 Project IAM and audit settings", "POL-02, POL-09", None, _why(e)))
     try:
         accts = s.get(f"https://iam.googleapis.com/v1/projects/{GCP_PROJECT}/serviceAccounts", timeout=30)
         accts.raise_for_status()
@@ -179,7 +188,7 @@ def run() -> list[dict]:
             keys[a["email"]] = k.json().get("keys", [])
         results.append(check_keys(accounts, keys))
     except Exception as e:  # noqa: BLE001
-        results.append(result("CFG-04 No user-managed service account keys", "POL-02 st. 14", None, f"couldn't read: {type(e).__name__}"))
+        results.append(result("CFG-04 No user-managed service account keys", "POL-02 st. 14", None, _why(e)))
     try:
         ds = []
         for name in ("raw", "staging", "marts"):
@@ -188,13 +197,13 @@ def run() -> list[dict]:
             ds.append(r.json())
         results += check_datasets(ds)
     except Exception as e:  # noqa: BLE001
-        results.append(result("CFG-05 Datasets", "POL-03, POL-13", None, f"couldn't read: {type(e).__name__}"))
+        results.append(result("CFG-05 Datasets", "POL-03, POL-13", None, _why(e)))
     try:
         b = s.get(f"https://logging.googleapis.com/v2/projects/{GCP_PROJECT}/locations/global/buckets/_Default", timeout=30)
         b.raise_for_status()
         results.append(check_log_bucket(b.json()))
     except Exception as e:  # noqa: BLE001
-        results.append(result("CFG-06 `_Default` log bucket keeps logs 400 days", "POL-09 st. 12", None, f"couldn't read: {type(e).__name__}"))
+        results.append(result("CFG-06 `_Default` log bucket keeps logs 400 days", "POL-09 st. 12", None, _why(e)))
     try:
         rules = _github(f"repos/{REPO}/rules/branches/main")
     except Exception:  # noqa: BLE001
