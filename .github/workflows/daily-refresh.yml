@@ -11,18 +11,69 @@ on:
     # about 9.5 hours late (11-25, 11-26), after the 12:00 deadline; from 05:17 the same delay still finishes by
     # about 10:00 New York (GOV-123). GitHub never starts early, so the run can't fall before NY midnight.
     - cron: "17 5 * * *"
-  workflow_dispatch:         # "Run workflow" button on the Actions tab
+    # Backup starts. GitHub may delay a schedule by hours or drop it (it skipped 11-27 entirely, GOV-123).
+    # The "check" job below stops a backup straight away if today's refresh already succeeded.
+    - cron: "17 8 * * *"    # 03:17 New York (04:17 in summer)
+    - cron: "17 11 * * *"   # 06:17 New York (07:17 in summer)
+  workflow_dispatch:         # "Run workflow" button on the Actions tab: always runs in full
 
 permissions:
   contents: write   # commit the run record
   id-token: write   # keyless sign-in to Google Cloud
+  actions: read     # the check job reads earlier runs of this workflow
 
 concurrency:
   group: daily-refresh
   cancel-in-progress: false
 
 jobs:
+  check:
+    # Did a run of this workflow already refresh today (New York date)? "Refreshed" means its dbt step
+    # succeeded. The run's overall result isn't used, because it fails on purpose when the security
+    # review raises alerts. Runs queue one at a time (concurrency below), so a backup that waited behind
+    # a full run sees it here and stops. Manual runs always go ahead.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, subprocess, zoneinfo
+          ny = zoneinfo.ZoneInfo("America/New_York")
+          today = datetime.datetime.now(ny).date()
+          repo, me = os.environ["REPO"], int(os.environ["RUN_ID"])
+
+          def gh(path):
+              return json.loads(subprocess.check_output(["gh", "api", path]))
+
+          done = None
+          if os.environ["EVENT"] == "schedule":
+              runs = gh(f"repos/{repo}/actions/workflows/daily-refresh.yml/runs?per_page=30")["workflow_runs"]
+              for r in runs:
+                  started = datetime.datetime.fromisoformat(r["run_started_at"].replace("Z", "+00:00"))
+                  if r["id"] == me or started.astimezone(ny).date() != today:
+                      continue
+                  jobs = gh(f"repos/{repo}/actions/runs/{r['id']}/jobs")["jobs"]
+                  if any(s["name"] == "Build and test (dbt)" and s["conclusion"] == "success"
+                         for j in jobs for s in j.get("steps", [])):
+                      done = r["id"]
+                      break
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"run={'false' if done else 'true'}\n")
+          print(f"Today ({today}) was already refreshed by run {done}: skipping." if done
+                else f"No successful refresh yet today ({today}): running.")
+          PY
+
   refresh:
+    needs: check
+    if: needs.check.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:

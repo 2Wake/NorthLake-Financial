@@ -23,10 +23,41 @@ Running log of all work, decisions and open items. It's the source for progress 
 - [x] ~~Collate~~: dropped 2026-11-25 (company email and wait list; connecting needs a key). Replaced by Knowledge Catalog.
 - [ ] **Knowledge Catalog (STD-02, DRAFT v0.3):** council decides D2 to D4, then the one-time import and daily extract (GOV-167), Looker Studio tables, and a DOC-02 entry. Lineage cost check on or after 2026-12-02 (GOV-168).
 - [ ] **First council meeting, Tuesday 2026-12-01** (agenda and review pack: Confluence 1015810; Jira GOV-171). After it: write the minutes, log decisions as `GV-D-###`, revise STD-02 to v0.3, move the charter to Confluence if adopted, and update the register for the 30 proposed rows.
-- [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run moved to 05:17 UTC (GOV-123); check over the next few days that it finishes before 12:00 New York.
+- [ ] **Monitoring gaps (R-003, to 2027-01-31):** the Google-side watchdog is live and tested (GOV-170 Done). The daily run starts at 05:17 UTC with backup starts at 08:17 and 11:17 UTC, which skip if today is already refreshed (2026-11-28). GitHub dropped the 11-27 run entirely. If it keeps missing days, consider starting the run from Google's side.
 - [ ] **Deadlines:** O7 log lock (GOV-94) and the first Atlassian export (GOV-158; Cloud Storage on hold), both by 2026-12-31. Treatment before expiry: GOV-161 training (01-31), GOV-154 DOC-03 and GOV-163 rebuild test (02-28). **12-09:** policy and DOC-04 acknowledgments (blog 950312; GOV-107, GOV-108).
 - [ ] **Register approvals:** 30 rows still `proposed`. On the 12-01 agenda (item 4.3).
 - [ ] **Clean up merged branches** on GitHub (`five-tier-classification`, `governance-council`). The user asked to keep them for now.
+
+---
+
+## 2026-11-28 — Backup start times for the daily run; GOV-169 closed; council item 4.5 (acknowledgment consequences)
+
+### Done
+- **Manual run** (owner, 06:41 New York, run 46141088504): loaded 11-26 and 11-27, and dbt passed.
+  - The security review covered 11-26 and 11-27 and raised **2 alerts**, both on 11-27 and both expected watchdog setup:
+    - 09:23 UTC: the maintainer gave `ect-watchdog` BigQuery Job User and Metadata Viewer (setup J1);
+    - 09:30 UTC: Google's service-agent manager gave the BigQuery Data Transfer service agent its role, which happens automatically with the first scheduled query.
+  - Triage ticket drafted for the owner's approval.
+- **Backup start times (this PR):**
+  - `daily-refresh.yml` adds cron 08:17 and 11:17 UTC, plus a `check` job: a scheduled start stops straight away if a run of the workflow already **refreshed today** (New York date).
+  - "Refreshed" means its dbt step succeeded. The overall result isn't used, because it fails on purpose when the review raises alerts.
+  - Runs already queue one at a time (`concurrency`), so a backup waiting behind a full run sees it and stops. Manual runs always go ahead.
+  - **Why:** GitHub delayed the schedule 9 to 10 hours on 11-25 and 11-26, dropped 11-27, and hadn't started 11-28 by 11:41 UTC (GOV-123).
+- **GOV-169 closed** with a closing comment: triage done on 11-27, and the case fix (PR #15) was used by today's run.
+- **Council agenda 1015810 v5:** new item 4.5, consequences for not acknowledging policies. Today the only step is reporting to the manager and the VP People, with no escalation and no effect on access.
+  - Options A (reminders only), **B (steps, proposed)** and C (hard stop).
+  - **The owner set Option B's timings:** a reminder on the due date; the VP People at **5 business days** overdue; the CISO at **10 business days**, who may suspend access beyond email and HR self-service (drivers can't go online). The council recommends; the VP People and CISO revise POL-05 or POL-14.
+- **Acknowledgment reporting** (owner decision): no per-person comments. One summary comment a day on blog 950312 (done and left), and a final summary after each deadline (12-09 policies, 12-14 DOC-04). How the simulated acknowledgments are produced is waiting for the owner's OK.
+
+### Tested
+- The `check` logic was run read-only against the real run history:
+  - **11-26:** skip (run 45885971310's dbt step passed).
+  - **11-27:** run (nothing that day).
+  - **11-28:** skip (today's manual run).
+  - **A manual start:** always runs.
+
+### Found (left as findings)
+- **The security review doesn't alert on a new service account** (`CreateServiceAccount`, `ect-watchdog` at 09:22 on 11-27). The account itself was expected. Whether creating a service account should alert is a question for POL-09 Appendix A.
 
 ---
 
